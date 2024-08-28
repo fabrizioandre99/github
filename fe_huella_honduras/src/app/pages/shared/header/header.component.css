@@ -1,0 +1,342 @@
+.dash_header {
+    background: white;
+    margin: 0px 12px 12px 12px;
+    border-radius: 24px;
+    height: 90px;
+    box-shadow: 0px 7px 32px 7px rgba(183, 199, 255, 0.4);
+}
+
+.dash_menu {
+    z-index: 5;
+}
+
+.dash_menu_dropdown__button mat-icon {
+    height: 50px;
+    width: 50px;
+    color: white;
+
+}
+
+.dash_header__arbol-icon {
+    background: linear-gradient(to bottom, #00903B 0%, #7DBB5C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dash_menu_navbar .dropdown-item:hover {
+    color: white;
+    background-color: #97c97d;
+}
+
+.navbar-toggler {
+    margin-top: -108px;
+}
+
+.navbar-nav mat-icon {
+    color: white;
+    width: 18px;
+    height: 100%;
+    margin-top: -3.5px;
+    margin-left: 8px;
+}
+
+.dash_menu_dropdown .dropdown-item {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 270px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.dash_menu_dropdown--mobile {
+    display: none;
+}
+
+.offcanvas {
+    --bs-offcanvas-transition: transform 0.25s ease-in-out;
+
+}
+
+.button_close {
+    margin: calc(-.5* var(--bs-offcanvas-padding-y)) calc(-.5* var(--bs-offcanvas-padding-x)) calc(-.5* var(--bs-offcanvas-padding-y)) auto;
+}
+
+
+.button_close mat-icon {
+    /*  padding: 0; */
+    bottom: 2px;
+    position: relative;
+}
+
+.dash_header__title {
+    color: #00903B;
+    flex-direction: column;
+    display: flex;
+    margin-top: 4.5px;
+    font-weight: 500;
+}
+
+.dash_header__title label {
+    font-family: "Pluto" !important;
+}
+
+.dash_header__title--top {
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.dash_header__title--bottom {
+    font-size: 22px;
+}
+
+.dash_menu_dropdown__empresa {
+    font-family: "Pluto Cond" !important;
+    background: #35A249;
+    box-shadow: 0px 4px 12px rgba(117, 137, 120, 0.3);
+    border-radius: 0 16px 16px 0;
+    color: white;
+    height: 42px;
+    padding: 0 11px 0 14px;
+    align-items: center;
+    position: absolute;
+    left: 43px;
+    display: flex;
+    font-size: 12px;
+    z-index: -1;
+}
+
+.dash_menu_dropdown__empresa span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.dash_menu_dropdown {
+    display: flex;
+    align-items: center;
+}
+
+/*-------------- Modo Tableta --------------*/
+@media (width <=1135px) {
+    .dash_header {
+        margin: 0;
+        border-radius: 0;
+    }
+}
+
+/*-------------- Modo Móvil --------------*/
+@media (width <=1135px) {
+
+    .dash_menu_dropdown--mobile {
+        display: flex;
+        width: fit-content;
+        align-items: center;
+    }
+
+    .dash_menu_dropdown--desktop {
+        display: none;
+    }
+
+
+    .dash_header__arbol-icon {
+        margin-left: 60px !important;
+    }
+
+    .offcanvas.show:not(.hiding),
+    .offcanvas.showing {
+        width: 80%;
+        min-width: 80%;
+        max-width: 80%;
+    }
+
+    .margin_logo_hc {
+        margin-left: 77px;
+        margin-right: 3px;
+    }
+
+    .margin_logo_hc_left {
+        margin-left: 13px;
+    }
+}
+
+@media (width <=512px) {
+
+    .dash_header__title {
+        font-size: 5vw;
+        line-height: 21px;
+        width: 50%;
+    }
+}
+
+/*-------------- Modo Escritorio --------------*/
+@media (width >=1135px) {
+
+    .margin_logo_hc {
+        margin-right: 6px;
+        margin-left: 1rem;
+    }
+
+    .dash_menu_navbar {
+        font-family: 'Pluto Cond' !important;
+        background: linear-gradient(0deg, #7DBB5C 0%, #00903B 100%);
+        box-shadow: 0px 4px 12px rgba(117, 137, 120, 0.3);
+        border-radius: 16px;
+        color: #652DC1;
+        height: 50px;
+    }
+
+    .dash_menu_dropdown__button {
+        background-color: #35A249;
+        border-radius: 100%;
+        height: 55px;
+        width: 55px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        margin-top: -2.5px;
+    }
+
+
+    .dash_menu_navbar .nav-link,
+    .dash_menu_navbar .dropdown-item,
+    .dash_menu_dropdown__button {
+        font-family: 'Pluto Cond', sans-serif !important;
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+    .dash_menu_navbar .nav-link {
+        color: #ffffff;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dash_menu_navbar .dropdown-menu {
+        background-color: #ffffff;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .dash_menu .dropdown-menu {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+
+
+    }
+
+    .dash_menu_dropdown .dropdown-menu {
+        /*  top: -6px; */
+    }
+
+    .dash_menu_dropdown__button--arrow {
+        position: absolute;
+        top: 31px;
+        right: 0px;
+        background-color: #35A249;
+        height: 20px;
+        width: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 38px;
+
+    }
+
+    .dash_menu {
+        position: absolute;
+        top: 77px;
+        left: 50%;
+        transform: translateX(-50%) translateX(15%);
+        display: flex;
+        width: fit-content;
+    }
+
+    .navbar-expand-custom {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+    .navbar-expand-custom .navbar-nav {
+        flex-direction: row;
+    }
+
+    .navbar-expand-custom .navbar-nav .dropdown-menu {
+        position: absolute;
+    }
+
+    .navbar-expand-custom .navbar-nav-scroll {
+        overflow: visible;
+    }
+
+    .navbar-expand-custom .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .navbar-expand-custom .navbar-toggler {
+        display: none;
+    }
+
+    .navbar-expand-custom .offcanvas {
+        position: static;
+        z-index: auto;
+        flex-grow: 1;
+        width: auto !important;
+        height: auto !important;
+        visibility: visible !important;
+        background-color: transparent !important;
+        border: 0 !important;
+        transform: none !important;
+        box-shadow: none;
+        transition: none;
+    }
+
+    .navbar-expand-custom .offcanvas .offcanvas-header {
+        display: none;
+    }
+
+    .navbar-expand-custom .offcanvas .offcanvas-body {
+        display: flex;
+        flex-grow: 0;
+        padding: 0;
+        overflow-y: visible;
+    }
+
+
+    .navbar-expand-custom .navbar-nav {
+        flex-direction: row;
+    }
+
+    .navbar-expand-custom .dropdown-menu {
+        position: absolute;
+    }
+
+    .navbar-expand-custom .nav-link {
+        padding-right: .5rem;
+        padding-left: .5rem;
+    }
+
+    .navbar-expand-custom>.container {
+        flex-wrap: nowrap;
+    }
+
+    .navbar-expand-custom .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .navbar-expand-custom .navbar-toggler {
+        display: none;
+    }
+
+}

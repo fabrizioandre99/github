@@ -1,0 +1,13 @@
+.table__body {
+  height: 40px;
+}
+
+@media (min-width:767.98px) {
+  .w_empresa {
+    width: 256px;
+  }
+
+  .w_calendar {
+    width: 220px;
+  }
+}

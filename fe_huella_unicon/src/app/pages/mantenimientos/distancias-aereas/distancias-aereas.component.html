@@ -1,0 +1,171 @@
+<div class="container margin-container">
+  <div *ngIf="fShow" class="crud__card mt-4 p-4 pt-2 col-md-12">
+    <form (ngSubmit)="fnRegOEdit(RegOEditForm)" #RegOEditForm="ngForm" novalidate>
+      <div class="row">
+        <div class="col-lg-3 w-OriYDest">
+          <label for="origen_aereo" class="col-form-label col-form-label-sm">Origen</label>
+          <input id="origen_aereo" type="text" maxlength="100" class="form-control crud__input" #sOrigen="ngModel"
+            name="origen" [(ngModel)]="model.sOrigen" placeholder="Descripción" required pattern="^(?!\s*$).+"
+            [ngClass]="{ 'is-invalid': submitCategoria&& sOrigen.errors?.['required']
+          ||submitCategoria&& sOrigen.errors?.['pattern']}">
+          <div class="ms-2"
+            *ngIf="submitCategoria&& sOrigen.errors?.['required'] ||submitCategoria&& model.sOrigen.trim().length==0">
+            <small class="text-danger">Ingrese el origen.</small>
+          </div>
+          <div class="ms-2" *ngIf="submitCategoria&& sOrigen.errors?.['pattern']&& model.sOrigen.trim().length!==0">
+            <small class="text-danger">No ingrese caracteres extraños.</small>
+          </div>
+        </div>
+        <div class="col-lg-3 w-OriYDest">
+          <label for="destino_aereo" class="col-form-label col-form-label-sm">Destino</label>
+          <input id="destino_aereo" type="text" maxlength="100" class="form-control crud__input" #sDestino="ngModel"
+            [(ngModel)]="model.sDestino" name="destino" placeholder="Descripción" required [ngClass]="{ 'is-invalid': submitCategoria&& sDestino.errors?.['required']
+          ||submitCategoria&& sDestino.errors?.['pattern']}" pattern="^(?!\s*$).+">
+          <div class="ms-2"
+            *ngIf="submitCategoria&& sDestino.errors?.['required'] ||submitCategoria&& model.sDestino.trim().length==0">
+            <small class="text-danger">Ingrese el destino.</small>
+          </div>
+          <div class="ms-2" *ngIf="submitCategoria&& sDestino.errors?.['pattern']&& model.sDestino.trim().length!==0">
+            <small class="text-danger">No ingrese caracteres extraños.</small>
+          </div>
+        </div>
+        <div class="col-lg-2 w-distancia">
+          <label for="distancia_aereo" class="col-form-label col-form-label-sm">Distancia</label>
+          <input id="distancia_aereo" type="text" maxlength="10" class="form-control crud__input" #bdDistacia="ngModel"
+            [(ngModel)]="model.bdDistacia" name="distancia" placeholder="0" required
+            pattern="^[0-9]{1,5}(?:\.[0-9]{1,4})?$" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" [ngClass]="{ 'is-invalid': submitCategoria&& bdDistacia.errors?.['required'] || submitCategoria&& bdDistacia.errors?.['pattern']
+          ||submitCategoria && !regexNoCeros.test(model.bdDistacia)
+          && model.bdDistacia.trim().length!==0}">
+          <div class="ms-2" *ngIf="submitCategoria&& bdDistacia.errors?.['required'] ">
+            <small class="text-danger">Ingrese la distancia.</small>
+          </div>
+          <div class="ms-2" *ngIf="submitCategoria&& bdDistacia.errors?.['pattern'] && model.bdDistacia.trim().length!==0
+            && regexNoCeros.test(model.bdDistacia)">
+            <small class="text-danger">Valor incorrecto.</small>
+          </div>
+        </div>
+        <div class="padding-div ps-0">
+          <label>Km</label>
+        </div>
+        <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+          <button type="button" class="crud__button button-white"
+            (click)="fShow=false; selectedCategory_A=null">Cancelar</button>
+          <button type="submit" [disabled]="loadRegOEdit" class="crud__button button-blue ms-2"> <span
+              *ngIf="loadRegOEdit" class="spinner-border spinner-border-sm me-1"></span>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <label class="crud__title">Distancias aéreas</label>
+  <div class="row mt-3">
+    <div class="col-md-5 col-lg-3">
+      <input class="form-control crud__input crud__input--search ms-2" [(ngModel)]="model.sSearchCodigo"
+        placeholder="Buscar por destino">
+    </div>
+  </div>
+  <div class="mt-2">
+    <div class="d-flex justify-content-end">
+      <button [disabled]="fShow" class="crud__button button-blue d-flex align-items-center" (click)="fnNuevoTramo()">
+        <img src=" assets/images/icon-plus.svg" height="25" />
+        <span class="ms-2">Nuevo tramo</span></button>
+    </div>
+  </div>
+  <div class="table-responsive  crud__card mt-4">
+    <table class="table">
+      <thead class="table__header">
+        <tr class="text-center">
+          <th scope="col">Tramo</th>
+          <th scope="col">Distancia (km)</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <ng-container *ngIf="fShowSkeleton">
+        <tbody *ngFor="let item of lstSkeleton">
+          <tr class="table__body table__body--skeleton">
+            <td>
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
+      <ng-container *ngIf="!fShowSkeleton">
+        <tbody *ngFor="let item of lstAereas| Busqueda: model;  index as i">
+          <tr class="table__body table__body--degradado" [ngStyle]="{
+                  'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                  'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null,
+                  'background-color': selectedCategory_A === item.nIdDistancia ? '#FFEFB0' : null
+                }">
+            <td class="text-center">
+              {{item.sOrigen}} - {{item.sDestino}}
+            </td>
+            <td class="text-center">
+              {{item.bdDistacia}}
+            </td>
+            <td class="text-center">
+              <img class="icon_editar pointer" src="assets/images/icon-editar.svg" (click)="fnEditarTramo(item, i)" />
+            </td>
+            <td class="text-center">
+              <img class="icon_tacho pointer" src="assets/images/icon-tacho.svg"
+                (click)="openEliminar(contentEliminar,item)" />
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
+    </table> <ng-container *ngIf="!fShowSkeleton && (lstAereas| Busqueda: model)?.length <= 0">
+      <div class="text-center mt-5 mb-5">
+        <h5 class="mb-0">No existen resultados.</h5>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="!fShowSkeleton &&(lstAereas| Busqueda: model)?.length > 0" class="d-flex justify-content-center mt-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="(lstAereas| Busqueda: model)?.length" [(page)]="page"
+      [maxSize]="8" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="(lstAereas| Busqueda: model)?.length" [(page)]="page"
+      [maxSize]="5" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <label class="modal__title">Confirmación</label>
+      <label class="mt-3 d-flex justify-content-center fs-16">
+        ¿Está seguro de eliminar la distancia?
+      </label>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminar()" class="crud__button button-blue ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

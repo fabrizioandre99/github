@@ -1,0 +1,280 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div *ngIf="isShown" class="mb-5 mb-xl-3">
+        <div class="me-2 ms-2 mt-1">
+          <div class="d-lg-flex align-items-center">
+            <h2>Registrar datos de actividad</h2>
+            <app-alert class="ms-auto alto"></app-alert>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-4">
+              <div class="form-item">
+                <label class="asterisk bold">Seleccionar sector</label>
+                <div class="selection">
+                  <select [disabled]="disabled || disabledForm" [(ngModel)]="model.nIdFuenteEmision"
+                    (change)="changeSector()" class="form-select" id="sector" name="sector"
+                    [ngClass]="{ 'is-invalid': submitForm && this.model.nIdFuenteEmision=='Seleccionar' }" required>
+                    <option value="Seleccionar">Seleccionar</option>
+                    <option [ngValue]="item.nIdFuenteEmision" *ngFor="let item of lstSector">
+                      {{item.sNombre}}
+                    </option>
+                  </select>
+                </div>
+                <div *ngIf="submitForm && this.model.nIdFuenteEmision=='Seleccionar'">
+                  <small class="text-danger">
+                    Selecciona un sector.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col ms-md-5">
+              <div class="form-item col-md-11 mt-2 mt-md-0">
+                <label class="asterisk bold">Cargar datos de actividad</label>
+                <div class="d-flex bd-highlight form-file"
+                  [ngClass]="{ 'form-file-invalid': submitForm && (this.fileExcel?.length==0 || this.fileExcel==null ), 'disabled' : disabledForm}">
+                  <label for="fileinput" class="textfile w-100 bd-highlight" [ngClass]="{'pointer' : !disabledForm }"
+                    #myInputExcel>Seleccionar
+                    archivo... </label>
+                  <div class="flex-shrink-1 bd-highlight">
+                    <input type="file" [disabled]="disabledForm"
+                      accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
+                      id="fileinput" name="myInputExcel" (change)="onFileChangeExcel($event)"
+                      [ngClass]="{'pointer' : !disabledForm }" required>
+                  </div>
+                </div>
+                <div class="align-items-center d-flex mt-1">
+                  <img src="assets/images/info.svg" height="15" />
+                  <span class="span-info">Formato permitido: .xls ó .xlsx</span>
+                </div>
+                <div *ngIf="submitForm && (this.fileExcel?.length==0 || this.fileExcel==null)">
+                  <small class="text-danger">
+                    Cargue un archivo correcto.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <!--   <br>
+            <div><label class="asterisk"></label><label class="ms-1" style="font-size:14px">Datos
+                obligatorios</label></div> -->
+          </div>
+        </div>
+        <hr>
+        <div class="me-2 ms-2">
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div class="form-item">
+                <label class="asterisk bold">Adjuntar evidencia</label>
+                <div [ngClass]="{ 'form-file-invalid': submitEvidencia && !filePdf, 'disabled' : disabledForm}"
+                  class="form-file">
+                  <label for="fileinput2" class="textfile w-100 bd-highlight" [ngClass]="{'pointer' : !disabledForm }"
+                    #myInputPdf>Seleccionar
+                    archivo... </label>
+                  <div class="flex-shrink-1 bd-highlight">
+                    <input type="file" [disabled]="disabledForm" [ngClass]="{'pointer' : !disabledForm }"
+                      accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv, .pdf, application/pdf"
+                      id="fileinput2" style="text-align: center" (change)="onFileChangePdf($event)">
+                  </div>
+                </div>
+                <div class="align-items-center d-flex mt-1">
+                  <img src="assets/images/info.svg" height="15" />
+                  <span class="span-info">Formato permido: .xls, .xlsx ó pdf, se puede agregar 1 o más
+                    evidencias.</span>
+                </div>
+
+                <div *ngIf="submitEvidencia && !filePdf"> <small class="text-danger">
+                    Cargue un archivo correcto.
+                  </small></div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn btn-success verde button-regEvidencia mt-2 mt-md-0"
+                [disabled]="this.disabledForm " (click)="agregarDocumento()">
+                <i class="fa-solid fa-plus"></i><span class="ms-2">Registrar
+                  evidencia</span> </button>
+            </div>
+          </div>
+          <br> <br>
+          <div class="row">
+            <div class="col-md-5">
+              <table class="table mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col" style="border-bottom: 2px solid black;">Documentos adjuntos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of documentos; let i = index">
+                    <td [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                      <div class="d-flex justify-content-between text-start">
+                        <div class="documento">
+                          <span>{{item.sNombreDocumento}}</span>
+                        </div>
+                        <div>
+                          <button class="button-to-disabled" type="button"
+                            [disabled]="this.disabledForm ||item.loadingEliminar" (click)="eliminarDocumento(item, i)"
+                            [ngClass]="{ 'image-disabled': this.disabledForm}">
+                            <img src="assets/images/tacho.svg" height="20" />
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="documentos.length == 0">
+                    <!-- <th scope="row" [ngClass]="{ 'label-invalid':noHayEvidencias &&  this.documentos.length <= 0}">
+                      No hay documentos.
+                    </th> -->
+                    <th scope="row">
+                      No hay documentos.
+                    </th>
+                  </tr>
+                </tbody>
+              </table>
+              <div *ngIf="noHayEvidencias &&  this.documentos.length <= 0">
+                <small class="text-danger mb-3">
+                  Registre las evidencias.
+                </small>
+              </div>
+              <div *ngIf="documentos.length > 0" class="d-flex justify-content-center">
+                <ngb-pagination class="pagination-md" [maxSize]="5" [collectionSize]="documentos.length" [(page)]="page"
+                  [pageSize]="pageSize">
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="documentos.length" [(page)]="page" [maxSize]="3"
+                  [pageSize]="pageSize">
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+          <!-- <br> -->
+          <div><label class="asterisk"></label><label class="ms-1" style="font-size:14px">Datos
+              obligatorios</label></div>
+        </div>
+        <hr>
+        <div class="col d-flex justify-content-end align-items-end">
+          <button class="btn btn-success blanco large me-3" (click)="cancelarRegistro()" type="button">
+            Cancelar
+          </button>
+          <button [disabled]="loading || this.disabledForm" class="btn btn-success verde large" type="submit"
+            (click)="guardarRegistro()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+            Guardar
+          </button>
+        </div>
+      </div>
+      <div class="me-2 ms-2">
+        <div class="d-lg-flex text-start">
+          <h2>Historial de datos de actividad</h2>
+          <div class="ms-auto alto">
+            <app-alert *ngIf="!isShown"></app-alert>
+          </div>
+        </div>
+        <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 240px">
+          <div class=" spinner-border text-success" role="status">
+          </div>
+        </div>
+        <div></div>
+        <div *ngIf="!loadingTable" class="row justify-content-between align-items-end">
+          <div class="col-md-8">
+            <div class="row">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-item">
+                    <div class="align-items-center d-flex ">
+                      <img src="assets/images/info.svg" height="15" />
+                      <span class="span-info">FDA: Formato de datos de
+                        actividad</span>
+                    </div>
+                    <button type="button" (click)="fnDescargarFormato()" class="btn btn-success mt-2 blanco text-negro
+                    ">
+                      <img src="assets/images/pdf.svg" height="20" /><span class="ms-2">Descargar
+                        FDA</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-auto">
+            <button *ngIf="!disabledForm" [disabled]="isShown || this.disabledForm" type="button"
+              (click)='registrarDatos()' class="mt-2 mt-xl-0 btn btn-success verde">
+              <i class="fa-solid fa-plus"></i><span class="ms-2">Registrar datos de actividad</span></button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!loadingTable">
+        <br>
+        <div *ngIf="lstHistorial.length > 0">
+          <div class="table-responsive text-center me-2 ms-2 overflow-auto">
+            <table class="table">
+              <thead>
+                <tr class="text-center">
+                  <th scope="col">Código</th>
+                  <th scope="col">Sector </th>
+                  <th scope="col">Datos<br>
+                    de actividad</th>
+                  <th scope="col">Evidencia</th>
+                  <th scope="col" *ngIf="!disabledForm">Editar</th>
+                  <th scope="col" *ngIf="!disabledForm">Eliminar</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of lstHistorial; index as i">
+                <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                  <td>{{item.oFuenteEmision.sCodigoGPC}}</td>
+                  <td>{{item.oFuenteEmision.sNombre}}</td>
+                  <td>
+                    <a class="descarga pointer" (click)="fnDescargarDatosActividad(item)">
+                      {{item.oDocumento.sNombreDocumento}}</a>
+                  </td>
+                  <td>
+                    <div *ngFor="let lievidencia of item.liEvidencia">
+                      <a class="descarga pointer" (click)="fnDescargarEvidencia(lievidencia)">
+                        {{lievidencia.sNombreDocumento}}</a>
+                    </div>
+                  </td>
+                  <td *ngIf="!disabledForm"> <img src="assets/images/lapiz.svg" height="20" class="pointer"
+                      (click)="Editar(item)" /></td>
+                  <!--   <td *ngIf="disabledForm"> <img class="image-disabled" src="assets/images/lapiz.svg" height="20" />
+                  </td> -->
+                  <td *ngIf="!disabledForm">
+                    <button class="button-to-disabled" [ngClass]="{ 'image-disabled': disabledForm}"
+                      [disabled]="disabledForm" (click)="Eliminar(item)"><img src="assets/images/tacho.svg"
+                        height="20" /></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br>
+          <div class="d-flex justify-content-center">
+            <ngb-pagination class="pagination-md" [collectionSize]="lstHistorial.length" [(page)]="page" [maxSize]="8"
+              [pageSize]="pageSize">
+              <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+              <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+            </ngb-pagination>
+            <ngb-pagination class="pagination-sm" [collectionSize]="lstHistorial.length" [(page)]="page" [maxSize]="3"
+              [pageSize]="pageSize">
+              <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+              <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+            </ngb-pagination>
+          </div>
+        </div>
+        <div class="mt-5 mb-5 text-center" *ngIf="lstHistorial.length <= 0">
+          <h5 class="mt-5">
+            No existen resultados.
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="float-end me-3">
+    <button class="btn btn-success blanco align-items-center" type="button" (click)="redictVolver()">
+      <img src="assets/images/arrow-left.svg" height="20" class="pointer ms-2" />
+      <span class="ms-2 me-2">Volver</span>
+    </button>
+    <button class="btn btn-success verde align-items-center ms-2" type="button" routerLink="/resultados-gei">
+      <span>Ir a resultados GEI</span>
+    </button>
+  </div><br>
+</div>

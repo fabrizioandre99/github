@@ -1,0 +1,168 @@
+<div *ngIf="loading" class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+<form autocomplete="off" (ngSubmit)="fnNuevaContrasena(nuevaContrasenaForm)" #nuevaContrasenaForm="ngForm" novalidate>
+  <div class="container-fluid">
+    <div class="row vh-100">
+      <div class="col-md-5 px-0 d-none d-md-block">
+
+        <!-- Montana: -->
+        <img src="assets/images/fondo_montana.webp" alt="Login image" class="w-100 vh-100"
+          style="object-fit: cover; object-position: 50% 50%;">
+
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+
+        <div class="container">
+
+          <div class="mx-auto card ">
+            <div class="p-4">
+              <label class="text-center d-block fs-17 fw-500 ">Crear nueva contraseña</label>
+
+              <label class="form-label text-default mt-3">Nueva contraseña</label>
+
+
+              <div class="group">
+                <input autocomplete="new-password" [ngClass]="{ 'is-invalid': !model.sContrasena && submitted }"
+                  type=" password" #firstPassword maxlength="20" class="form-control dashboard_input input-group"
+                  id="newContrasena" name="newContrasena" [disabled]="loading" [(ngModel)]="model.sContrasena"
+                  minlength="8" maxlength="20"
+                  pattern="(?=.*^[A-Za-z])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,20}$"
+                  oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')" required>
+                <!--  <div class="text-group">
+                  <img src="assets/images/icon_eye.svg" class="icon_eye pointer"
+                    (mousedown)="showFirstPassword(firstPassword)" (mouseup)="hideFirstPassword(firstPassword)"
+                    (mouseleave)="hideFirstPassword(firstPassword)" (touchstart)="showFirstPassword(firstPassword)"
+                    (touchend)="hideFirstPassword(firstPassword)" (touchcancel)="hideFirstPassword(firstPassword)" />
+                </div> -->
+
+                <div class="text-group">
+
+                  <button type="button" class="dashboard_button_icon" (mousedown)="showFirstPassword(firstPassword)"
+                    (mouseup)="hideFirstPassword(firstPassword)" (mouseleave)="hideFirstPassword(firstPassword)"
+                    (touchstart)="showFirstPassword(firstPassword)" (touchend)="hideFirstPassword(firstPassword)"
+                    (touchcancel)="hideFirstPassword(firstPassword)">
+
+                    <img *ngIf="!isFirstPasswordVisible" src="assets/images/icon_eye_login.svg" height="23" />
+
+                    <img *ngIf="isFirstPasswordVisible" src="assets/images/icon_eye_closed_login.svg" height="23" />
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+              <small *ngIf="model.sContrasena==null && submitted" class="text-danger">
+                Ingrese una contraseña.
+              </small>
+              <div class="mt-2 ">
+                <div class="d-flex info">
+                  <img class="icon_circle me-2" src="assets/images/icon_info_ncontrasena.svg" />
+                  <div class="dashboard_textinfo">
+                    <img class="icon_validacion me-1" *ngIf="submitted && !model.sContrasena?.match('^.{8,20}$')"
+                      src="assets/images/icon_aspa.svg" />
+                    <img class="icon_validacion me-1" *ngIf="model.sContrasena?.match('^.{8,20}$')"
+                      src="assets/images/icon_check.svg" />
+                    <label [ngClass]="{ 'text-green': model.sContrasena?.match('^.{8,20}$'),
+                            'text-red': submitted && !model.sContrasena?.match('^.{8,20}$') }">
+                      Como mínimo 8 y máximo 20 caracteres</label><br>
+                    <img class="icon_validacion me-1"
+                      *ngIf="submitted && !model.sContrasena?.match('(?=.*[a-z])(?=.*[A-Z])')"
+                      src="assets/images/icon_aspa.svg" />
+                    <img class="icon_validacion me-1" *ngIf="model.sContrasena?.match('(?=.*[a-z])(?=.*[A-Z])')"
+                      src="assets/images/icon_check.svg" />
+                    <label [ngClass]="{ 'text-green': model.sContrasena?.match('(?=.*[a-z])(?=.*[A-Z])'),
+                            'text-red': submitted && !model.sContrasena?.match('(?=.*[a-z])(?=.*[A-Z])')}"> Al
+                      menos una
+                      letra
+                      mayúscula y una letra minúscula</label><br>
+                    <img class="icon_validacion me-1" *ngIf="submitted && !model.sContrasena?.match('[0-9]')"
+                      src="assets/images/icon_aspa.svg" />
+                    <img class="icon_validacion me-1" *ngIf="model.sContrasena?.match('[0-9]')"
+                      src="assets/images/icon_check.svg" />
+                    <label [ngClass]="{ 'text-green': model.sContrasena?.match('[0-9]'),
+                            'text-red': submitted && !model.sContrasena?.match('[0-9]')}">
+                      Al menos un número
+                      del 0 al 9</label><br>
+                    <img class="icon_validacion me-1" *ngIf="submitted && !model.sContrasena?.match('[!@#$%^&*_=+-]')"
+                      src="assets/images/icon_aspa.svg" />
+                    <img class="icon_validacion me-1" *ngIf="model.sContrasena?.match('[!@#$%^&*_=+-]')"
+                      src="assets/images/icon_check.svg" />
+                    <label [ngClass]="{ 'text-green': model.sContrasena?.match('[!@#$%^&*_=+-]'),
+                            'text-red': submitted && !model.sContrasena?.match('[!@#$%^&*_=+-]')}">
+                      Al menos un caracter
+                      extraño </label><br>
+                    <img class="icon_validacion me-1" *ngIf="submitted && !model.sContrasena?.match('^[A-Za-z]')"
+                      src="assets/images/icon_aspa.svg" />
+                    <img class="icon_validacion me-1" *ngIf="model.sContrasena?.match('^[A-Za-z]')"
+                      src="assets/images/icon_check.svg" />
+                    <label [ngClass]="{ 'text-green': model.sContrasena?.match('^[A-Za-z]'),
+                              'text-red': submitted && !model.sContrasena?.match('^[A-Za-z]')}">
+                      No debe iniciar con
+                      caracter extraño o número</label>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <label class="form-label text-default mt-2 asterisk">Confirmar contraseña</label>
+
+
+              <div class="group">
+
+
+                <input autocomplete="new-password"
+                  [ngClass]="{ 'is-invalid': !model.sRepContrasena && submitted ||(model.sRepContrasena!==undefined && model.sContrasena!==undefined&&   model.sContrasena != model.sRepContrasena) }"
+                  type="password" #secondPassword maxlength="20" class="form-control dashboard_input"
+                  id="verifContrasena" name="verifContrasena" [disabled]="loading" [(ngModel)]="model.sRepContrasena"
+                  pattern="^(?=.*^[A-Za-z])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,20}$"
+                  oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')" required>
+
+
+                <div class="text-group">
+
+                  <button type="button" class="dashboard_button_icon" (mousedown)="showSecondPassword(secondPassword)"
+                    (mouseup)="hideSecondPassword(secondPassword)" (mouseleave)="hideSecondPassword(secondPassword)"
+                    (touchstart)="showSecondPassword(secondPassword)" (touchend)="hideSecondPassword(secondPassword)"
+                    (touchcancel)="hideSecondPassword(secondPassword)">
+
+                    <img *ngIf="!isSecondPasswordVisible" src="assets/images/icon_eye_login.svg" height="23" />
+
+                    <img *ngIf="isSecondPasswordVisible" src="assets/images/icon_eye_closed_login.svg" height="23" />
+
+                  </button>
+
+
+                </div>
+
+              </div>
+              <small
+                *ngIf="model.sRepContrasena!==undefined && model.sContrasena!==undefined&&   model.sContrasena != model.sRepContrasena"
+                class="text-danger">
+                Las contraseñas no coinciden.
+              </small>
+              <small *ngIf="model.sRepContrasena==null && submitted" class="text-danger">
+                Repita la contraseña.
+              </small>
+              <div class="float-right mt-5">
+                <div class="col  d-flex justify-content-end align-items-end">
+                  <button class="btn btn-lg btn-light fs-14 fw-500" [disabled]="loading"
+                    routerLink="/codigo-confirmacion" type="button">
+                    Cancelar
+                  </button>
+                  <button class="btn btn-lg btn-primary fs-14 fw-500 ms-3" type="submit" [disabled]="loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

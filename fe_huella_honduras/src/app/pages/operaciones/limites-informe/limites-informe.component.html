@@ -1,0 +1,421 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Límites de informes</h3>
+
+    <div class="d-md-flex">
+        <label class="dash_subtitle">Datos de actividad de la organización</label>
+
+        <div class="mt-2 mt-md-0 ms-auto d-flex align-items-center" *ngIf="lstNoRerpotadas.length !== 0"
+            [matTooltip]="tooltipSedesFaltantes()" matTooltipPosition="above" matTooltipClass="custom-tooltip">
+            <div class="custom-spinner-background">
+                <mat-progress-spinner [value]="porcentajeSedesNoReportadas" color="primary" diameter="27"
+                    style="position: relative; z-index: 2;">
+                </mat-progress-spinner>
+            </div>
+            <label class="fs-14 ms-1" style="line-height: 17px;">Existen sedes que aún no<br>cuentan con
+                información</label>
+        </div>
+
+        <ng-template #tooltipTemplate>
+            <div>
+                <p>Sedes no reportadas:</p>
+                <ul>
+                    <li *ngFor="let sede of lstNoRerpotadas">{{ sede.sNombre }}</li>
+                </ul>
+            </div>
+        </ng-template>
+    </div>
+
+    <div class="d-flex flex-column flex-md-row mt-3 form_sm">
+        <mat-form-field class="w_anio" appearance="outline">
+            <mat-label>Año</mat-label>
+            <input matInput [(ngModel)]="getPeriodo.nAnio" disabled />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="ms-md-2 mt-3 mt-md-0" [ngClass]="{'invalid': sinSeleccionarSede}">
+            <mat-label>Seleccionar sede</mat-label>
+            <mat-select [(ngModel)]="selectSede" (selectionChange)="fnListarFuente()">
+                <mat-option *ngFor="let sede of lstSede" [value]="sede.nIdSede">
+                    {{sede.sNombre}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="ms-auto mt-2 mt-md-0">
+            <!-- <button mat-flat-button color="primary" type="button" class="button_add" (click)="fnDescargaFormato()">
+                <mat-icon svgIcon="ph-regular:file-zip"></mat-icon>
+                Descargar formatos (FNA)
+            </button> -->
+        </div>
+    </div>
+
+    @if (loadingCards){
+    <div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 300px);">
+        <mat-progress-bar mode="query" style="width: 50%;"></mat-progress-bar>
+    </div>
+    }
+
+    @else {
+    @if (lstCategoria.length > 0) {
+
+    <div class="row mt-4" *ngFor="let row of groupedCategories; let i = index">
+        <div class="col-md-5 col-sm-6 col-12 col-lg-3 mb-4 d-flex align-items-stretch" *ngFor="let category of row">
+            <mat-card (click)="seleccionarCard(category)" [class.selected]="category.selected"
+                class="w-100 d-flex flex-column">
+
+                <img class="card_image" mat-card-image
+                    [src]="'assets/icon/icon_categoria_' + getCategoryNumber(category) + '.svg'" draggable="false" />
+
+                <mat-card-content class="flex-grow-1 d-flex flex-column">
+                    <mat-card-title class="fw-700 fs-24 mt-3 pluto_normal">{{
+                        category.sCategoria.split(':')[0]?.trim()
+                        }}</mat-card-title>
+                    <mat-card-subtitle class="fs-14 fw-300">{{ category.sCategoria.split(':')[1]?.trim()
+                        }}</mat-card-subtitle>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div *ngIf="selectedCategory && row.includes(selectedCategory)" class="col-12 limites_panel p-4 mb-5">
+            <div class="d-flex align-items-center">
+                <label class="dash_subtitle pluto_normal">{{
+                    selectedCategory?.sCategoria?.split(':')[0]?.trim()
+                    }}</label>
+                <label class="fw-500 ms-2">{{ selectedCategory?.sCategoria?.split(':')[1]?.trim() }}</label>
+            </div>
+
+            <div class="table-responsive border mt-3">
+                <table mat-table [dataSource]="selectedCategory?.liFuenteEmision">
+                    <ng-container matColumnDef="boExcluida">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let item" class="text-center" style="width: 5%;">
+                            <button mat-icon-button matTooltip="{{ item?.sDescripcion}}" style="color: #065FD4">
+                                <mat-icon svgIcon="ph-duotone:info"></mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="sNombre">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let item" style="width: 28%;"> {{ item?.sNombre }} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="archivo">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let item">
+
+                            <label *ngIf="item?.sCodigoFuente === 'C15F1AVV'" class="italic fs-14 fw-500 mt-2">Ingresar
+                                las remociones y cargar la evidencia
+                                de cálculo</label>
+
+                            <label *ngIf="item?.sCodigoFuente.endsWith('OFC') || item?.sCodigoFuente === 'C42F1EBC'"
+                                class="italic fs-14 fw-500 mt-2">Ingresar las emisiones de GEI y cargar la
+                                evidencia del cálculo</label>
+
+
+                            <div *ngIf="item?.sCodigoFuente === 'C15F1AVV'">
+                                <form [formGroup]="emisionForms[item.sCodigoFuente]">
+                                    <div style="display: flex;  gap: 16px;" class="mt-3 mb-2 form_sm">
+                                        <mat-form-field appearance="outline"
+                                            style="min-width: 105px;width: 105px;max-width: 105px;">
+                                            <mat-label>tCO<sub>2</sub></mat-label>
+                                            <input matInput formControlName="tCO2" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)"
+                                                (input)="syncTCO2eq(item.sCodigoFuente)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline"
+                                            style="min-width: 105px;width: 105px;max-width: 105px;">
+                                            <mat-label>tCO<sub>2</sub>eq</mat-label>
+                                            <input matInput formControlName="tCO2eq" type="text" inputmode="decimal"
+                                                [disabled]="true" />
+                                        </mat-form-field>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div *ngIf="item?.sCodigoFuente.endsWith('OFC') || item?.sCodigoFuente === 'C42F1EBC'">
+                                <form [formGroup]="emisionForms[item.sCodigoFuente]">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 16px;" class="mt-3 mb-2 form_sm">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tCO<sub>2</sub></mat-label>
+                                            <input matInput formControlName="tCO2" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tCH<sub>4</sub></mat-label>
+                                            <input matInput formControlName="tCH4" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tN<sub>2</sub>O</mat-label>
+                                            <input matInput formControlName="tN2O" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tHFC</mat-label>
+                                            <input matInput formControlName="tHFC" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tSF<sub>6</sub></mat-label>
+                                            <input matInput formControlName="tSF6" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tPFC</mat-label>
+                                            <input matInput formControlName="tPFC" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tNF<sub>3</sub></mat-label>
+                                            <input matInput formControlName="tNF3" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>tCO<sub>2</sub>eq</mat-label>
+                                            <input matInput formControlName="tCO2eq" type="text" inputmode="decimal"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)" />
+                                        </mat-form-field>
+                                    </div>
+                                </form>
+                            </div>
+
+
+                            <div *ngIf="tieneArchivo(item) && !item.editing"
+                                [ngClass]="{'mb-2': item?.sCodigoFuente.endsWith('OFC') || item?.sCodigoFuente === 'C42F1EBC' || item?.sCodigoFuente === 'C15F1AVV'}">
+                                <a class="text-primary text-decoration-underline pointer"
+                                    (click)="fnDescargaArchivo(item.oNivelActividad.oDocumento.sCodigoDocumento)">
+                                    {{item.oNivelActividad.oDocumento.sNombre}}
+                                </a>
+                            </div>
+
+                            <div *ngIf="(!tieneArchivo(item)) || tieneArchivo(item) && item.editing ">
+                                <div class="file-input-container w-100" (dragover)="onDragOver($event)"
+                                    (dragleave)="onDragLeave($event)" (drop)="onDrop($event, item)"
+                                    [ngClass]="{'mb-3 mt-2': item?.sCodigoFuente.endsWith('OFC') || item?.sCodigoFuente === 'C42F1EBC'|| item?.sCodigoFuente === 'C15F1AVV' ,'invalid': item.touched && !item.selectedFile, 'disabled': item.loading || esCompletoFinalizado 
+                        ||!item.editing  ||(!item.editing && !tieneArchivo(item) &&  item?.sCodigoFuente.endsWith('OFC') )}">
+                                    <span class="file-input-text">{{ item.selectedFileName || 'Seleccionar archivo'
+                                        }}</span>
+                                    <mat-icon class="file-input-icon" svgIcon="ph-duotone:folder-open"></mat-icon>
+                                    <input type="file" class="file-input" accept=".xls, .xlsx"
+                                        (change)="onFileSelected($event, item)"
+                                        [disabled]="item.loading || esCompletoFinalizado ||!item.editing || (!item.editing && !tieneArchivo(item) &&  item?.sCodigoFuente.endsWith('OFC') )
+                                            || (!item.editing && !tieneArchivo(item) && item?.sCodigoFuente === 'C42F1EBC' )">
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="sede">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let item" class="form_xs form_sede" style="width: 8%;">
+                            <mat-form-field appearance="outline" style="width: 193px" class="my-1"
+                                [ngClass]="{'invalid': item.touched && !item.oNivelActividad.sCodIncertidumbre}">
+                                <mat-select placeholder="Incertidumbre"
+                                    [(ngModel)]="item.oNivelActividad.sCodIncertidumbre"
+                                    [disabled]="!item.editing || item.loading || esCompletoFinalizado">
+                                    <mat-option *ngFor="let incert of lstIncertidumbre" [value]="incert.sCodigo">
+                                        {{incert.sValor}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="accion">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let item" style="width: 10%;" class="text-center">
+                            <div *ngIf="!esCompletoFinalizado">
+                                <button mat-icon-button style="color: #60929e" matTooltip="Editar"
+                                    (click)="editarNA(item)" *ngIf="!item.editing && !item.isNew">
+                                    <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                                </button>
+
+                                <div *ngIf="item.editing">
+                                    <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                        <mat-spinner color="primary" diameter="16">
+                                        </mat-spinner>
+                                    </mat-icon>
+                                    <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                        matTooltip="Guardar"
+                                        (click)="(item?.sCodigoFuente.endsWith('OFC') || item?.sCodigoFuente === 'C42F1EBC'|| item?.sCodigoFuente === 'C15F1AVV') ? registrarPersonalizado(item) : registrarNActividad(item)">
+                                        <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                    </button>
+
+                                    <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                        matTooltip="Cancelar" (click)="cancelarNA(item)">
+                                        <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                    </button>
+                                </div>
+
+                                <button (click)="fnEliminarNActividad(item)" type="button" mat-icon-button
+                                    *ngIf="tieneArchivo(item) && !item.editing" matTooltip="Eliminar"
+                                    style="color: #822195">
+                                    <mat-icon svgIcon="ph-duotone:trash"></mat-icon>
+                                </button>
+                            </div>
+
+                            <ng-container *ngIf="!esCompletoFinalizado  && item.boExcluida && !tieneArchivo(item)">
+                                <div class="limite_excluida mb-1"
+                                    matTooltip="Al cargar datos de actividad en la fuente, se eliminará de las exclusiones."
+                                    matTooltipPosition="above">
+                                    Fuente excluida
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="esCompletoFinalizado  && item.boExcluida && !tieneArchivo(item)">
+                                <div class="limite_excluida  mb-1">
+                                    Fuente excluida
+                                </div>
+                            </ng-container>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="hLimites"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hLimites;"></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    }@else{
+    <div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 400px);">
+        <p class="text-center fs-20">No hay data.</p>
+    </div>
+    } }
+
+
+    <!-- Botones en la parte inferior -->
+    <div class="d-md-flex flex-column flex-md-row justify-content-between mt-4">
+        <!--  {{getPeriodo.sRutaAnterior}} -->
+        <button *ngIf="getPeriodo.sRutaAnterior =='mis-hc'" mat-stroked-button color="primary" type="button"
+            class="button_add " (click)="redirectMisHc()">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Mis Huellas de carbono
+        </button>
+        <button *ngIf="getPeriodo.sRutaAnterior =='hc-organizacional'" mat-stroked-button color="primary" type="button"
+            class="button_add " (click)="redirectHCOrg()">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Huellas de carbono organizacionales
+        </button>
+
+        <div>
+            <button mat-flat-button color="primary" type="button" class="button_add mt-2 mt-md-0"
+                *ngIf="!esCompletoFinalizado" [disabled]="loadingCards || esIniciado" (click)="openCompletado()">
+                <mat-icon svgIcon="ph-regular:thumbs-up"></mat-icon>
+                He completado mi Huella
+            </button>
+
+            <button (click)="redictIndicadoresD()" mat-flat-button color="primary" type="button"
+                class="button_add mt-2 mt-md-0" *ngIf="getPeriodo.nEstadoPeriodo == 2">
+                Continuar
+            </button>
+
+            <button (click)="redictIndicadoresD()" mat-flat-button color="primary" type="button"
+                class="button_add mt-2 mt-md-0" *ngIf="getPeriodo.nEstadoPeriodo == 3">
+                Indicador desempeño
+            </button>
+            <button (click)="redictMisExclusiones()" mat-stroked-button color="primary" type="button"
+                class="button_add ms-md-2 mt-2 mt-md-0">
+                <mat-icon svgIcon="ph-regular:gauge"></mat-icon>
+                Mis exclusiones
+            </button>
+
+        </div>
+
+        <button (click)="redictResultadoGei()" mat-stroked-button color="primary" type="button"
+            class="button_add ms-md-2 mt-2 mt-md-0">
+            <mat-icon svgIcon="ph-regular:calculator"></mat-icon>
+            Resultados de GEI
+        </button>
+
+
+    </div>
+</div>
+
+<!-- Modal Sedes incompletas -->
+<ng-template #modalSedesIncompletas>
+    <form [formGroup]="sedesform" (ngSubmit)="fnRegistrarNoReportadas()">
+        <div class="dialog-container d-flex flex-column align-items-center text-center">
+            <h2 mat-dialog-title class="fw-500 pluto_normal">Sedes incompletas</h2>
+            <div mat-dialog-content>
+                <p>Existen sedes sin datos de actividad, por favor ingrese el motivo de la información faltante para
+                    cada
+                    una de las sedes.</p>
+
+
+                <div formArrayName="sedes" *ngFor="let sede of sedes.controls; let i = index">
+                    <div [formGroupName]="i" class="mt-3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Sede {{ sede.value.sNombre }}</mat-label>
+
+                            <textarea matInput formControlName="sJustificacion" placeholder="Ingrese justificación"
+                                cdkTextareaAutosize
+                                oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');"></textarea>
+                            <!--    <mat-error *ngIf="sede.get('sJustificacion')!.hasError('required')">
+                                Este campo es requerido
+                            </mat-error> -->
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button mat-dialog-close type="button">Cancelar</button>
+                <button [disabled]="loadingModal || sedesform.invalid" mat-flat-button type="submit" color="primary">
+
+                    <mat-icon *ngIf="loadingModal">
+                        <mat-spinner color="primary" diameter="16">
+                        </mat-spinner></mat-icon>Aceptar
+                </button>
+
+
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+
+<!-- Modal Confirmacion -->
+<ng-template #modalConfirmacion>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>Una vez completado sus datos de actividad y exclusiones no podrá modificarlos.<br> ¿Está seguro de
+                completar el registro para todas sus sedes?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit" color="primary"
+                (click)="fnCompletarPeriodo()">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16">
+                    </mat-spinner></mat-icon>
+                Sí, estoy seguro</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- Modal Felicidades -->
+<ng-template #modalFelicidades>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+
+        <img src="assets/icon/icon_applause.svg" class="modal_aplauso">
+
+
+        <h2 mat-dialog-title class="fw-500 pluto_normal">¡Felicidades! </h2>
+        <div mat-dialog-content>
+            <p>Ha completado con éxito el registro de su huella de carbono y ha postulado al primer nivel de
+                reconocimiento: <span class="fc-black fw-500">Cuantificación</span>.
+            </p>
+        </div>
+        <div mat-dialog-actions>
+
+            <button mat-flat-button type="submit" color="primary" (click)="redictIndicadoresD()">
+                Aceptar</button>
+        </div>
+    </div>
+</ng-template>

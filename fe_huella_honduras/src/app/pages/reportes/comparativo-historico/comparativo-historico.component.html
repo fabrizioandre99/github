@@ -1,0 +1,54 @@
+<div class="container pb-3 pb-md-5">
+    <h3 class="dash_title">Reporte histórico de GEI</h3>
+    <label class="dash_subtitle">Comparativo histórico real</label>
+    @if (loadingCharts){
+    <div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 300px);">
+        <mat-progress-bar mode="query" style="width: 50%;"></mat-progress-bar>
+    </div>
+    }
+    @else {
+    @if (lstAbsolutas.length > 0) {
+    <div class="row mt-4">
+        <!-- Gráfico de emisiones absolutas -->
+        <div class="col-12 mb-4">
+            <mat-card class="w-100 sombra  ">
+                <mat-card-header class="d-flex justify-content-center">
+                    <mat-card-title class="fw-500 fs-24 mt-2 mt-md-0 mb-3">
+                        <label class="pluto_normal fc-green">
+                            Comparativo de emisiones absolutas
+                        </label>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <canvas class="chart_absoluta w-100" baseChart [data]="barChartHistData"
+                        [options]="barChartHistOptions" [legend]="barChartHistLegend" [type]="'bar'"></canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    } @else {
+    <div style="height: calc(100vh - 300px);" class="d-flex justify-content-center align-items-center">
+        <p class="text-center fs-20">No hay data.</p>
+    </div>
+    }
+
+    <!-- En Tabs -->
+    @if (lstRelativas.length > 0) {
+    <div class="row mt-2">
+        <div class="col-12">
+            <h4 class="text-center pluto_normal fc-green mt-1 mb-4 fs-22">
+                Comparativo de emisiones relativas
+            </h4>
+            <mat-tab-group class="sombra">
+                <mat-tab *ngFor="let relativa of lstRelativas; let i = index" [label]="relativa.sIndicador">
+                    <div class="p-3">
+                        <canvas class="chart_relativa w-100" baseChart [data]="barChartRelData[i]"
+                            [options]="barChartRelOptions[i]" [legend]="barChartHistLegend" [type]="'bar'"></canvas>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+    }
+    }
+</div>

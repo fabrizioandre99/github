@@ -1,0 +1,13 @@
+<nav class="navbar" [ngClass]="{ 'estilos-admin': router.url == '/' || router.url == '/mantenimiento'}">
+  <div class="container-fluid">
+    <div>
+      <img src="assets/images/color-logo.svg" class="logo__size ms-5" />
+      <label class="header__title ms-3">Huella de carbono energética</label>
+    </div>
+    <div class="header__container-username d-flex align-items-center me-md-4">
+      <img src="assets/images/img-user.svg" height="40" class="me-2" />
+      <label class="header__username">{{user}}</label>
+      <img src="assets/images/icon-power.svg" (click)="logout()" height="25" class="pointer" />
+    </div>
+  </div>
+</nav>

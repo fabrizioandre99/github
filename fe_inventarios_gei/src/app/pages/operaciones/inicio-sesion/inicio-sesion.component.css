@@ -1,0 +1,165 @@
+.fondo {
+  background: url(src/assets/images/fondo.png) center no-repeat;
+  background-size: cover;
+  min-height: 90vh;
+  padding-top: 50px;
+}
+
+h2 {
+  color: #4E944F;
+  font-weight: 700;
+}
+
+.card {
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  width: min(90%, 450px);
+  margin-bottom: 5.5em;
+}
+
+.card-body {
+  padding: 37px 70px 0;
+}
+
+.card-footer {
+  padding: 17px 25px 28px 13px;
+  background-color: transparent;
+  border: 0;
+}
+
+.card-footer-text {
+  font-size: 14px;
+}
+
+.center-image {
+  width: 120.50px;
+  display: block;
+  margin: 0 auto;
+}
+
+hr {
+  width: 95%;
+  margin: auto;
+  color: #eee;
+  height: 0.125rem;
+  opacity: 90;
+}
+
+.btn {
+  background: linear-gradient(270deg, #4F9450 0%, #75B665 47.92%, #4F9450 100%);
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  width: 8.5625rem;
+  height: 2.625rem;
+  border: none;
+}
+
+a {
+  font-weight: 500;
+  color: #413F42;
+  font-size: 16px;
+}
+
+.text-aqui {
+  font-weight: 600;
+  text-decoration-line: underline;
+}
+
+/*****************************************/
+/*--------------- Inputs --------------- */
+
+.iform {
+  width: 1.4737rem;
+  height: 1.7075rem;
+  margin: 0.375rem 0.375rem 0.375rem 0.375rem;
+}
+
+.eform {
+  border: 0;
+  height: 47px;
+  width: 84%;
+  outline: none
+}
+
+.tform {
+  background: #FFFFFF;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+  border-radius: 0.5rem;
+}
+
+/********************************************/
+/*--------------- CheckBoxes --------------- */
+
+.checkbox {
+  padding-left: 0.875rem;
+}
+
+.checkbox label {
+  display: inline-block;
+  position: relative;
+  padding-left: 0.3125rem;
+}
+
+.checkbox label::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  width: 1.0625rem;
+  height: 1.0625rem;
+  left: 0;
+  top: 0.1875rem;
+  margin-left: -1.25rem;
+  border: 0.0625rem solid black;
+  background-color: #fff;
+}
+
+.checkbox label::after {
+  display: inline-block;
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  left: 0;
+  top: 0.0813rem;
+  margin-left: -1.25rem;
+  padding: 0.0625rem, 0, 0, 0.1875rem;
+  font-size: 0.8125rem;
+  color: black;
+}
+
+.form-check {
+  padding-left: 0;
+}
+
+/*******************************************/
+/*-------------- Modo Móvil -------------- */
+
+@media (max-width: 767.98px) {
+  .card-body {
+    padding: 37px 26px 0;
+  }
+
+  .fondo {
+    min-height: 75vh;
+  }
+
+  .iform {
+    margin: 0 0px 0px 3px;
+    width: 8vw;
+  }
+
+}
+
+
+@media (max-width: 407px) {
+  .flex-radiogruop {
+    flex-direction: column;
+  }
+
+  .paddingCredencial {
+    padding-left: 0 !important;
+  }
+}
+
+/*******************************************/

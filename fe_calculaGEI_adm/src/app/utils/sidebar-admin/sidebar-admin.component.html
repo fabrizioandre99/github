@@ -1,0 +1,31 @@
+<nav id="sidebar" class="sidebar close">
+  <div class="nav-menu">
+    <div class="menu-bar">
+      <div class="nav-header mb-4">
+        <img src="assets/images/icon-sidebar.svg" height="30" class="pointer" (click)="firstCollapse()" />
+      </div>
+      <div *ngFor="let first of lstMenu; index as i">
+        <li class="nav-links">
+          <a class="navbar-circle" (click)="secondCollapse(i)"
+            [ngClass]="{ 'circle-blue': rutasSubindice[i].includes(router.url)|| activeCircles}">
+            <img src="/panl_admclp/{{first.sAccion}}" height="30" />
+            <!--  <img src="{{first.sAccion}}" height="30" /> -->
+          </a>
+          <div class="text nav-text" (click)="redictFather(i)">
+            {{first.sNombre}}
+            <img src="assets/images/icon-collapse.svg" height="13"
+              [ngClass]="isCollapsed[i] && first.liSeccion?.length >0 ? 'collapsed-active' : 'collapsed-inactive'" />
+          </div>
+        </li>
+        <div class="first collapse show" [ngbCollapse]="!isCollapsed[i]">
+          <ul>
+            <li *ngFor="let second of first.liSeccion; index as i"><a (click)="closeSidebar()"
+                routerLink="{{second.sRuta}}">{{second.sNombre}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="nav-backdrop" [hidden]="!showBackdrop" (click)="firstCollapse()"></div>

@@ -1,0 +1,13 @@
+.mat-mdc-card {
+    margin-right: 10px;
+    text-align: center;
+    text-align: left;
+}
+
+.chart_absoluta {
+    height: 380px !important;
+}
+
+.chart_relativa {
+    height: 370px !important;
+}

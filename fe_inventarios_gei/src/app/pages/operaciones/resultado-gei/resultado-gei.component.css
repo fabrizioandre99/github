@@ -1,0 +1,87 @@
+.second {
+  min-width: 440px;
+  width: 440px;
+}
+
+.third {
+  width: 13.4%;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.fourth {
+  width: 9.1%;
+  min-width: 9.1%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.progress {
+  display: flex;
+  height: 40px;
+}
+
+.progress-text {
+  position: absolute;
+  width: 100%;
+  font-weight: 500;
+  font-size: 14px;
+  color: black;
+}
+
+.table {
+  font-size: 14px;
+  display: table;
+}
+
+.table-header {
+  border-top: 0.0313rem solid #000000;
+}
+
+sub {
+  padding: 0;
+}
+
+.table>:not(caption)>*>* {
+  border-bottom-width: auto;
+}
+
+.first {
+  width: 140px;
+  min-width: 88px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.cols {
+  padding: 0.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.gray {
+  background-color: #e7e7e7 !important;
+}
+
+.arrow-down svg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+/* Modo pantallas reducidas */
+@media (max-width: 1399.50px) {
+
+  .third {
+    width: 15.5%;
+  }
+
+  .arrow-down {
+    left: 7px;
+  }
+
+}

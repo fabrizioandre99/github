@@ -1,0 +1,30 @@
+.header {
+  margin-top: 90px;
+}
+
+.borde {
+  background-color: white;
+  height: 84%;
+  margin: 0 auto;
+  width: 0.5px;
+}
+
+label {
+  color: #0D3154;
+}
+
+.arrow-sm {
+  display: none;
+}
+
+.card-body-t,
+.card-body-b {
+  line-height: 118.4% !important;
+}
+
+@media (max-width: 991.98px) {
+  .arrow-sm {
+    display: unset;
+  }
+
+}

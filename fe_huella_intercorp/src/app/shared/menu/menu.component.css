@@ -1,0 +1,322 @@
+* {
+  color: white;
+  font-family: 'Value Serif Pro';
+  font-size: 16px;
+}
+
+.sidebar {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  position: absolute;
+  user-select: none;
+  display: flex;
+  width: 292px;
+  padding: 15px 4px;
+  transition: all 0.1s ease;
+  background: white;
+  box-shadow: 1px 7px 24px 3px rgba(120, 146, 191, 0.60);
+  border-radius: 0px 0px 24px 0px;
+  z-index: 25;
+  min-height: calc(100% - 119px);
+}
+
+.sidebar.close {
+  width: 65px;
+}
+
+.nav-text {
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 24px;
+  width: 220px;
+  margin-left: 10px;
+  transition: all 0.1s ease !important;
+  text-overflow: clip;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.sidebar.close .nav-text {
+  width: 0px;
+}
+
+.sidebar .nav-links a {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  width: 270px;
+  height: 45px;
+  border-radius: 16px;
+  transition: all 0.1s ease;
+  display: inline-flex;
+  cursor: pointer;
+  margin-left: 6.5px;
+  padding-left: 9px;
+  background-color: #2E2E2E;
+}
+
+.sidebar.close .nav-links a {
+  width: 45px;
+}
+
+.sidebar .nav-links a:hover {
+  background: #B497FF !important;
+  border-radius: 16px 0px !important;
+  box-shadow: 0px 7px 12px 2px rgba(180, 151, 255, 0.60);
+}
+
+.circle-blue .img-collapse,
+a:hover .img-collapse {
+  filter: sepia(100%) brightness(400%);
+  transition: all 0.1s ease;
+}
+
+.circle-blue {
+  background-color: #B497FF !important;
+}
+
+
+.sidebar .nav-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar .nav-links {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.first {
+  margin-top: 5px;
+}
+
+ul {
+  list-style: none;
+  font-weight: 300;
+  margin-left: 30px;
+}
+
+li a {
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
+}
+
+.nav-text img {
+  width: 20px;
+  margin-right: 5px;
+}
+
+ul li:hover {
+  font-weight: 600;
+  color: #000000;
+  text-decoration-line: underline;
+}
+
+.nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 15;
+  width: 100vw;
+  height: 100vh;
+}
+
+.collapsed-active {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+  transition: all 0.2s;
+}
+
+.collapsed-inactive {
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+  transition: all 0.2s;
+}
+
+.collapsing {
+  transition: height 0.1s ease !important;
+}
+
+.navbar-children {
+  margin-top: 7px;
+}
+
+/*****************************************/
+/* ------------ Modo Móvil-------------- */
+@media (max-width: 1200px) {
+  .nav-header {
+    position: absolute;
+    left: 0;
+    top: -74px;
+  }
+
+  .sidebar.close {
+    width: 0;
+    visibility: hidden;
+  }
+
+  .nav-header {
+    visibility: visible
+  }
+
+  .sidebar.close .nav-links {
+    opacity: 0;
+  }
+
+  .sidebar {
+    margin-top: 2px;
+    min-height: calc(100% - 64px);
+
+  }
+}
+
+@media (max-width: 314px) {
+  .sidebar .nav-links a {
+    width: 84vw;
+  }
+}
+
+
+/********************************************/
+/* ------------ Modo Escritorio-------------- */
+@media (min-width: 1201px) {
+
+  .sidebar:not(.close) .img-threedots {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    transition: all 0.2s;
+  }
+
+  .sidebar.close .img-threedots {
+    transition: all 0.2s;
+  }
+
+  .nav-header {
+    margin-left: 25px;
+  }
+
+  .hamburger_content {
+    display: none;
+  }
+
+
+}
+
+/* ----Icon Hamburger-------- */
+.hamburger_main__label {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 8px;
+  top: 13px;
+  z-index: 200;
+}
+
+.hamburger_main__checkbox:checked~label span {
+  background-color: transparent;
+}
+
+.hamburger_main__span {
+  position: relative;
+  display: block;
+  width: 2.75rem;
+  cursor: pointer;
+  --tw-bg-opacity: 1;
+  background-color: white;
+  height: 3px;
+}
+
+.hamburger_main__checkbox:checked~label span:after,
+.hamburger_main__checkbox:checked~label span:before {
+  top: 0px;
+}
+
+.hamburger_main__checkbox:checked~label span:after,
+.hamburger_main__checkbox:checked~label span:before {
+  top: 0px;
+}
+
+.hamburger_main__checkbox:checked~label span:after {
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hamburger_main__checkbox:checked~label span:before {
+  --tw-rotate: -45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hamburger_main__span:before {
+  position: absolute;
+  top: 0.5rem;
+  display: block;
+  height: 100%;
+  width: 100%;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  content: "";
+  transition: all .2s ease-in-out;
+}
+
+.hamburger_main__span:after {
+  position: absolute;
+  top: -0.5rem;
+  display: block;
+  height: 100%;
+  width: 100%;
+  --tw-bg-opacity: 1;
+  background-color: white;
+  content: "";
+  transition: all .2s ease-in-out;
+}
+
+.header_main__nav {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 4rem;
+  z-index: 10;
+  display: none;
+  width: 100vw;
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 47 161 / var(--tw-bg-opacity));
+}
+
+*,
+::before,
+::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+}
+
+::before,
+::after {
+  --tw-content: '';
+}

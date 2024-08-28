@@ -1,0 +1,12 @@
+<div class="detect_size">
+  w: {{ pantallaAncho }}px,
+  h: {{ pantallaAltura }}px
+</div>
+
+<div class="scrollable-content" [ngClass]="{ 'crud__background': router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'
+&& router.url !=='/loading-logout'&& router.url !=='/mantenimiento'}">
+  <app-header></app-header>
+  <app-menu
+    *ngIf="!hasQueryParams() && router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'"></app-menu>
+  <router-outlet></router-outlet>
+</div>

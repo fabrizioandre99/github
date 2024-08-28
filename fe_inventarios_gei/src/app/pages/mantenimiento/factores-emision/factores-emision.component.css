@@ -1,0 +1,92 @@
+.modal-footer {
+  padding: 8.95px;
+  border-top: 1px solid #413F42;
+}
+
+.modal-header {
+  padding: 12px 17px;
+  border-bottom: 1px solid #413F42;
+}
+
+.col-form-label-sm {
+  padding-bottom: 0;
+}
+
+table {
+  white-space: normal;
+}
+
+.is-invalid {
+  padding-right: 0.75rem;
+  background-image: none;
+}
+
+.button-generar-factor {
+  width: 241px;
+  line-height: 20px;
+  font-weight: 500;
+  padding: 6px 39px 5px !important;
+}
+
+.col-md-3:first-of-type {
+  width: 140px !important;
+}
+
+th {
+  line-height: 19px;
+}
+
+td {
+  line-height: 18px;
+}
+
+button .blanco {
+  font-weight: 500;
+}
+
+.w-unidadVcn {
+  width: 9%;
+  margin: 28px 0 0 -16px;
+}
+
+.alto {
+  margin-top: -13px;
+}
+
+/* Modo Escritorio */
+@media only screen and (min-width: 1400px) {
+  .col-width {
+    width: 700px
+  }
+
+  .div-button-generator {
+    height: 0;
+    position: relative;
+    top: -25px
+  }
+
+}
+
+@media (min-width: 768px) {
+  .w-perdidasTyD {
+    width: 192px;
+  }
+
+  .col-xl-4 {
+    width: 260px;
+  }
+}
+
+/* Modo móvil */
+@media (max-width: 768px) {
+  .w-vconversion {
+    width: 90%;
+  }
+}
+
+@media (max-width: 500px) {
+  .w-vconversion {
+    width: 82%;
+  }
+
+}

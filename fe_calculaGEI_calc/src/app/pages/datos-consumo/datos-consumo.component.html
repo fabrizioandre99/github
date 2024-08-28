@@ -1,0 +1,54 @@
+<form [formGroup]="consumoForm" (ngSubmit)="onSubmit()">
+  <img class="arrow-float" src="assets/images/arrow-left.svg" (click)="retornar()" />
+  <img class="arrow-sm-float" src="assets/images/arrow-left-sm.svg" (click)="retornar()" height="30" />
+  <div class="float-lg-end mt-3 me-lg-1">
+    <img src="assets/images/celepsa.png" class="celepsa-image" />
+  </div>
+  <div class="body">
+    <div class="header">
+      <h2 class="text-center">Completa los datos de tu<br> consumo energético</h2>
+      <app-barra-lateral></app-barra-lateral>
+    </div>
+    <div class="content card-form pt-5 px-md-5 pb-lg-5">
+      <div class="text-center">
+        <h5>¿Con cuántos proveedores de<br> energía cuentan? <img src="assets/images/info.svg" height="16"
+            class="image-info pointer" data-bs-toggle="modal" data-bs-target="#provModal" /></h5>
+      </div>
+      <div class="margin-select">
+        <ng-select class="custom" [(ngModel)]="consumo.numero" placeholder="Número" formControlName="numero"
+          [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false"
+          [ngClass]="{ 'is-invalid': submitted && f.numero.errors }">
+          <ng-option [value]="1">1</ng-option>
+          <ng-option [value]="2">2</ng-option>
+          <ng-option [value]="3">3</ng-option>
+        </ng-select>
+        <div *ngIf="submitted && f.numero.errors">
+          <div class="warning-label" *ngIf="f.numero.errors.required">Por favor selecciona un número.
+          </div>
+        </div>
+      </div>
+      <div class="text-center" style="margin-top: auto;">
+        <button class="button-celepsa btn-form button-blue"
+          [ngClass]="{ 'button-gray': this.consumoForm.invalid }">Continuar</button>
+      </div>
+    </div>
+    <label class="footer">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+  </div>
+</form>
+<!-- Modal Proveedor-->
+<div class="modal fade" id="provModal" tabindex="-1" aria-labelledby="provModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title" id="provModalLabel">Proveedor de energía</label>
+        <img src="assets/images/icon-aspa.svg" class="icon-aspa-black close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+        <img src="assets/images/icon-aspa-white.svg" class="icon-aspa-white close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+      </div>
+      <div class="modal-body">
+        En caso tu empresa tenga varias sedes, indica tus proveedores principales.
+      </div>
+    </div>
+  </div>
+</div>

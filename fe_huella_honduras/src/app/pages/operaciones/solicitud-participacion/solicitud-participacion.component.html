@@ -1,0 +1,266 @@
+<div class="container pb-5">
+    <h4 class="solicitud_title text-center fw-700 pluto_normal" style="margin-top: 40px;">Solicitud de participación
+    </h4>
+    <div class="row d-flex justify-content-center">
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 col-xxl-5">
+            <div class="solicitud_steps d-flex justify-content-center mt-3 pluto_normal">
+                <button class="btn btn-outline-primary" [ngClass]="{'active': stepper.selectedIndex === 0}"
+                    (click)="irAlPrimerPaso(stepper)">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img src="assets/icon/icon_apartment_fill.svg" height="26"
+                            [ngClass]="{'d-none': stepper.selectedIndex !== 0, 'icon-hover-0': true}" />
+                        <img src="assets/icon/icon_apartment.svg" height="26"
+                            [ngClass]="{'d-none': stepper.selectedIndex === 0, 'icon-hover-1': true}" />
+                        <span class="text-start ps-2">Mi<br> organización</span>
+                    </div>
+                </button>
+
+                <div class="solicitud_steps__line"></div>
+
+                <button class="btn btn-outline-primary" [ngClass]="{'active': stepper.selectedIndex === 1}"
+                    (click)="irAlSegundoPaso(stepper)" (dblclick)="checkFormValidation(firstFormGroup, 'shake1')">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <mat-icon svgIcon="ph-regular:plant"></mat-icon>
+                        <span class="text-start ps-2">Coordinador<br> de GEI</span>
+                    </div>
+                </button>
+
+            </div>
+
+
+            <mat-stepper #stepper [linear]="true">
+                <!--  <mat-stepper #stepper> -->
+
+                <!-- Paso 1: Datos de mi organización -->
+                <mat-step [stepControl]="firstFormGroup">
+                    <form [formGroup]="firstFormGroup">
+                        <div class="solicitud_card pt-2 mt-4" [class.shake-animation]="shake1">
+                            <div class="d-flex justify-content-center"> <label
+                                    class="solicitud_card__title pluto_normal">Datos de mi organización</label>
+                            </div>
+
+
+                            <!-- Alerta -->
+                            <div class="mb-4" *ngIf="rtnRegistrado">
+                                <app-alert [msgError]="msg_rtnRegistrado"></app-alert>
+                            </div>
+
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>R.T.N.</mat-label>
+
+                                <input matInput placeholder="999 9999 9999 9999" formControlName="rtn" type="text"
+                                    inputmode="numeric" maxlength="15"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
+
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Razón o denominación social</mat-label>
+                                <input matInput placeholder="Mi empresa SAC" formControlName="rsocial" type="text"
+                                    maxlength="150"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .-]/g, '');">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Dirección</mat-label>
+                                <input matInput placeholder="Av. Las Flores 123" formControlName="address" type="text"
+                                    maxlength="200"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .-]/g, '');">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>CIIU - Actividad económica</mat-label>
+                                <mat-select formControlName="ciiu">
+                                    <mat-option *ngFor="let rol of lstRol" [value]="rol.nIdCiiu">{{ rol.sDescripcion
+                                        }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+
+                            <div class="d-flex">
+                                <label class="text-start fs-15">Declaración de participación</label>
+                            </div>
+                            <div class="col-lg-12 mt-2">
+                                <input accept=".pdf" type="file" id="fileParticipacion"
+                                    (change)="changeEvidencia($event)" formControlName="file" style="display: none;">
+
+                                <label [ngClass]="{'dragging': dragging}" for="fileParticipacion" class="solicitud_file"
+                                    (click)="handleButtonNEvidencia($event)" (dragleave)="dragging = false"
+                                    (dragover)="handleDragOverEvidencia($event)" (drop)="handleDropEvidencia($event)">
+
+                                    <mat-icon *ngIf="!dragging  && !isUploaded" aria-hidden="false"
+                                        aria-label="cloud_upload" fontIcon="cloud_upload"
+                                        style="font-size: 32px; height: 32px; width: 32px;"></mat-icon>
+                                    <mat-icon *ngIf="dragging" aria-hidden="false" aria-label="cloud_download"
+                                        fontIcon="cloud_download"
+                                        style="font-size: 32px; height: 32px; width: 32px;"></mat-icon>
+                                    <mat-icon *ngIf="isUploaded && !dragging" aria-hidden="false"
+                                        aria-label="check_circle" fontIcon="check_circle"
+                                        style="font-size: 32px; height: 32px; width: 32px;"></mat-icon>
+
+                                    <div *ngIf="!dragging && !isUploaded" class="solicitud_file--text mt-1">
+                                        Seleccione para cargar
+                                        o arrastrar y soltar aquí
+                                        <br>
+                                        <span class="mt-3">Archivo permitido en PDF y
+                                            máximo de
+                                            5 mb</span>
+                                    </div>
+
+                                    <div *ngIf=" isUploaded && !dragging" class="mt-1">
+                                        <span class="solicitud_file--archivo fs-14">Archivo: {{ nombreArchivo }}</span>
+                                    </div>
+
+                                    <span *ngIf="dragging" class="solicitud_file--text mt-1">Soltar archivo</span>
+
+                                </label>
+                            </div>
+
+
+                            <mat-error class="text-start mt-2 fs-12"
+                                *ngIf="(noEsPdf || (!archivoEvidencia && clickUltimoPaso)) && !archivoMuyGrande">Por
+                                favor, selecciona un archivo
+                                PDF.</mat-error>
+
+                            <mat-error class="text-start mt-2 fs-12" *ngIf="archivoMuyGrande">El archivo debe tener un
+                                máximo
+                                de 5 mb.</mat-error>
+
+
+                            <div *ngIf="esEditar && !cambioArchivo" class="d-flex justify-content-center mt-2">
+                                <a (click)="fnDescargaArchivo()" class="text-primary text-decoration-underline pointer">
+                                    {{lstGetSolicitud.oDocumento.sNombre}}</a>
+
+                            </div>
+
+                            <!--  <div *ngIf="esEditar" class="mt-3">
+                                <div class="solicitud_file_adjuntos">
+                                    <span>{{lstGetSolicitud.oDocumento.sNombre}}</span>
+                                    <mat-icon svgIcon="ph-fill:trash"></mat-icon>
+                                </div>
+                            </div>-->
+
+                            <div class="d-flex align-items-center mt-3">
+                                <span (click)="fnDescargarFormato()" class="pointer d-flex align-items-center">
+                                    <mat-icon class="pointer" svgIcon="ph-fill:file-arrow-down" color="primary"
+                                        style="margin-top: -3.5px;"></mat-icon>
+                                    <label class="fs-14 primary-label pointer ps-1">Formato declaración de
+                                        participación</label>
+                                </span>
+                            </div>
+
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button mat-flat-button (click)="irAlSegundoPaso(stepper)"
+                                    (dblclick)="checkFormValidation(firstFormGroup, 'shake1')"
+                                    color="primary">Siguiente</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </mat-step>
+
+                <!-- Paso 2: Coordinador(a) de GEI de mi organización -->
+                <mat-step [stepControl]="secondFormGroup">
+                    <form [formGroup]="secondFormGroup">
+                        <div class="solicitud_card pt-2 mt-4" [class.shake-animation]="shake2">
+                            <div class="d-flex justify-content-center text-center">
+                                <label class="solicitud_card__title pluto_normal">Coordinador(a) de GEI de mi
+                                    organización</label>
+                            </div>
+
+
+                            <!-- Alerta -->
+                            <div class="mb-4" *ngIf="errorServer">
+                                <app-alert [msgError]="msg_errorServer"></app-alert>
+                            </div>
+
+                            <!-- Alerta -->
+                            <div class="mb-4" *ngIf="dniRegistrado">
+                                <app-alert [msgError]="msg_dniRegistrado"></app-alert>
+                            </div>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>DNI</mat-label>
+                                <input matInput placeholder="8888 8888 8888" formControlName="dni" type="text"
+                                    inputmode="numeric" maxlength="13"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Nombres</mat-label>
+                                <input matInput formControlName="firstName" type="text" maxlength="50"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Apellidos</mat-label>
+                                <input matInput formControlName="lastName" type="text" maxlength="150"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="contact-form-field">
+                                <mat-label>Correo electrónico</mat-label>
+                                <input matInput placeholder="ejemplo@correo.com" formControlName="email">
+
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="contact-form-field">
+                                <mat-label>Teléfono</mat-label>
+                                <input matInput placeholder="9876-5432" formControlName="phone" type="text"
+                                    inputmode="numeric" maxlength="9" (input)="formatPhone($event)">
+                            </mat-form-field>
+
+                            <div class="d-flex justify-content-between ">
+                                <button matStepperPrevious mat-stroked-button color="primary">Atrás</button>
+                                <button [disabled]="loadingForm" mat-flat-button color="primary"
+                                    (click)="irAlTercerPaso(stepper)"
+                                    (dblclick)="checkFormValidation(secondFormGroup, 'shake2')">
+                                    <mat-icon *ngIf="loadingForm"><mat-spinner color="primary" diameter="16">
+                                        </mat-spinner></mat-icon>
+                                    <span *ngIf="!esEditar">Enviar</span>
+                                    <span *ngIf="esEditar">Actualizar</span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+                </mat-step>
+
+
+            </mat-stepper>
+
+        </div>
+    </div>
+</div>
+<!-- Modal de Solicitud enviada -->
+<ng-template #modalSolicitud>
+    <div class="frame">
+        <div class="plane-container">
+            <a>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+                    y="0px" width="1131.53px" height="379.304px" viewBox="0 0 1131.53 379.304"
+                    enable-background="new 0 0 1131.53 379.304" xml:space="preserve" class="plane">
+                    <polygon fill="white"
+                        points="72.008,0 274.113,140.173 274.113,301.804 390.796,221.102 601.682,367.302 1131.53,0.223" />
+                    <polygon fill="#C4C4C3" points="1131.53,0.223 274.113,140.173 274.113,301.804 390.796,221.102" />
+                </svg>
+            </a>
+        </div>
+    </div>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Solicitud enviada</h2>
+        <mat-dialog-content class="mat-typography">
+            Se ha registrado la solicitud
+            <label class="fw-600 fc-black">Nº {{numSolicitud}}</label>.<br>
+            En los proximos días recibirá un correo con las credenciales de<br> usuario
+            para acceder a la <label class="fw-600">Huella de Carbono Honduras</label>.<br>
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-flat-button mat-dialog-close color="primary" (click)="refreshPage()">Aceptar</button>
+        </mat-dialog-actions>
+    </div>
+</ng-template>

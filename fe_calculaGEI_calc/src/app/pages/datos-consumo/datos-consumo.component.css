@@ -1,0 +1,26 @@
+h5 {
+  font-weight: 700;
+  line-height: 27px;
+}
+
+.margin-select {
+  margin: 79px 0 110px 0;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  text-align: right;
+  padding-right: 16px;
+}
+
+:host ::ng-deep .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+/* Modo escritorio */
+@media (min-width: 991.98px) {
+  .header {
+    margin-top: 105px;
+    margin-bottom: 10px;
+  }
+}

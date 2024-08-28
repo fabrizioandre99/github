@@ -1,0 +1,32 @@
+.modal__label {
+  margin-top: 20px;
+}
+
+/* Tabla */
+.table__header th:first-child {
+  width: 14%;
+}
+
+.table__header th:nth-child(2) {
+  width: 14%;
+}
+
+.table__header th:nth-child(3) {
+  width: 22%;
+}
+
+.table__header th:nth-child(4) {
+  width: 17%;
+}
+
+.table__header th:nth-child(5) {
+  width: 12%;
+}
+
+.table__header th:nth-child(6) {
+  width: 7%;
+}
+
+.table__header th:nth-child(7) {
+  width: 7%;
+}

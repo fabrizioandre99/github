@@ -1,0 +1,214 @@
+<div class="container">
+  <div class="row" *ngIf="sfNuevaGestion">
+    <form (ngSubmit)="fnRegOEdit(RegOEditForm)" #RegOEditForm="ngForm" novalidate>
+      <div class="crud__panel mt-4 col-lg-8">
+        <div class="row align-items-end  ">
+          <div class="col-md-4">
+            <div class="d-md-flex align-items-center">
+              <div class="col-md-3 col-xxl-2 text-md-end">
+                <label class="crud__label--sm crud__label--codigo" for="codigo">Código</label>
+              </div>
+              <div class="col-md-10 ms-md-2">
+                <div class="form-group">
+                  <input type="text" id="codigo" name="codigo" minlength="3" maxlength="63"
+                    class="form-control crud__input" required pattern="^(?!-)([a-záéíóúüñ0-9]+(-?[a-záéíóúüñ0-9]+)*)*$"
+                    [(ngModel)]="model.sCodEmpresa" #sOrigen="ngModel" [ngClass]="{
+                      'is-invalid': RegOEditForm.submitted &&
+                                    (sOrigen.errors?.['required'] ||
+                                     sOrigen.errors?.['pattern'] ||
+                                     sOrigen.errors?.['minlength'] ||
+                                     sOrigen.errors?.['maxlength'])
+                    }" placement="top" ngbTooltip="Solicitar código de la empresa al área de TI"
+                    tooltipClass="tooltip_solCodigo" triggers="manual" #tooltip="ngbTooltip"
+                    (mouseenter)="openTooltip(tooltip)" (focus)="openTooltip(tooltip)" (input)="openTooltip(tooltip)"
+                    (mouseout)="closeTooltip(tooltip)" (blur)="closeTooltip(tooltip)" [autoClose]="false"
+                    autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 mt-md-3 d-md-flex align-items-center">
+              <div class="col-md-3 col-xxl-2 text-md-end">
+                <label class="crud__label--sm" for="ruc">RUC</label>
+              </div>
+              <div class="col-md-10 ms-md-2">
+                <div class="form-group">
+                  <input id="ruc" name="ruc" maxlength="11" minlength="11" class="form-control crud__input"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                    [(ngModel)]="model.sRuc" #sRuc="ngModel" required
+                    [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sRuc.errors?.['required']
+          || RegOEditForm.submitted && sRuc.errors?.['maxlength'] || RegOEditForm.submitted && sRuc.errors?.['minlength']}">
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 mt-md-3 d-md-flex  align-items-center">
+              <div class="col-md-3 col-xxl-2 text-md-end">
+                <label class="crud__label--sm" for="sector">Sector</label>
+              </div>
+              <div class="col-md-10 ms-md-2">
+                <ng-select [notFoundText]="'No hay data'" id="sector" name="sector" placeholder="Seleccionar"
+                  [searchable]="false" [clearable]="false" class="ng-select-admin" [(ngModel)]="model.sCodSector"
+                  #sCodSector="ngModel" [items]="lstSector" bindLabel="sValor" bindValue="sCodigo" required [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sCodSector.errors?.['required']
+          || RegOEditForm.submitted && sCodSector.errors?.['pattern']}"></ng-select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="mt-2 mt-md-0 d-md-flex  align-items-center">
+              <div class="col-3 text-md-end">
+                <label class="crud__label--sm" for="rsocial">Razón social</label>
+              </div>
+              <div class="col-md-9 ms-md-2">
+                <div class="form-group">
+                  <input id="rsocial" name="rsocial" maxlength="150" class="form-control crud__input"
+                    [(ngModel)]="model.sRazonSocial" #sRazonSocial="ngModel" required [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sRazonSocial.errors?.['required']
+                    || RegOEditForm.submitted && sRazonSocial.errors?.['pattern']}" (keypress)="validarNombres($event)"
+                    pattern="^(?=.*[A-Za-z0-9.ñÑáéíóúÁÉÍÓÚüÜ])[A-Za-z0-9.ñÑáéíóúÁÉÍÓÚüÜ ]+$">
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 mt-md-3  d-md-flex  align-items-center">
+              <div class="col-3 text-md-end">
+                <label class="crud__label--sm" for="ncomercial">Nombre
+                  comercial</label>
+              </div>
+              <div class="col-md-9 ms-md-2">
+                <div class="form-group">
+                  <input id="ncomercial" name="ncomercial" maxlength="150" class="form-control crud__input"
+                    [(ngModel)]="model.sNombreComercial" #sNombreComercial="ngModel" [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sNombreComercial.errors?.['required']
+                    || RegOEditForm.submitted && sNombreComercial.errors?.['pattern']}"
+                    (keypress)="validarNombres($event)"
+                    pattern="^(?=.*[A-Za-z0-9.ñÑáéíóúÁÉÍÓÚüÜ])[A-Za-z0-9.ñÑáéíóúÁÉÍÓÚüÜ ]+$" required>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col text-end p-0 mt-3">
+
+            <button type="button" class="crud__button button-white" (click)="closePanel()">
+              Cancelar</button> <button type="submit" [disabled]="loadRegSub"
+              class="crud__button button-blue ms-2 me-1">
+              <span *ngIf="loadRegSub" class="spinner-border spinner-border-sm me-1"></span> Guardar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="d-flex align-items-center mt-4">
+    <label class="crud__title">Gestionar empresas</label>
+  </div>
+  <div class="row align-items-end">
+    <div class="col-md-3 col-lg-2">
+      <label class="crud__label--sm" for="sector_search">Sector</label>
+      <ng-select [notFoundText]="'No hay data'" id="sector_search" [(ngModel)]="sector" (change)="fnListarEmpresa()"
+        [searchable]="false" [clearable]="false" placeholder="Seleccionar" class="ng-select-admin" [items]="lstSector"
+        bindLabel="sValor" bindValue="sCodigo"></ng-select>
+    </div>
+    <div class="col-md-5 mt-2 mt-md-0">
+      <input [(ngModel)]="model.nombreEmpresa" maxlength="150" class="form-control crud__input crud__input--search"
+        placeholder="Buscar por nombre de empresa">
+    </div>
+  </div>
+  <div class="ms-auto col-md-5 d-flex justify-content-end mt-2 mt-md-0">
+    <button class="crud__button btn-corner button-blue d-flex align-items-center" [disabled]="sfNuevaGestion==true"
+      (click)="nuevaEmpresa()">
+      <img src="assets/images/icon-plus.svg" height="25" />
+      <span class="ms-2">Nueva empresa</span> </button>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="mt-4 col-md-10">
+      <div class="table-responsive crud__card">
+        <table class="table">
+          <thead class="table__header">
+            <tr class="text-center">
+              <!-- <th scope="col">Id </th> -->
+              <th scope="col">RUC</th>
+              <th scope="col">Razón social</th>
+              <th scope="col">Nombre comercial</th>
+              <th scope="col">Editar</th>
+              <th scope="col">Eliminar</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstEmpresas| Busqueda: model; index as i">
+              <tr class="table__body" [ngStyle]="{
+                'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null,
+                'background-color': selectedItem === item.nIdEmpresa ?  '#D8C8FF' : null
+              }">
+                <!--   <td class="text-center">
+                  {{item.nIdEmpresa}}</td> -->
+                <td class="text-center">
+                  {{item.sRuc}}
+                </td>
+                <td class="text-center">
+                  {{item.sRazonSocial}}
+                </td>
+                <td class="text-center">
+                  {{item.sNombreComercial}}
+                </td>
+                <td class="text-center">
+                  <img class="pointer" placement="top" ngbTooltip="Editar" src="assets/images/icon-editar.svg"
+                    height="23" (click)="editarEmpresa(item)" />
+                </td>
+                <td class="text-center">
+                  <img class="pointer" (click)="openEliminarEmpresa(item,contentEliminar)" placement="top"
+                    ngbTooltip="Eliminar" src="assets/images/icon-tacho.svg" height="23" />
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="(lstEmpresas| Busqueda: model)?.length <= 0 && lstEmpresas.length !== 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados para: "{{model.nombreEmpresa}}".</h5>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="lstEmpresas.length == 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados.</h5>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div class="d-flex justify-content-center mt-4 pb-3"
+      *ngIf="!fShowSkeleton &&(lstEmpresas| Busqueda: model)?.length > 0">
+      <ngb-pagination class="pagination-md" [collectionSize]="(lstEmpresas| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="8" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="(lstEmpresas| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="5" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div style="padding: 5px 25px 11px;">
+    <div class="modal-body ">
+      <label class="modal__title">Confirmación</label>
+      <div class="mt-3 d-flex justify-content-center">
+        <div *ngIf="hasPeriodos">La empresa tiene periodos creados, ¿desea eliminar la empresa y su información
+          asociada?</div>
+        <div *ngIf="!hasPeriodos">¿Está seguro de eliminar el registro?</div>
+      </div>
+      <div class="d-flex justify-content-center mt-4">
+        <button style="width: 100px;" (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button style="width: 100px;" (click)="fnEliminarEmpresa()" [disabled]="loadEliminar"
+          class="crud__button button-blue ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

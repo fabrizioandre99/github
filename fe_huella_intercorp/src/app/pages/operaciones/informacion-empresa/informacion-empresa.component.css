@@ -1,0 +1,19 @@
+.button-editar img {
+  filter: grayscale(100%) invert(100%);
+}
+
+.button-editar {
+  padding: 2px;
+  width: 35px;
+  height: 35px;
+}
+
+.button-editar[disabled] img {
+  filter: invert(40%) sepia(93%) saturate(1354%) hue-rotate(216deg) brightness(174%) contrast(75%);
+}
+
+.form-switch.form-switch-md .form-check-input {
+  height: 1.5rem;
+  width: calc(2rem + 0.75rem);
+  border-radius: 3rem;
+}

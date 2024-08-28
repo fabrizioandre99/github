@@ -1,0 +1,166 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="text-center mt-md-4">
+      <div class="card-body lista">
+        <div class="d-lg-flex text-start">
+          <h2>Evaluar inventarios GEI</h2>
+          <div class="ms-auto alto">
+            <app-alert></app-alert>
+          </div>
+        </div>
+        <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 240px">
+          <div class=" spinner-border text-success" role="status">
+          </div>
+        </div>
+        <div *ngIf="!loadingTable">
+          <div class="mt-3 row justify-content-between align-items-center">
+            <div class="col">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <input [(ngModel)]="model.sNombre" type="text" name="sNombre" maxlength="50"
+                      class="form-control buscar" placeholder="Buscar por nombre de municipalidad" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div *ngIf="(lstInventarios | Busqueda: model)?.length > 0">
+            <div class="table-responsive align-middle">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Municipalidad</th>
+                    <th scope="col">Año</th>
+                    <th scope="col">Detalle<br>periodo</th>
+                    <th scope="col">Datos<br>actividad</th>
+                    <th scope="col">Resultados<br>GEI</th>
+                    <th scope="col">Acción a tomar</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of lstInventarios| Busqueda: model; index as i ">
+                  <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{item.oMunicipalidad.sNombre}}</td>
+                    <td>{{item.nAnio}} </td>
+                    <td> <img class="pointer" src="assets/images/ver.svg" (click)="openModalVer(item)" height="20" />
+                    </td>
+                    <td><img class="pointer" src="assets/images/tabla.svg" (click)="redictDatosActividad(item)"
+                        height="20" placement="bottom" ngbTooltip="Ir a datos de actividad" /></td>
+                    <td><img class="pointer" src="assets/images/calculadora.svg" (click)="redictResultadosGei(item)"
+                        height="22" /></td>
+                    <td>
+                      <!-- Botón Aprobar -->
+                      <button type="button" class="boton btn btn-success btn-exito me-2" placement="bottom"
+                        ngbTooltip="Aprobar" (click)="openModalAprobar(contentAprobar, item)">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                      <!-- Botón Observar -->
+                      <button type="button" class="boton btn btn-warning me-2" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop" placement="bottom" ngbTooltip="Observar"
+                        (click)="openObservar(item)">
+                        <i class="fa-solid fa-exclamation"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+              <ngb-pagination class="pagination-md" [collectionSize]="(lstInventarios | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+              <ngb-pagination class="pagination-sm" [collectionSize]="(lstInventarios | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+            </div>
+          </div>
+          <div class="mt-5 mb-5 text-center"
+            *ngIf="(lstInventarios| Busqueda: model)?.length <= 0 && model.sNombre?.length !== 0 && model.sNombre !== undefined">
+            <h5 class="mt-5">
+              No hay resultados para: "{{model.sNombre}}".
+            </h5>
+          </div>
+          <div class="mt-5 mb-5 text-center" *ngIf="((lstInventarios| Busqueda: model)?.length <= 0
+          && model.sNombre?.length == 0) || (lstInventarios| Busqueda: model)?.length <= 0
+          && model.sNombre == undefined">
+            <h5 class=" mt-5">
+              No existen resultados.
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Aprobar -->
+<ng-template #contentAprobar let-modalAprobar>
+  <div class="modal-body">
+    <h5>Confirmación</h5>
+    <label>Se generará el documento de aprobación para <label style="font-weight:500">
+        {{itemAprobar.oMunicipalidad.sNombre}} - {{itemAprobar.nAnio}}
+      </label>.<br>
+      ¿Está seguro de la aprobación?</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn button-modal btn-success blanco" (click)="modalAprobar.dismiss()">Cancelar</button>
+    <button type="button" class="btn button-modal btn-success verdemodal" [disabled]="loading"
+      (click)="cambiarEstadoAprobar()"><span *ngIf="loading"
+        class="spinner-border spinner-border-sm me-2"></span>Aceptar</button>
+  </div>
+</ng-template>
+
+<!-- Modal Observar -->
+<div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title" id="modal-basic-title"><i class="fa-solid fa-circle-exclamation alerta"></i> Observar
+          inventario
+          GEI</label>
+        <button type="button" id="closeModal" #closeModalObservar class="close" aria-label="Close"
+          data-bs-dismiss="modal" aria-label="Close" (click)="closeObservar()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Documento de observaciones</p>
+        <div class="form-file pointer">
+          <label for="fileinput" class="textfile w-100 bd-highlight pointer" #InputPdf>Seleccionar
+            archivo... </label>
+          <div class="flex-shrink-1 bd-highlight">
+            <input type="file" accept=".pdf, application/pdf" class="pointer" id="fileinput" name="InputPdf"
+              (change)="onFileChange($event)" required [disabled]="loading">
+          </div>
+        </div>
+        <div *ngIf="incorrectFile">
+          <small class="text-danger">
+            El archivo debe ser de formato PDF.
+          </small>
+        </div>
+        <div *ngIf="submitModal">
+          <small class="text-danger">
+            Agregue un archivo PDF.
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn button-modal btn-success blanco" aria-label="Close" data-bs-dismiss="modal"
+          aria-label="Close" (click)="closeObservar()">Cancelar</button>
+        <button type="button" class="btn button-modal btn-success verdemodal" [disabled]="loading"
+          (click)="cambiarEstadoObservar()"><span *ngIf="loading"
+            class="spinner-border spinner-border-sm me-2"></span>Observar</button>
+      </div>
+    </div>
+  </div>
+</div>

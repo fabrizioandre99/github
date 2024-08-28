@@ -1,0 +1,119 @@
+.login__subtitle {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
+  display: block;
+  text-align: center;
+  color: #00358A;
+  cursor: pointer;
+}
+
+.login__button {
+  border-radius: 12px;
+  margin-top: 40px;
+  font-weight: 500;
+}
+
+.login__labels {
+  color: black;
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.modal-body {
+  padding: 22px 40px;
+}
+
+
+.button-blue {
+  width: 100%;
+}
+
+.login__title {
+  font-size: calc(2rem + 1.5vw);
+}
+
+.container-fluid {
+  background-image: url('src/assets/images/fondo-unicon.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 10% 90%;
+}
+
+.login_version {
+  font-size: 12px;
+}
+
+/**********************************************/
+/* ------------ Modo Escritorio-------------- */
+
+
+@media (min-width: 575px) {
+  .modal-body--repContrasena {
+    padding: 22px 75px;
+  }
+
+}
+
+@media (min-width: 991.98px) {
+  .login__title {
+    font-size: 36px;
+  }
+}
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .login__subtitle {
+    font-size: 0.82vw;
+    line-height: 0.82vw;
+  }
+
+  .login__button {
+    border-radius: 0.703vw;
+    margin-top: 2.343vw;
+  }
+
+  .login__labels--olvido {
+    font-size: 0.937vw;
+  }
+
+  .login__labels {
+    margin-top: 1.172vw;
+    font-size: 0.82vw;
+    line-height: 0.996vw;
+  }
+
+  .modal-body {
+    padding: 1.289vw 2.343vw;
+  }
+
+  .login__title {
+    font-size: calc(2rem + 1.5vw);
+  }
+
+  .login_version {
+    font-size: 0.703vw;
+  }
+
+  /**********************************************/
+  /* ------------ Modo Escritorio-------------- */
+
+
+  @media (min-width: 575px) {
+    .modal-body--repContrasena {
+      padding: 1.289vw 4.394vw;
+    }
+
+  }
+
+  @media (min-width: 991.98px) {
+    .login__title {
+      font-size: 2.109vw;
+    }
+  }
+
+
+}

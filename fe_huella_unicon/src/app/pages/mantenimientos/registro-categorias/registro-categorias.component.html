@@ -1,0 +1,639 @@
+<div class="container  pb-5">
+  <label class="crud__title">Registro de categorías</label>
+  <div class="card mt-2">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#tab1">Geográfica</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#tab2">Ámbito</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body ">
+      <div class="tab-content">
+        <!-- Tab Geográico -->
+        <div class="tab-pane show active" id="tab1">
+          <div class="row justify-content-center">
+            <div class="col-md-9 ">
+              <div *ngIf="fShowAgreCatGeo" class="crud__card mt-4 p-4 pt-2 col-md-12 col-lg-11">
+                <form (ngSubmit)="fnRegistrarCatGeo(registrarCategoriaForm)" #registrarCategoriaForm="ngForm"
+                  novalidate>
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label for="r_categoria_geo" class="col-form-label col-form-label-sm">Categoría geográfica</label>
+                      <input id="r_categoria_geo" type="text" maxlength="50" class="form-control crud__input"
+                        placeholder="Categoría" [(ngModel)]="modelCatGeo.sNombre" name="nombre" required
+                        #sNombre="ngModel" [ngClass]="{ 'is-invalid': submitCatGeo && sNombre.errors?.['required']
+              ||submitCatGeo && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$"
+                        onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$/.test(event.key)">
+                      <div
+                        *ngIf="submitCatGeo&& sNombre.errors?.['required'] ||submitCatGeo&& modelCatGeo?.sNombre?.trim()?.length==0">
+                        <small class="text-danger">Ingrese la categoría.</small>
+                      </div>
+                      <div
+                        *ngIf="submitCatGeo&& sNombre.errors?.['pattern']&& modelCatGeo?.sNombre?.trim()?.length!==0">
+                        <small class="text-danger">No ingrese caracteres extraños.</small>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-lg-2">
+                      <div class="form-group mt-2 marginToogle">
+                        <label class="switch">
+                          <input type="checkbox" id="boEstado_CatGeo" name="boEstado"
+                            [(ngModel)]="modelCatGeo.boCodEstado">
+                          <span class="slider round"></span>
+                        </label>
+                        <label for="boEstado_CatGeo" *ngIf="modelCatGeo.boCodEstado" class="ms-2">Activo</label>
+                        <label for="boEstado_CatGeo" *ngIf="!modelCatGeo.boCodEstado" class="ms-2">Inactivo</label>
+                      </div>
+                    </div>
+                    <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+                      <button type="button" class="crud__button button-white" (click)="cancelCatGeo()">Cancelar</button>
+                      <button type="submit" [disabled]="loadRegCatGeo" class="crud__button button-blue ms-2"> <span
+                          *ngIf="loadRegCatGeo" class="spinner-border spinner-border-sm me-1"></span>
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="d-flex justify-content-end mt-3">
+                <button class="crud__button button-blue d-flex align-items-center" [disabled]="fShowAgreCatGeo"
+                  (click)="openAgreCatGeo()">
+                  <img src=" assets/images/icon-plus.svg" class="me-2" />Agregar categoría</button>
+              </div>
+              <div class="table-responsive  crud__card mt-4">
+                <table class="table">
+                  <thead class="table__header">
+                    <tr class="text-center">
+                      <th scope="col">Categoría geográfica</th>
+                      <th scope="col">Subcategorías</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Editar</th>
+                      <th scope="col">Eliminar</th>
+                    </tr>
+                  </thead>
+                  <ng-container *ngIf="fSkCatGeo">
+                    <tbody *ngFor="let item of lstSkeleton">
+                      <tr class="table__body table__body--skeleton">
+                        <td>
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td>
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </ng-container>
+                  <ng-container *ngIf="!fSkCatGeo">
+                    <tbody *ngFor="let item of lstGeograficas; index as i">
+                      <tr class="table__body table__body--degradado" [ngStyle]="{
+                                    'display': i / pageSizeA >= pageA || i / pageSizeA < pageA - 1 ? 'none' : 'table-row',
+                                    'border-bottom': (i + 1) === (pageA * pageSizeA) ? '0 solid transparent' : null,
+                                    'background-color': selectedCategory_A === item.nIdCategoria ? '#FFEFB0' : null
+                                  }">
+                        <td class="text-center">
+                          {{item.sNombre}}
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_subcategorias pointer" src="assets/images/icon-subcategorias.svg"
+                            (click)="openSubCatGeo(item)" />
+                        </td>
+                        <td class="text-center">
+                          <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+                          <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                            (click)="openEditCatGeo(item, i)" />
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_tacho pointer" (click)="openEliminar(contentEliminar,item, 1)"
+                            src="assets/images/icon-tacho.svg" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </ng-container>
+                </table>
+                <ng-container *ngIf="!fSkCatGeo && lstGeograficas.length <= 0">
+                  <div class="text-center mt-5 mb-5">
+                    <h5 class="mb-0">No existen resultados.</h5>
+                  </div>
+                </ng-container>
+              </div>
+              <div *ngIf="!fSkCatGeo &&lstGeograficas.length > 0" class="d-flex justify-content-center mt-4 pb-5">
+                <ngb-pagination class="pagination-md" [collectionSize]="lstGeograficas.length" [(page)]="pageA"
+                  [maxSize]="8" [pageSize]="pageSizeA">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="lstGeograficas.length" [(page)]="pageA"
+                  [maxSize]="5" [pageSize]="pageSizeA">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+              </div>
+              <div [hidden]="!fShowSubCatGeo" class="mb-4">
+                <div class="col-md-9">
+                  <div class="row mt-2">
+                    <div class="col-lg-7">
+                      <label class="crud__subtitle mt-4">Subcategorías - {{itemSubCatGeo.sNombre}}</label>
+                    </div>
+                    <div *ngIf="!fShowAgreSubCatGeo"
+                      class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-2">
+                      <button class="crud__button button-blue" (click)="openAgreSubCatGeo()">
+                        <img src="assets/images/icon-plus.svg" height="25" />
+                        <span class="ms-2">Agregar subcategoría</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="fShowAgreSubCatGeo" class="crud__card mt-4 p-4 pt-2 col-md-12 col-lg-10">
+                  <form (ngSubmit)="fnRegistrarSubCatGeo(registrarSubCatGeoForm)" #registrarSubCatGeoForm="ngForm"
+                    novalidate>
+                    <div class="row">
+                      <div class="col-lg-6 w-subCat">
+                        <label for="r_subcategoria_geo" class="col-form-label col-form-label-sm">Subcategoría
+                          geográfica</label>
+                        <input id="r_subcategoria_geo" type="text" maxlength="50" class="form-control crud__input"
+                          placeholder="Subcategoría" [(ngModel)]="modelSubCatGeo.sNombre" name="nombre" required
+                          #sNombre="ngModel" [ngClass]="{ 'is-invalid': submitSubCatGeo && sNombre.errors?.['required']
+        ||submitSubCatGeo && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$"
+                          onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$/.test(event.key)">
+                        <div
+                          *ngIf="submitSubCatGeo&& sNombre.errors?.['required'] ||submitSubCatGeo&& modelSubCatGeo?.sNombre?.trim()?.length==0">
+                          <small class="text-danger">Ingrese la subcategoría.</small>
+                        </div>
+                        <div
+                          *ngIf="submitSubCatGeo&& sNombre.errors?.['pattern']&& modelSubCatGeo?.sNombre?.trim()?.length!==0">
+                          <small class="text-danger">No ingrese caracteres extraños.</small>
+                        </div>
+                      </div>
+                      <div class="col-lg-3  w-codEstado">
+                        <div class="form-group mt-2 marginToogle">
+                          <label class="switch">
+                            <input type="checkbox" id="boEstado_SubCatGeo" name="boEstado"
+                              [(ngModel)]="modelSubCatGeo.boCodEstado">
+                            <span class="slider round"></span>
+                          </label>
+                          <label for="boEstado_SubCatGeo" *ngIf="modelSubCatGeo.boCodEstado" class="ms-2">Activo</label>
+                          <label for="boEstado_SubCatGeo" *ngIf="!modelSubCatGeo.boCodEstado"
+                            class="ms-2">Inactivo</label>
+                        </div>
+                      </div>
+                      <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+                        <button type="button" class="crud__button button-white"
+                          (click)="cancelSubCatGeo()">Cancelar</button>
+                        <button type="submit" [disabled]="loadRegSubCatGeo" class="crud__button button-blue ms-2"> <span
+                            *ngIf="loadRegSubCatGeo" class="spinner-border spinner-border-sm me-1"></span>
+                          Guardar
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-9">
+                  <div *ngIf="fShowAgreSubCatGeo"
+                    class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-4">
+                    <button class="crud__button button-blue" disabled>
+                      <img src="assets/images/icon-plus.svg" height="25" />
+                      <span class="ms-2">Agregar subcategoría</span>
+                    </button>
+                  </div>
+                  <div class="table-responsive  crud__card mt-4">
+                    <table class="table">
+                      <thead class="table__header">
+                        <tr class="text-center">
+                          <th scope="col">Subcategoría geográfica</th>
+                          <th scope="col">Estado</th>
+                          <th scope="col">Editar</th>
+                          <th scope="col">Eliminar</th>
+                        </tr>
+                      </thead>
+                      <ng-container *ngIf="fSkSubCatGeo">
+                        <tbody *ngFor="let item of lstSkeleton">
+                          <tr class="table__body table__body--skeleton">
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </ng-container>
+                      <ng-container *ngIf="!fSkSubCatGeo">
+                        <tbody *ngFor="let item of lstSubGeograficas; index as i">
+                          <tr class="table__body table__body--degradado" [ngStyle]="{
+                                    'display': i / pageSizeB >= pageB || i / pageSizeB < pageB - 1 ? 'none' : 'table-row',
+                                    'border-bottom': (i + 1) === (pageB * pageSizeB) ? '0 solid transparent' : null,
+                                    'background-color': selectedCategory_B === item.nIdCategoria ? '#FFEFB0' : null
+                                  }">
+                            <!--  <td class="text-center">
+                              {{item.nIdCategoria}} </td> -->
+                            <td class="text-center">
+                              {{item.sNombre}}
+                            </td>
+                            <td class="text-center">
+                              <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+                              <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+                            </td>
+                            <td class="text-center">
+                              <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                                (click)="openEditSubCatGeo(item,i)" />
+                            </td>
+                            <td class="text-center">
+                              <img class="icon_tacho pointer" (click)="openEliminar(contentEliminar,item, 2)"
+                                src="assets/images/icon-tacho.svg" />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </ng-container>
+                    </table>
+                    <ng-container *ngIf="!fSkSubCatGeo && lstSubGeograficas.length <= 0">
+                      <div class="text-center mt-5 mb-5">
+                        <h5 class="mb-0">No existen resultados.</h5>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div *ngIf="!fSkSubCatGeo &&lstSubGeograficas.length > 0" class="d-flex justify-content-center mt-4">
+                    <ngb-pagination class="pagination-md" [collectionSize]="lstSubGeograficas.length" [(page)]="pageB"
+                      [maxSize]="8" [pageSize]="pageSizeB">
+                      <ng-template ngbPaginationPrevious><img
+                          src="assets/images/icon-left-pagination.svg" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                    </ngb-pagination>
+                    <ngb-pagination class="pagination-sm" [collectionSize]="lstSubGeograficas.length" [(page)]="pageB"
+                      [maxSize]="5" [pageSize]="pageSizeB">
+                      <ng-template ngbPaginationPrevious><img
+                          src="assets/images/icon-left-pagination.svg" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                    </ngb-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Tab de Ámbito -->
+        <div class="tab-pane" id="tab2">
+          <div class="row justify-content-center">
+            <div class="col-md-9 ">
+              <div *ngIf="fShowAgreCatAmb" class="crud__card mt-4 p-4 pt-2 col-md-12 col-lg-11">
+                <form (ngSubmit)="fnRegistrarCatAmb(registrarCategoriaForm)" #registrarCategoriaForm="ngForm"
+                  novalidate>
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label for="r_categoria_amb" class="col-form-label col-form-label-sm">Categoría por ámbito</label>
+                      <input id="r_categoria_amb" type="text" maxlength="50" class="form-control crud__input "
+                        placeholder="Categoría" [(ngModel)]="modelCatAmb.sNombre" name="nombre" required
+                        #sNombre="ngModel" [ngClass]="{ 'is-invalid': submitCatAmb && sNombre.errors?.['required']
+              ||submitCatAmb && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$"
+                        onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$/.test(event.key)">
+                      <div
+                        *ngIf="submitCatAmb&& sNombre.errors?.['required'] ||modelCatAmb&& modelCatAmb?.sNombre?.trim()?.length==0">
+                        <small class="text-danger">Ingrese la categoría.</small>
+                      </div>
+                      <div
+                        *ngIf="submitCatAmb&& sNombre.errors?.['pattern']&& modelCatAmb?.sNombre?.trim()?.length!==0">
+                        <small class="text-danger">No ingrese caracteres extraños.</small>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-lg-2">
+                      <div class="form-group mt-2 marginToogle">
+                        <label class="switch">
+                          <input type="checkbox" id="boEstado" name="boEstado" [(ngModel)]="modelCatAmb.boCodEstado">
+                          <span class="slider round"></span>
+                        </label>
+                        <label for="boEstado" *ngIf="modelCatAmb.boCodEstado" class="ms-2">Activo</label>
+                        <label for="boEstado" *ngIf="!modelCatAmb.boCodEstado" class="ms-2">Inactivo</label>
+
+                      </div>
+                    </div>
+                    <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+                      <button type="button" class="crud__button button-white" (click)="cancelCatAmb()">Cancelar</button>
+                      <button type="submit" [disabled]="loadRegCatAmb" class="crud__button button-blue ms-2"> <span
+                          *ngIf="loadRegCatAmb" class="spinner-border spinner-border-sm me-1"></span>
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+              </div>
+              <div class="d-flex justify-content-end mt-3">
+                <button class="crud__button button-blue d-flex align-items-center" (click)="openAgreCatAmb()">
+                  <img src=" assets/images/icon-plus.svg" class="me-2" height="25" />Agregar categoría</button>
+              </div>
+              <div class="table-responsive  crud__card mt-4">
+                <table class="table">
+                  <thead class="table__header">
+                    <tr class="text-center">
+                      <th scope="col">Categoría por ámbito</th>
+                      <th scope="col">Subcategorías</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Editar</th>
+                      <th scope="col">Eliminar</th>
+                    </tr>
+                  </thead>
+                  <ng-container *ngIf="fSkCatAmb">
+                    <tbody *ngFor="let item of lstSkeleton">
+                      <tr class="table__body table__body--skeleton">
+                        <!--    <td>
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td> -->
+                        <td>
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td>
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                        <td class="text-center">
+                          <p class="placeholder-glow rounded m-0">
+                            <span class="placeholder col-12 placeholder-sm"></span>
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </ng-container>
+                  <ng-container *ngIf="!fSkCatAmb">
+                    <tbody *ngFor="let item of lstAmbito;  index as i">
+                      <tr class="table__body table__body--degradado" [ngStyle]="{
+                              'display': i / pageSizeC >= pageC || i / pageSizeC < pageC - 1 ? 'none' : 'table-row',
+                              'border-bottom': (i + 1) === (pageC * pageSizeC) ? '0 solid transparent' : null,
+                              'background-color': selectedCategory_C === item.nIdCategoria ? '#FFEFB0' : null
+                            }">
+                        <td class="text-center">
+                          {{item.sNombre}}
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_subcategorias pointer" src="assets/images/icon-subcategorias.svg"
+                            (click)="openSubCatAmb(item)" />
+                        </td>
+                        <td class="text-center">
+                          <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+                          <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                            (click)="openEditCatAmb(item,i)" />
+                        </td>
+                        <td class="text-center">
+                          <img class="icon_tacho pointer" (click)="openEliminar(contentEliminar,item, 3)"
+                            src="assets/images/icon-tacho.svg" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </ng-container>
+
+                </table>
+                <ng-container *ngIf="!fSkCatAmb && lstAmbito.length <= 0">
+                  <div class="text-center mt-5 mb-5">
+                    <h5 class="mb-0">No existen resultados.</h5>
+                  </div>
+                </ng-container>
+              </div>
+              <div *ngIf="!fSkCatAmb && lstAmbito.length > 0" class="d-flex justify-content-center mt-4 pb-5">
+                <ngb-pagination class="pagination-md" [collectionSize]="lstAmbito.length" [(page)]="pageC" [maxSize]="8"
+                  [pageSize]="pageSizeC">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="lstAmbito.length" [(page)]="pageC" [maxSize]="5"
+                  [pageSize]="pageSizeC">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+              </div>
+              <div [hidden]="!fShowSubCatAmb">
+                <div class="col-md-9">
+                  <div class="row mt-2">
+                    <div class="col-lg-7">
+                      <label class="crud__subtitle mt-4">Subcategorías - {{itemSubCatAmb.sNombre}}</label>
+                    </div>
+                    <div *ngIf="!fShowAgreSubCatAmb"
+                      class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-2">
+                      <button class="crud__button button-blue" (click)="openAgreSubCatAmb()">
+                        <img src="assets/images/icon-plus.svg" height="25" />
+                        <span class="ms-2">Agregar subcategoría</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="fShowAgreSubCatAmb" class="crud__card mt-4 p-4 pt-2 col-md-12 col-lg-10">
+                  <form (ngSubmit)="fnRegistrarSubCatAmb(registrarSubCatAmbForm)" #registrarSubCatAmbForm="ngForm"
+                    novalidate>
+                    <div class="row">
+                      <div class="col-lg-6 w-subCat">
+                        <label for="r_subcategoria_amb" class="col-form-label col-form-label-sm">Subcategoría por
+                          ámbito</label>
+
+                        <input id="r_subcategoria_amb" type="text" maxlength="50" class="form-control crud__input"
+                          placeholder="Subcategoría" [(ngModel)]="modelSubCatAmb.sNombre" name="nombre" required
+                          #sNombre="ngModel" [ngClass]="{ 'is-invalid': submitSubCatAmb && sNombre.errors?.['required']
+       || submitSubCatAmb && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$"
+                          onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$/.test(event.key)">
+                        <div
+                          *ngIf="submitSubCatAmb&& sNombre.errors?.['required'] ||submitSubCatAmb&& modelSubCatAmb?.sNombre?.trim()?.length==0">
+                          <small class="text-danger">Ingrese la subcategoría.</small>
+                        </div>
+                        <div
+                          *ngIf="submitSubCatAmb&& sNombre.errors?.['pattern'] && modelSubCatAmb?.sNombre?.trim()?.length!==0">
+                          <small class="text-danger">No ingrese caracteres extraños.</small>
+                        </div>
+                      </div>
+                      <div class="col-lg-3  w-codEstado">
+                        <div class="form-group mt-2 marginToogle">
+                          <label class="switch">
+                            <input type="checkbox" id="boEstado" name="boEstado"
+                              [(ngModel)]="modelSubCatAmb.boCodEstado">
+                            <span class="slider round"></span>
+                          </label>
+                          <label for="boEstado" *ngIf="modelSubCatAmb.boCodEstado" class="ms-2">Activo</label>
+                          <label for="boEstado" *ngIf="!modelSubCatAmb.boCodEstado" class="ms-2">Inactivo</label>
+
+                        </div>
+                      </div>
+                      <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+                        <button type="button" class="crud__button button-white"
+                          (click)="cancelSubCatAmb()">Cancelar</button>
+                        <button type="submit" [disabled]="loadRegSubCatAmb" class="crud__button button-blue ms-2"> <span
+                            *ngIf="loadRegSubCatAmb" class="spinner-border spinner-border-sm me-1"></span>
+                          Guardar
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-9">
+                  <div *ngIf="fShowAgreSubCatAmb"
+                    class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-4">
+                    <button class="crud__button button-blue" disabled>
+                      <img src="assets/images/icon-plus.svg" height="25" />
+                      <span class="ms-2">Agregar subcategoría</span>
+                    </button>
+                  </div>
+                  <div class="table-responsive  crud__card mt-4">
+                    <table class="table">
+                      <thead class="table__header">
+                        <tr class="text-center">
+                          <th scope="col">Subcategoría por ámbito</th>
+                          <th scope="col">Estado</th>
+                          <th scope="col">Editar</th>
+                          <th scope="col">Eliminar</th>
+                        </tr>
+                      </thead>
+                      <ng-container *ngIf="fSkSubCatAmb">
+                        <tbody *ngFor="let item of lstSkeleton">
+                          <tr class="table__body table__body--skeleton">
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                            <td class="text-center">
+                              <p class="placeholder-glow rounded m-0">
+                                <span class="placeholder col-12 placeholder-sm"></span>
+                              </p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </ng-container>
+                      <ng-container *ngIf="!fSkSubCatAmb">
+                        <tbody *ngFor="let item of lstSubAmbito; index as i">
+                          <tr class="table__body table__body--degradado" [ngStyle]="{
+                            'display': i / pageSizeD >= pageD || i / pageSizeD < pageD - 1 ? 'none' : 'table-row',
+                            'border-bottom': (i + 1) === (pageD * pageSizeD) ? '0 solid transparent' : null,
+                            'background-color': selectedCategory_D === item.nIdCategoria ? '#FFEFB0' : null
+                          }">
+                            <!--    <td class="text-center">
+                              {{item.nIdCategoria}}</td> -->
+                            <td class="text-center">
+                              {{item.sNombre}}
+                            </td>
+
+                            <td class="text-center">
+                              <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+                              <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+                            </td>
+                            <td class="text-center">
+                              <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                                (click)="openEditSubCatAmb(item, i)" />
+                            </td>
+                            <td class="text-center">
+                              <img class="icon_tacho pointer" (click)="openEliminar(contentEliminar,item, 4)"
+                                src="assets/images/icon-tacho.svg" />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </ng-container>
+                    </table>
+                    <ng-container *ngIf="!fSkSubCatAmb && lstSubAmbito.length <= 0">
+                      <div class="text-center mt-5 mb-5">
+                        <h5 class="mb-0">No existen resultados.</h5>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div *ngIf="!fSkSubCatAmb &&lstSubAmbito.length > 0" class="d-flex justify-content-center mt-4">
+                    <ngb-pagination class="pagination-md" [collectionSize]="lstSubAmbito.length" [(page)]="pageD"
+                      [maxSize]="8" [pageSize]="pageSizeD">
+                      <ng-template ngbPaginationPrevious><img
+                          src="assets/images/icon-left-pagination.svg" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                    </ngb-pagination>
+                    <ngb-pagination class="pagination-sm" [collectionSize]="lstSubAmbito.length" [(page)]="pageD"
+                      [maxSize]="5" [pageSize]="pageSizeD">
+                      <ng-template ngbPaginationPrevious><img
+                          src="assets/images/icon-left-pagination.svg" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                    </ngb-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body ">
+      <label class="modal__title">Confirmación</label>
+      <div class="mt-3 d-flex justify-content-center fs-16">
+        ¿Está seguro de eliminar la&nbsp; <label *ngIf="eliminar.catoSub==1||eliminar.catoSub==3">categoría</label>
+        <label *ngIf="eliminar.catoSub==2||eliminar.catoSub==4">subcategoría</label>?
+      </div>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminar()" class="crud__button button-blue ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

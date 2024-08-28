@@ -1,0 +1,894 @@
+@import 'ngx-toastr/toastr';
+
+:root {
+    --color-primario: #00903B;
+    --color-secundario: #037D67;
+    --color-title-primario: #172318;
+    --color-text-secundario: #274234;
+    --mdc-filled-button-container-color: #00903B !important;
+    --mat-form-field-container-text-size: 1rem;
+}
+
+/************************************************/
+/*----------------- Fonts -------------------- */
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Thin.woff2') format('woff2');
+    font-weight: 100;
+    /* Thin */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    /* Extra Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Light.woff2') format('woff2');
+    font-weight: 300;
+    /* Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Regular.woff2') format('woff2');
+    font-weight: 400;
+    /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/PlutoRegular-Italic.woff2') format('woff2');
+    font-weight: 400;
+    /* Italic */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Medium.woff2') format('woff2');
+    font-weight: 500;
+    /* Medium */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Bold.woff2') format('woff2');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto';
+    src: url('assets/fonts/Pluto-Black.woff2') format('woff2');
+    font-weight: 900;
+    /* Black */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Thin.woff2') format('woff2');
+    font-weight: 100;
+    /* Thin */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    /* Extra Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Light.woff2') format('woff2');
+    font-weight: 300;
+    /* Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Regular.woff2') format('woff2');
+    font-weight: 400;
+    /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCondRegular-Italic.woff2') format('woff2');
+    font-weight: 400;
+    /* Italic */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Medium.woff2') format('woff2');
+    font-weight: 500;
+    /* Medium */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Bold.woff2') format('woff2');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCond-Black.woff2') format('woff2');
+    font-weight: 900;
+    /* Black */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Cond';
+    src: url('assets/fonts/PlutoCondLight-Italic.woff2') format('woff2');
+    font-weight: 300;
+    /* Light Italic */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Thin.woff2') format('woff2');
+    font-weight: 100;
+    /* Thin */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    /* Extra Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Light.woff2') format('woff2');
+    font-weight: 300;
+    /* Light */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Regular.woff2') format('woff2');
+    font-weight: 400;
+    /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Medium.woff2') format('woff2');
+    font-weight: 500;
+    /* Medium */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Heavy.woff2') format('woff2');
+    font-weight: 800;
+    /* Heavy */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pluto Sans';
+    src: url('assets/fonts/PlutoSans-Black.woff2') format('woff2');
+    font-weight: 900;
+    /* Black */
+    font-style: normal;
+}
+
+/************************************************/
+/*----------------- General-------------------- */
+* {
+    font-family: "Pluto Cond", sans-serif !important;
+}
+
+.material-icons {
+    font-family: 'Material Icons' !important;
+}
+
+.fs-10 {
+    font-size: 10px !important;
+}
+
+.fs-11 {
+    font-size: 11px !important;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+
+.fs-13 {
+    font-size: 13px !important;
+}
+
+.fs-14 {
+    font-size: 14px !important;
+}
+
+.fs-15 {
+    font-size: 15px !important;
+}
+
+.fs-16 {
+    font-size: 16px !important;
+}
+
+.fs-17 {
+    font-size: 17px !important;
+}
+
+.fs-18 {
+    font-size: 18px !important;
+}
+
+.fs-19 {
+    font-size: 19px !important;
+}
+
+.fs-20 {
+    font-size: 20px !important;
+}
+
+.fs-22 {
+    font-size: 22px !important;
+}
+
+.fs-23 {
+    font-size: 23px !important;
+}
+
+.fs-25 {
+    font-size: 25px !important;
+}
+
+.fs-30 {
+    font-size: 30px !important;
+}
+
+.fs-32 {
+    font-size: 32px !important;
+}
+
+.fw-100 {
+    font-weight: 100 !important;
+}
+
+.fw-300 {
+    font-weight: 200 !important;
+}
+
+.fw-400 {
+    font-weight: 400 !important;
+}
+
+.fw-500 {
+    font-weight: 500 !important;
+}
+
+.fw-600 {
+    font-weight: 600 !important;
+}
+
+.fw-700 {
+    font-weight: 700 !important;
+}
+
+.fw-800 {
+    font-weight: 800 !important;
+}
+
+.fw-900 {
+    font-weight: 900 !important;
+}
+
+.mr-8 {
+    margin-right: 8px !important;
+}
+
+.fc-black {
+    color: #1a1b1f;
+}
+
+.fc-green {
+    color: #00903B;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.pluto_normal {
+    font-family: "Pluto", sans-serif !important;
+}
+
+.pluto_cond {
+    font-family: "Pluto Cond", sans-serif !important;
+}
+
+.truncated-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 30vw;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+mat-form-field,
+mat-select,
+mat-option {
+    font-weight: 300 !important;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label.mdc-floating-label {
+    font-weight: 300;
+}
+
+.dash_title {
+    margin-top: 52px;
+    /* font-weight: 600; */
+    font-family: 'Pluto' !important;
+}
+
+.dash_subtitle {
+    font-size: 20px;
+    font-weight: 500;
+    color: #00903B;
+}
+
+.sombra {
+    box-shadow: 0px 0px 16px 5px rgba(112, 112, 112, 0.15) !important;
+}
+
+.grecaptcha-badge {
+    /*  visibility: hidden; */
+    z-index: 99;
+}
+
+/************************************************/
+/*--------------------- Botones --------------- */
+.button-defect {
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+}
+
+.button_add {
+    border-radius: 10px !important;
+}
+
+.close-button {
+    position: absolute !important;
+    top: 15px;
+    right: 12px;
+}
+
+.mdc-button {
+    height: 40px !important;
+}
+
+.mdc-button__label {
+    font-weight: 400;
+}
+
+.button_add mat-icon {
+    font-size: inherit !important;
+    height: 22px !important;
+    width: 21px !important;
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+    border-color: inherit !important;
+    background-color: white;
+}
+
+.mdc-button__label {
+    font-family: 'Pluto Cond';
+    font-weight: 400;
+}
+
+/************************************************/
+/*--------------------- Modales --------------- */
+
+.mat-mdc-dialog-content {
+    font-weight: 400 !important;
+    font-size: 13px !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title+.mat-mdc-dialog-content {
+    max-height: 100%;
+}
+
+.mat-mdc-dialog-title,
+.mdc-tab__text-label,
+.mat-mdc-header-cell,
+/* .mdc-button__label, */
+.mat-mdc-dialog-content p {
+    font-family: "Pluto" !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+    font-size: 14px !important;
+}
+
+.mat-mdc-dialog-content.form_sm .mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above {
+    color: #283041 !important;
+    top: 17px !important;
+}
+
+.mdc-dialog__container label {
+    /* color: #283041; */
+    color: #1a1b1f;
+}
+
+.mat-mdc-dialog-content {
+    overflow-y: hidden !important;
+}
+
+.cdk-global-overlay-wrapper {
+    overflow-y: scroll;
+}
+
+.cdk-global-overlay-wrapper::-webkit-scrollbar {
+    width: 0px;
+}
+
+.cdk-global-overlay-wrapper {
+    scrollbar-width: none;
+}
+
+
+/************************************************/
+/*--------------------- Inputs --------------- */
+
+.mdc-text-field--outlined.mdc-text-field--disabled .mdc-text-field__input {
+    color: #283041;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+
+.mdc-text-field--outlined.mdc-text-field--disabled .mdc-text-field__input {
+    color: #283041 !important;
+}
+
+.mdc-text-field--outlined.mdc-text-field--disabled .mdc-floating-label {
+    color: #283041 !important;
+}
+
+.form_sm .mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-text-field__input {
+    font-size: 14px;
+
+}
+
+.form_sm .mat-mdc-form-field-icon-suffix {
+    margin-right: 0 !important;
+}
+
+.mat-mdc-form-field-icon-suffix {
+    margin-right: 7px;
+}
+
+.mat-mdc-text-field-wrapper {
+    background-color: white !important;
+}
+
+.form_xs .mat-mdc-form-field-subscript-wrapper {
+    line-height: 0 !important;
+    height: 0 !important;
+}
+
+.form_xs .mat-mdc-select-value-text {
+    font-size: 14px;
+}
+
+.form_xs .mat-mdc-form-field .mat-mdc-floating-label.mdc-floating-label {
+    font-size: 14px;
+}
+
+.invalid .mdc-notched-outline>* {
+    border-color: #f44336 !important;
+}
+
+.invalid .mat-mdc-select-arrow {
+    color: #f44336 !important;
+}
+
+/* ------------ Inputs de los modales ------------*/
+.form_sm.form_modal .mat-mdc-form-field {
+    width: 100%;
+}
+
+.form_sm.form_modal .mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-text-field__input {
+    margin-top: 2px;
+}
+
+mat-paginator .mdc-text-field--outlined .mat-mdc-form-field-infix,
+mat-paginator .mdc-text-field--no-label .mat-mdc-form-field-infix {
+    padding-top: 5px !important;
+    padding-bottom: 0 !important;
+}
+
+.dialog-container .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+}
+
+.dialog-container .mat-primary.mat-mdc-form-field {
+    width: 100%;
+}
+
+.form_sm.form_modal .mat-mdc-form-field-infix {
+    padding-top: 8px !important;
+}
+
+.form_sm.form_modal .mat-mdc-form-field .mdc-notched-outline:not(.mdc-notched-outline--notched) .mat-mdc-floating-label.mdc-floating-label {
+    top: 18px;
+}
+
+.remove_wrapper .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+/* ---------- Modal detalle ----------- */
+
+.modal_detalle mat-dialog-container .mat-mdc-dialog-surface {
+    background: #F9FBFD !important;
+}
+
+.modal_detalle mat-dialog-container .mat-mdc-text-field-wrapper {
+    background: white;
+}
+
+.form_modal mat-checkbox .mdc-form-field>label {
+    margin-top: 2.3px;
+}
+
+.form_modal mat-radio-button .mdc-form-field>label {
+    margin-top: 2.5px;
+}
+
+.form_sm.form_modal .mat-mdc-form-field .mdc-notched-outline:not(.mdc-notched-outline--notched) .mat-mdc-floating-label.mdc-floating-label {
+    top: 20px;
+}
+
+@media (width >=768px) {
+    .modal_detalle {
+        width: 673px;
+        min-width: 673px !important;
+    }
+
+    .modal_actualizacion {
+        width: 400px;
+        min-width: 400px !important;
+    }
+
+    .modal_border:first-of-type {
+        border-right: 0.5px solid #00903B;
+    }
+
+    .modal_border:nth-of-type(2) {
+        border-left: 0.5px solid #00903B;
+    }
+}
+
+
+
+/************************************************/
+/*--------------------- Tablas --------------- */
+.mat-mdc-cell {
+    font-weight: 300;
+}
+
+.mat-mdc-cell {
+    font-size: 12px;
+}
+
+table .mdc-button__label {
+    font-size: 12px !important;
+}
+
+table .mat-mdc-button {
+    height: auto !important;
+    min-height: 32px !important;
+}
+
+.table_shadow {
+    box-shadow: 0px 5px 12px 5px rgba(168, 187, 255, 0.3);
+}
+
+/************************************************/
+/*--------------------- Calendar --------------- */
+
+mat-calendar .mat-mdc-icon-button {
+    width: 25px !important;
+    height: 25px !important;
+    padding: 20px !important;
+}
+
+/************************************************/
+/*--------------- Input File ------------------ */
+
+.file-input-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    width: 70%;
+    border-bottom: 1px solid #2F2F2F;
+}
+
+.file-input-container.invalid {
+    border-bottom: 1px solid #f44336;
+}
+
+.file-input-container .file-input-text {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.file-input-icon {
+    margin-left: auto;
+    order: 2;
+    color: #E3A220;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-input-container.disabled {
+    cursor: default;
+}
+
+.file-input-container.disabled .file-input-icon {
+    color: #A9A9A9;
+}
+
+.file-input-container.disabled .file-input {
+    cursor: default;
+}
+
+.spinner-border.dash__spinner--file {
+    position: absolute;
+    margin-top: -1px;
+    right: 30px;
+    width: 1rem;
+    height: 1rem;
+    color: #2E2E2E;
+
+}
+
+/* ------------- Input File de arrastre ------------------ */
+.solicitud_file--text {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 88%;
+    font-size: 12px;
+    display: list-item;
+    text-overflow: ellipsis;
+}
+
+.solicitud_file--loading {
+    background-image: none;
+    pointer-events: none;
+}
+
+.solicitud_file {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2.22px dashed var(--color-primario);
+    color: var(--color-primario) !important;
+    background-repeat: no-repeat;
+    background-position: 96% center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f2faf5;
+}
+
+.solicitud_file--archivo {
+    display: inline-block;
+    width: 330px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.solicitud_file--text {
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.solicitud_file.dragging {
+    background-color: white;
+}
+
+.solicitud_file.dragging .solicitud_file--text {
+    font-weight: 400;
+}
+
+.solicitud_file.dragging img {
+    filter: invert(43%) sepia(95%) saturate(2000%) hue-rotate(202deg) brightness(90%) contrast(88%);
+}
+
+/************************************************/
+/*----------------- Toogle ---------------- */
+mat-slide-toggle {
+    transform: scale(0.7) !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::after {
+    background: #7DBB5C !important;
+}
+
+.mdc-switch:enabled:active .mdc-switch__track::after {
+    background: #7DBB5C !important;
+}
+
+/************************************************/
+/*----------------- Paginación ---------------- */
+mat-paginator .mat-mdc-text-field-wrapper {
+    height: 34px !important;
+}
+
+.mat-mdc-select-arrow-wrapper {
+    margin-top: -3px;
+}
+
+.form_sm .mat-mdc-icon-button.mat-mdc-button-base {
+    margin-right: 5px;
+}
+
+/************************************************/
+/*------------------ Tabs ---------------------- */
+.dash_tab {
+    box-shadow: 0px 0px 32px 12px rgba(168, 187, 255, 0.2);
+}
+
+.mat-form-field-wrapper {
+    white-space: normal !important;
+}
+
+.mat-form-field-infix {
+    white-space: normal !important;
+}
+
+.mat-mdc-tab-body-content,
+.mat-mdc-tab-label-container {
+    background: white;
+}
+
+.mat-mdc-tab-body-content {
+    height: 100%;
+    padding: 2rem;
+    overflow: auto;
+}
+
+/************************************************/
+/*------ Efecto de vibración de formulario----- */
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-4px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+.shake-animation {
+    animation: shake 0.8s ease-in-out;
+}
+
+/************************************************/
+/*--------------- Media Queries----------------- */
+
+/*-------------- Modo Escritorio --------------*/
+@media (width >=768px) {
+    .w_date {
+        width: 200px;
+    }
+
+    .w_parametro {
+        width: 250px;
+    }
+
+    .w_organizacion {
+        width: 310px;
+    }
+
+    .w_anio {
+        width: 120px;
+    }
+
+    .w_actividad_eco {
+        width: 350px;
+
+    }
+}
+
+
+/*-------------- Modo Móvil --------------*/
+
+@media (width <=1135px) {
+    .dash_title {
+        margin-top: 10px;
+
+    }
+
+    .dash_subtitle {
+        font-size: 18px;
+        line-height: 24px;
+    }
+}

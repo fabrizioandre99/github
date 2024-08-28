@@ -1,0 +1,123 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex align-items-center">
+        <h2>Bandeja de periodos de cálculo</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 250px">
+        <div class=" spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loadingTable">
+        <div class="row mt-2 align-items-center">
+          <!--   <div class="row"> -->
+          <div class="col-lg-3">
+            <div class="form-group">
+              <input type="text" [(ngModel)]="model.nAnio" name="modelA.nAnio" maxlength="50"
+                class="form-control buscar" placeholder="Buscar por año">
+            </div>
+          </div>
+          <div class="col-lg-4 ms-auto d-flex justify-content-end mt-2 mt-lg-0 "><button type="button"
+              (click)="openModalRegistrar()" class="btn btn-success verde">
+              Registrar nuevo periodo</button>
+          </div>
+          <!--  </div> -->
+        </div>
+        <br>
+        <div *ngIf="(lstPeriodo | Busqueda: model).length > 0">
+          <div class="table-responsive align-middle">
+            <table class="table ">
+              <thead>
+                <tr class="align-middle">
+                  <th scope="col">Item</th>
+                  <th scope="col">Año</th>
+                  <th scope="col">Fecha inicio</th>
+                  <th scope="col">Fecha de fin</th>
+                  <th scope="col">Estado actual</th>
+                  <th scope="col">Ver/Editar</th>
+                  <th scope="col">Datos de actividad</th>
+                  <th scope="col">Reporte GEI</th>
+                  <th scope="col">Acción a tomar</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of lstPeriodo | Busqueda: model; index as i">
+                <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                  <th scope="row">{{ i + 1 }}</th>
+                  <td>{{item.nAnio}}</td>
+                  <td>{{item.sFechaInicio}}</td>
+                  <td>{{item.sFechaFin}} </td>
+                  <td>
+                    <label class="align-items-center d-flex justify-content-center">{{item.sEstadoActual}} <img
+                        *ngIf="item.nEstadoActual==2" src="assets/images/info.svg" height="15" class="pointer"
+                        style="margin-left: 5px;margin-top: -2px;" placement="top"
+                        ngbTooltip="Si el registro ha sido observado, puede ver las observaciones remitidas en la pestaña Notificaciones." /></label>
+                  </td>
+                  <td>
+                    <img *ngIf="item.nEstadoActual==1 || item.nEstadoActual==3" class="pointer"
+                      src="assets/images/ver.svg" height="20" (click)="openModalVer(item)" />
+                    <img *ngIf="item.nEstadoActual==0 || item.nEstadoActual==2" src="assets/images/lapiz.svg"
+                      height="20" (click)="openModalEditar(item)" class="pointer" />
+                  </td>
+                  <td><img (click)="redictDatosActividad(item)" class="pointer" src="assets/images/tabla.svg"
+                      height="20" placement="bottom" ngbTooltip="Ir a datos de actividad" />
+                  </td>
+                  <td>
+                    <a class="descarga pointer" (click)="fnDescargarReporteGei(item)">
+                      {{item.sNombreReporteGEI}}</a>
+                  </td>
+                  <td>
+                    <button (click)="openModalConfirm(contentObservar)" class="btn btn-success verde"
+                      [hidden]="item.nEstadoActual!=0 && item.nEstadoActual!=2">
+                      Finalizar registro </button>
+                  </td>
+                </tr>
+                <ng-template #contentObservar let-modalObservar>
+                  <div class="modal-body">
+                    <h5>Confirmación</h5>
+                    <label>Al finalizar el registro, está confirmando que ha
+                      completado los datos de actividad para el periodo
+                      de cálculo <label style="font-weight:500">
+                        {{item.nAnio}}
+                      </label>.<br>
+                      ¿Está seguro de finalizar el registro?</label>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn button-modal btn-success blanco"
+                      (click)="modalObservar.dismiss()">Cancelar</button>
+                    <button type="button" [disabled]="loading" (click)="fnFinalizarRegistro(item)"
+                      class="btn button-modal btn-success verdemodal">
+                      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Aceptar</button>
+                  </div>
+                </ng-template>
+              </tbody>
+            </table>
+          </div>
+          <br>
+          <div class="d-flex justify-content-center">
+            <ngb-pagination class="pagination-md" [collectionSize]="(lstPeriodo | Busqueda: model).length"
+              [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+              <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+              <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+            </ngb-pagination>
+            <ngb-pagination class="pagination-sm" [collectionSize]="(lstPeriodo | Busqueda: model).length"
+              [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+              <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+              <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+            </ngb-pagination>
+          </div>
+        </div>
+        <div class="text-center mt-5 mb-5" *ngIf="(lstPeriodo| Busqueda: model).length <= 0 && model.nAnio!==undefined">
+          <h5>No hay resultados para "{{model.nAnio}}". </h5>
+        </div>
+        <div class="text-center mt-5 mb-5" *ngIf="(lstPeriodo| Busqueda: model).length <= 0 && model.nAnio==undefined">
+          <h5>No existen resultados. </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

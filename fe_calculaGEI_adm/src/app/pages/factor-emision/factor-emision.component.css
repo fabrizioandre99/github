@@ -1,0 +1,92 @@
+.icon-tacho {
+  filter: invert(100%);
+}
+
+.crud__dowloand {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  align-items: center;
+  display: flex;
+  color: #0075C9;
+}
+
+.form-file label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tabla */
+.table__header th:first-child {
+  width: 29%;
+}
+
+.table__header th:nth-child(2) {
+  width: 14%;
+}
+
+.table__header th:nth-child(3) {
+  width: 14%;
+}
+
+.table__header th:nth-child(4) {
+  width: 14%;
+}
+
+.table__header th:nth-child(5) {
+  width: 14%;
+}
+
+.table__header th:nth-child(6) {
+  width: 9%;
+}
+
+.table__header th:nth-child(7) {
+  width: 9%;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .table__buttons {
+    width: 58px;
+  }
+}
+
+@media (min-width: 991.98px) {
+  .col-md-4:first-of-type {
+    width: 480px;
+  }
+}
+
+@media (min-width: 760px) {
+  .crud__card--file {
+    width: 570px;
+  }
+}

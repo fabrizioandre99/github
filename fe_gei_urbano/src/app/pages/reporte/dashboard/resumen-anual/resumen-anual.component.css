@@ -1,0 +1,46 @@
+.crud__title,
+.crud__subtitle {
+  font-family: 'Value Serif Pro';
+  font-size: 24px;
+  color: #2E54B2;
+}
+
+.crud__title {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .crud__title {
+      line-height: 26px;
+    }
+}
+
+.crud__title--totalLoc {
+  font-size: 17px;
+  color: #0187E0
+}
+
+.crud__title--chart {
+  font-size: 22px;
+}
+
+.button-defect,
+.close-modal {
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+
+.d-none {
+  display: none !important;
+}
+
+@media (min-width: 1430px) {
+  .col-lg-1.col_nombreSelect {
+    width: 6%;
+  }
+}

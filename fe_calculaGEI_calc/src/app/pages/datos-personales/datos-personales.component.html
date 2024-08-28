@@ -1,0 +1,71 @@
+<form [formGroup]="personalForm" (ngSubmit)="onSubmit()">
+  <img class="arrow-float" src="assets/images/arrow-left.svg" (click)="retornar()" />
+  <img class="arrow-sm-float" src="assets/images/arrow-left-sm.svg" (click)="retornar()" height="30" />
+  <div class="float-lg-end mt-3 me-lg-1">
+    <img src="assets/images/celepsa.png" class="celepsa-image" />
+  </div>
+  <div class="body pb">
+    <div class="header">
+      <h2 class="text-center">Completa tus datos de contacto</h2>
+      <app-barra-lateral></app-barra-lateral>
+    </div>
+    <div class="content card-form pt-5 px-md-5 pb-lg-5">
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input class="form-control" formControlName="nomb_apell_contacto" maxlength="250"
+          onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)"
+          [(ngModel)]="personales.nomb_apell_contacto" placeholder="Nombre y Apellido"
+          [ngClass]="{ 'is-invalid': submitted && f.nomb_apell_contacto.errors }">
+        <div *ngIf="submitted && f.nomb_apell_contacto.errors">
+          <div class="warning-label" *ngIf="f.nomb_apell_contacto.errors.required">
+            Por favor ingresa su nombre.
+          </div>
+          <div class="warning-label" *ngIf="f.nomb_apell_contacto.errors.pattern">
+            Por favor ingrese un nombre válido.
+          </div>
+          <div class="warning-label" *ngIf="f.nomb_apell_contacto.errors.maxlength">
+            El nombre ingresado es demasiado largo.
+          </div>
+        </div>
+      </div>
+      <div class="form-group mt-3">
+        <label>Área a la que perteneces</label>
+        <input class="form-control" formControlName="area_contacto" maxlength="200"
+          onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" [(ngModel)]="personales.area_contacto"
+          placeholder="Área" [ngClass]="{ 'is-invalid': submitted && f.area_contacto.errors }">
+        <div *ngIf="submitted && f.area_contacto.errors">
+          <div class="warning-label" *ngIf="f.area_contacto.errors.required">
+            Por favor ingresa su área.
+          </div>
+          <div class="warning-label" *ngIf="f.area_contacto.errors.pattern">
+            Por favor ingrese un nombre de área válido.
+          </div>
+          <div class="warning-label" *ngIf="f.area_contacto.errors.maxlength">
+            El área ingresada es demasiado largo.
+          </div>
+        </div>
+      </div>
+      <div class="form-group mt-3">
+        <label>Correo electrónico</label>
+        <input type="email" class="form-control" formControlName="correo_contacto" maxlength="150"
+          [(ngModel)]="personales.correo_contacto" placeholder="correo@empresa.com"
+          [ngClass]="{ 'is-invalid': submitted && f.correo_contacto.errors }">
+        <div *ngIf="submitted && f.correo_contacto.errors">
+          <div class=" warning-label" *ngIf="f.correo_contacto.errors.required">
+            Por favor ingrese su correo electrónico.
+          </div>
+          <div class="warning-label" *ngIf="f.correo_contacto.errors.pattern">
+            Por favor ingrese un correo electrónico válido.
+          </div>
+          <div class="warning-label" *ngIf="f.correo_contacto.errors.maxlength">
+            El correo ingresado es demasiado largo.
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-lg-5" style="margin-top: auto;">
+        <button class="button-celepsa btn-form button-blue">Continuar</button>
+      </div>
+    </div>
+    <label class="footer">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+  </div>
+</form>

@@ -1,0 +1,153 @@
+label {
+  color: white;
+}
+
+.text-2 {
+  display: none;
+}
+
+.text-2-display {
+  display: unset;
+}
+
+.bar-body {
+  margin-top: 7rem;
+}
+
+.borde {
+  margin-left: 46px;
+  border-left: 1px solid #D9D9D9;
+  height: 90px;
+
+}
+
+.circulo {
+  margin-left: 24px;
+  color: #007EC5;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #D9D9D9;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 46px;
+}
+
+.circulo-select {
+  margin-left: 16px;
+  line-height: 50px;
+  width: 63px;
+  height: 63px;
+  border-radius: 50%;
+  background-color: white;
+  border: 7px solid #0D3154;
+  box-shadow: 0 0 0 3px white;
+  color: #0D3154;
+  font-weight: 600;
+  font-size: 32px;
+  text-align: center;
+}
+
+.circulo-check {
+  font-size: 0;
+  width: 44px;
+  height: 44px;
+  margin-left: 24px;
+  border-radius: 50%;
+  background-color: white;
+  background-image: url(src/assets/images/icon-check.svg) !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+
+}
+
+.number {
+  color: #007EC5;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 62px;
+}
+
+.number-select {
+  color: #0D3154;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 44px;
+}
+
+.text-select {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.capa {
+  border-radius: 60px 0 0 60px;
+  background: #0D3154;
+  width: 369px;
+  height: 95px;
+  font-size: 24px;
+
+}
+
+.circulo-sm {
+  height: 12px;
+  width: 12px;
+  background-color: #00AEE6;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.circulo-sm-select {
+  height: 12px;
+  width: 12px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+
+.borde-sm {
+  border-top: 1px solid #D9D9D9;
+  width: 37px;
+}
+
+
+.bar-sm {
+  display: none;
+}
+
+.bar-sm {
+  display: none !important;
+}
+
+.arrow-sm {
+  display: none;
+}
+
+@media (max-width: 1227px) {
+  .capa {
+    width: 325px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .arrow-sm {
+    display: unset;
+  }
+
+  .arrow-sm {
+    position: absolute;
+    left: 3px;
+    top: 1px;
+  }
+
+  .bar-sm {
+    display: flex !important;
+  }
+
+  .bar {
+    display: none;
+  }
+
+}

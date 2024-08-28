@@ -1,0 +1,19 @@
+.alert {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.alert_body {
+    width: 4rem;
+    background-color: #dc2626;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+mat-icon {
+    color: white;
+}
+
+.flex-fill {
+    background-color: white;
+}

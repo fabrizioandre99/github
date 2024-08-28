@@ -1,0 +1,53 @@
+<form class="form-signin needs-validation" (ngSubmit)="fnRecuperarContrasena(contrasenaForm,contentGuardar)"
+  #contrasenaForm="ngForm" novalidate>
+  <div class="container contenedor-padding">
+    <div class="d-lg-flex align-items-center">
+      <app-alert class="ms-auto alto"></app-alert>
+    </div>
+    <div class="row card-margin">
+      <div class="col-md-6">
+        <h5>Olvidé mi contraseña</h5>
+        <div class="card">
+          <div class="card-body">
+            <p class="card-text mb-5">
+              Si es una municipalidad y olvidó su contraseña, no se preocupe nosotros le ayudaremos.</p>
+            <label class="form-label bold">Ingrese su usuario (DNI) para continuar:</label>
+            <input [(ngModel)]="codigo" #sCodigo="ngModel" class="form-control" required
+              [ngClass]="{ 'is-invalid': sCodigo.invalid && contrasenaForm.submitted}" name="sCodigo" id="sUsuario"
+              maxlength="8">
+            <div *ngIf="sCodigo.invalid && contrasenaForm.submitted">
+              <small [hidden]="!sCodigo.errors?.['required']" class="text-danger">
+                El nombre de usuario es requerido
+              </small>
+            </div>
+            <div class="float-right mt-5">
+              <div class="col  d-flex justify-content-end align-items-end ">
+                <button type="button" [disabled]="loading"
+                  class="btn btn-success blanco align-items-center button-contrasena" routerLink="">
+                  <img src="assets/images/arrow-left.svg" height="20" />
+                  <span class="ms-2"> Volver</span>
+                </button>
+                <button [disabled]="loading" class=" btn btn-success ms-3 verde button-contrasena" type="submit">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 d-flex justify-content-center imagen-lapiz-margin">
+        <img src="assets/images/img-contrasena.png" class="imagen-lapiz" />
+      </div>
+    </div>
+  </div>
+</form>
+<ng-template #contentGuardar let-modalGuardar>
+  <div class="modal-body text-center mt-3 mb-4">
+    <h5 class="title-modal">Notificación enviada</h5> <br>
+    <label class="modal-text">Se le ha enviado un mail y un<br>
+      código de validación al correo registrado.</label>
+    <button type="button" class="btn mt-5 btn-success verde modal-button" routerLink="/codigo-confirmacion"
+      (click)="modalGuardar.dismiss()">Entendido</button>
+  </div>
+</ng-template>

@@ -1,0 +1,115 @@
+<div class="row m-0 login_container">
+    <!-- <div class="wrapper">
+        <div class="login_background_version">
+            Versión: 22.07.2024
+        </div>
+    </div>-->
+    <div class="d-none d-md-block col-xl-7 d-flex align-items-center">
+    </div>
+    <div class="col-xl-5 align-items-center d-flex justify-content-center"
+        style="background: rgba(154, 179, 193, 0.24);  min-height: 100vh;">
+        <div class=" p-sm-5 mx-md-4">
+            <mat-card [class.shake-animation]="shake">
+                <!-- <h2 class="dash_header__login text-center">HUELLA DE CARBONO<br> HONDURAS</h2>
+ -->
+                <div class="dash_header__title ms-1">
+                    <label class="dash_header__title--top">Huella de Carbono</label>
+                    <label class="dash_header__title--bottom">HONDURAS</label>
+                </div>
+                <h2 class="login_title pluto_normal mt-4">Iniciar sesión</h2>
+
+                <!-- Alerta -->
+                <app-alert *ngIf=" errorLogin" class="mt-2 mb-2" [msgError]="msgError"></app-alert>
+
+                <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+                    <mat-form-field appearance="outline" class="mt-3">
+                        <mat-label>Usuario</mat-label>
+                        <input matInput placeholder="Ingrese su usuario" maxlength="30" formControlName="usuario"
+                            required>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" placeholder="Ingrese su contraseña"
+                            maxlength="20" formControlName="contrasena" required>
+                        <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+
+                    <div class="d-flex flex-column justify-content-end">
+                        <a class="forgot-password mb-3 text-end" (click)="olvideContrasena()">¡Olvidé mi
+                            contraseña!</a>
+                        <button [disabled]="loadingForm" mat-flat-button color="primary" type="submit"
+                            (dblclick)="checkFormValidation()">
+                            <mat-icon *ngIf="loadingForm"><mat-spinner color="primary" diameter="16">
+                                </mat-spinner></mat-icon>Ingresar</button>
+                        <button mat-stroked-button color="primary" class="me-2 mt-2" type="button"
+                            (click)="redictSolicitud()">
+                            Solicitud de participación
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center mt-4">
+                        <img src="assets/images/logo_serna.png" style="height: 85px; width: auto;">
+                        <img src="assets/images/logo_secretaria.png" class="ps-3" style="height: 85px; width: auto;">
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center mt-3">
+                        <div style="width:80%;" class="login_apoyo">
+                            Con el apoyo financiero de:
+                            <img src="assets/images/logo_aecid.png" style="width:100%;margin-top: 2px;">
+                        </div>
+
+                        <img src="assets/images/logo_pnud_recortado.png" class="ps-4"
+                            style="height: 55px; width: auto; margin-top: 13px;">
+                    </div>
+                </form>
+                <label class="login_card_version">Versión: 24.07.2024.01</label>
+            </mat-card>
+
+        </div>
+    </div>
+
+</div>
+<!-- Modal de Solicitud enviada -->
+<ng-template #modalOlvideContrasena>
+    <form [formGroup]="modalForm" (ngSubmit)="verificarUsuario()">
+        <div class="dialog-container d-flex flex-column align-items-center text-center">
+            <h2 mat-dialog-title class="fw-500 pluto_normal">Olvidé mi contraseña</h2>
+            <mat-dialog-content class="mat-typography">
+
+                <label class="text-start">Ingrese su nombre de usuario para que el sistema valide su cuenta.</label>
+
+                <mat-form-field appearance="outline" class="mt-3">
+                    <mat-label>Usuario</mat-label>
+                    <input matInput placeholder="Ingrese su usuario" type="text" maxlength="30" minlength="3"
+                        formControlName="usuario" required
+                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9. ]/g, '');">
+
+                </mat-form-field>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+                <button [disabled]="loadingModal" mat-flat-button type="submit" color="primary">
+                    <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16">
+                        </mat-spinner></mat-icon>Enviar</button>
+            </mat-dialog-actions>
+        </div>
+
+    </form>
+
+</ng-template>
+
+
+<!-- Modal error 21 -->
+<ng-template #modalAlerta>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">¡Alerta!</h2>
+        <mat-dialog-content class="mat-typography">
+            El usuario ha sido bloqueado por límites de intentos. Recupere su contraseña en ¡Olvidé mi contraseña!
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-flat-button type="submit" color="primary" (click)="aceptarAlerta()">Aceptar</button>
+        </mat-dialog-actions>
+    </div>
+</ng-template>

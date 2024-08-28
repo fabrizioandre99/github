@@ -1,0 +1,266 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Acciones de mitigación</h3>
+    <label class="dash_subtitle">Cargar el informe del plan de mitigación de su organización y registrar las medidas de
+        mitigación</label>
+
+    <div class="col-lg-7">
+        <mat-card appearance="outlined" class="mt-3 mb-3 border">
+            <mat-card-header>
+                <mat-card-title>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5>Informe del plan de mitigación</h5>
+                        <button mat-icon-button type="button" matTooltip="Editar" style="color: #60929e"
+                            (click)="toggleEdit()">
+                            <mat-icon *ngIf="!editMode" svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            <mat-icon *ngIf="editMode">close</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div *ngIf="editMode" class="mt-2 d-flex align-self-end">
+                    <div class="file-input-container"
+                        [ngClass]="{'invalid': touched && !file.selectedFile, 'disabled': loadingFile}">
+                        <span class="file-input-text fs-14 fw-400">
+                            {{ this.file.selectedFileName || 'Seleccionar archivo' }}</span>
+                        <mat-icon class="file-input-icon" svgIcon="ph-duotone:folder-open"></mat-icon>
+                        <input [disabled]="loadingFile" type="file" class="file-input" accept=".pdf"
+                            (change)="onFileSelected($event)">
+                        <div *ngIf="loadingFile" class="spinner-border  spinner-border-sm dash__spinner--file"
+                            role="status">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="table-responsive mt-3 table_plan">
+                    <table mat-table [dataSource]="lstArchivosMitigacion"
+                        class="mat-elevation-z8 shadow-sm border rounded table_plan">
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                            <td mat-cell *matCellDef="let item">
+
+                                <a class="text-primary text-decoration-underline pointer"
+                                    (click)="fnDescargaArchivo(item)">
+                                    {{ item.oDocumento.sNombre }}
+                                </a>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                            <td mat-cell *matCellDef="let item" class="text-center">
+                                <button [disabled]="item.loading" mat-icon-button type="button" matTooltip="Eliminar"
+                                    (click)="fnEliminarPlan(item)" style="color: #822195">
+                                    <mat-icon svgIcon="ph-duotone:trash"></mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="['nombre', 'acciones']"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['nombre', 'acciones'];"></tr>
+                    </table>
+                    <div class="dash_noData text-center py-4 fs-18" *ngIf="lstArchivosMitigacion.length === 0">
+                        <p>No hay resultados</p>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div class="col-lg-9">
+        <mat-card appearance="outlined" class="mt-3 mb-3 border">
+            <mat-card-content>
+                <h5>Reducción total de GEI al {{ anioMayor }}</h5>
+                <div class="table-responsive ">
+                    <table mat-table [dataSource]="tReduccion" multiTemplateDataRows
+                        class="mat-elevation-z8 shadow-sm border rounded border-bottom-0">
+                        <ng-container matColumnDef="nAnio">
+                            <th mat-header-cell *matHeaderCellDef class="text-center"> Año </th>
+                            <td mat-cell *matCellDef="let item" class="text-center"
+                                [ngClass]="{'selected-row': item === expandedElement}">
+                                {{ item.nAnio }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="bdReduccion">
+                            <th mat-header-cell *matHeaderCellDef class="text-center"> Reducción total <br>
+                                [tCO<sub>2</sub>e]
+                            </th>
+                            <td mat-cell *matCellDef="let item" class="text-center"
+                                [ngClass]="{'selected-row': item === expandedElement}">
+                                {{ item.bdReduccion }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef class="text-center"> Medidas mitigación </th>
+                            <td mat-cell *matCellDef="let item" class="text-center"
+                                [ngClass]="{'selected-row': item === expandedElement}">
+                                <button *ngIf="!isExpanded(item)" mat-icon-button type="button"
+                                    matTooltip="Ver medidas mitigación" style="color: #0d6efd"
+                                    (click)="toggleRow(item)">
+                                    <mat-icon svgIcon="ph-duotone:list-checks" *ngIf="!isExpanded(item)"></mat-icon>
+                                </button>
+                                <div *ngIf="isExpanded(item)">
+                                    <button mat-icon-button matTooltip="Registrar medidas mitigación" color="primary"
+                                        style="color: #0d6efd" type="button" (click)="openDialog()">
+                                        <mat-icon svgIcon="ph-duotone:list-plus"></mat-icon>
+                                    </button>
+                                </div>
+
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="expandedDetail">
+                            <td mat-cell *matCellDef="let element" [attr.colspan]="hPlan.length" class="border-0"
+                                [ngClass]="{'expanded-row': isExpanded(element)}">
+                                <div class="example-element-detail"
+                                    [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                                    <div class="table-responsive">
+                                        <table mat-table [dataSource]="element.liMedidasMitigacion"
+                                            class="mat-elevation-z8 shadow-sm border rounded table_reduccionXAnio">
+                                            <ng-container matColumnDef="sector">
+                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Sector </th>
+                                                <td mat-cell *matCellDef="let item" class="text-center"> {{ item.sSector
+                                                    }}
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="descripcion">
+                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Medida de
+                                                    mitigación
+                                                </th>
+                                                <td mat-cell *matCellDef="let item" class="text-center"> {{
+                                                    item.sDescripcion }}
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="reduccion">
+                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Reducción
+                                                    total <br>
+                                                    [tCO<sub>2</sub>e] </th>
+                                                <td mat-cell *matCellDef="let item" class="text-center"> {{
+                                                    item.bdReduccion }}
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="acciones">
+                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones
+                                                </th>
+                                                <td mat-cell *matCellDef="let item" class="text-center">
+                                                    <button [disabled]="item.loading" mat-icon-button type="button"
+                                                        matTooltip="Editar" style="color: #60929e"
+                                                        (click)="editarMedida(item)">
+                                                        <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                                                    </button>
+                                                    <button mat-icon-button (click)="fnEliminarMedida(item)"
+                                                        type="button" matTooltip="Eliminar" [disabled]="item.loading"
+                                                        style="color: #822195">
+                                                        <mat-icon svgIcon="ph-duotone:trash"></mat-icon>
+                                                    </button>
+                                                </td>
+                                            </ng-container>
+                                            <tr mat-header-row *matHeaderRowDef="hReduccion"></tr>
+                                            <tr mat-row *matRowDef="let row; columns: hReduccion;"></tr>
+                                        </table>
+
+                                        <div class="dash_noData text-center py-4 fs-18"
+                                            *ngIf="element.liMedidasMitigacion.length === 0">
+                                            <p>No hay resultados</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="hPlan"></tr>
+                        <tr mat-row *matRowDef="let row; columns: hPlan;" class="example-element-row"
+                            [class.example-expanded-row]="isExpanded(row)"></tr>
+                        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"
+                            [ngClass]="{'expanded-row': isExpanded(row)}"></tr>
+                    </table>
+                    <div class="dash_noData text-center py-4 fs-18" *ngIf="tReduccion.data.length === 0">
+                        <p>No hay resultados</p>
+                    </div>
+                    <!--  <mat-paginator class="border border-top-0" [pageSizeOptions]="[5, 10, 20]"
+                        showFirstLastButtons></mat-paginator> -->
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+
+    </div>
+    <div class="mt-3 mt-md-0">
+        <button mat-stroked-button color="primary" type="button" class="button_add" (click)="redirectMisHc()">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Mis Huellas de carbono
+        </button>
+    </div>
+</div>
+
+<!-- Modal medida de mitigación -->
+<ng-template #modalMedidaMitigacion>
+    <form [formGroup]="medidaForm" (ngSubmit)="fnRegistrarMedida()">
+        <h2 mat-dialog-title class="fw-500 pluto_normal text-center">
+            <label *ngIf="!esEdit"> Agregar medida de mitigación</label>
+            <label *ngIf="esEdit"> Editar medida de mitigación</label>
+            <button mat-icon-button mat-dialog-close class="close-button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </h2>
+        <div mat-dialog-content>
+            <mat-form-field appearance="outline" class="w-100 mt-2">
+                <mat-label>Sector</mat-label>
+                <mat-select formControlName="sector">
+                    <mat-option *ngFor="let sector of lstSector" [value]="sector.sCodigo">{{ sector.sValor
+                        }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Descripción de la medida</mat-label>
+                <textarea oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');" matInput
+                    formControlName="descripcion" maxlength="250"></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Reducción total de la medida (tCO2e)</mat-label>
+                <input matInput type="text" inputmode="decimal"
+                    oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.match(/^\d{0,6}(\.\d{0,2})?$/) ? this.value : this.value.slice(0, -1)"
+                    formControlName="reduccion">
+
+                <mat-error *ngIf="medidaForm.controls['reduccion'].hasError('required')">
+                    El campo es obligatorio
+                </mat-error>
+                <mat-error *ngIf="medidaForm.controls['reduccion'].hasError('pattern')">
+                    Ingrese un máximo de 6 unidades y un máximo de 2 decimales
+                </mat-error>
+                <mat-error *ngIf="medidaForm.controls['reduccion'].hasError('min')">
+                    El valor debe ser mayor que 0
+                </mat-error>
+            </mat-form-field>
+
+
+
+        </div>
+        <mat-dialog-actions class="pt-0">
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="!medidaForm.valid || loadingModal">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+                <span *ngIf="!esEdit">Agregar</span>
+                <span *ngIf="esEdit">Actualizar</span>
+            </button>
+        </mat-dialog-actions>
+    </form>
+</ng-template>
+
+<!-- Modal eliminar -->
+<ng-template #modalDepurar>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>¿Está seguro de eliminar la medida de mitigación?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit" color="warn"
+                (click)="confirmEliminarMedida()">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary"
+                        diameter="16"></mat-spinner></mat-icon>Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>

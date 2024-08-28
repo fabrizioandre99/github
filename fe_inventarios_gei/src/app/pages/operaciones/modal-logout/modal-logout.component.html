@@ -1,0 +1,9 @@
+<div class="modal-body">
+  <h5>Cerrar sesión</h5>
+  <label>¿Está seguro de cerrar sesión?</label>
+</div>
+<div class="modal-footer b-0 pt-0">
+  <button type="button" class="btn button-modal btn-success blanco" (click)="closeModal()">Cancelar</button>
+  <button type="button" [disabled]="loading" class="btn button-modal btn-success verdemodal" (click)="logout()"><span
+      *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Aceptar</button>
+</div>

@@ -1,0 +1,17 @@
+/********************************************/
+/*----------------- Toogle ---------------- */
+mat-slide-toggle {
+    transform: scale(1) !important;
+}
+
+.mdc-switch {
+    transform: scale(0.8) !important;
+}
+
+/************************************************/
+/*-------------- Modo Escritorio --------------*/
+@media (width >=768px) {
+    .toggle_solicitud {
+        margin-top: 4px;
+    }
+}

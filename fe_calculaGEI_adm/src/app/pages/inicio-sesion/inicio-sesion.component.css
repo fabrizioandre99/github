@@ -1,0 +1,52 @@
+.login {
+  min-height: calc(100vh - 58.8px);
+}
+
+.bg-image {
+  background-image: url('src/assets/images/fondo-reserva-inicio-sesion.jpg');
+  background-size: cover;
+  background-position: center center;
+}
+
+.col-md-6 {
+  background-color: #EDF6FF;
+}
+
+.login__card {
+  background: #FEFDFB;
+  box-shadow: 0px 7px 14px 1px rgba(160, 187, 215, 0.6);
+  border-radius: 14px;
+  width: 458px;
+  padding: 38px 32px;
+  text-align: center;
+}
+
+.login__title {
+  font-weight: 600;
+  color: #3D3D3D;
+  margin-top: 10px;
+  font-size: calc(2rem + 1.5vw);
+}
+
+.login__subtitle {
+  font-weight: 600;
+  font-size: 35px;
+  color: #3D3D3D;
+  margin-top: -10px
+}
+
+.login__button {
+  border-radius: 12px;
+  height: 45px;
+  width: 100%;
+  margin-top: 14px;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+/* Modo escritorio */
+@media (min-width: 991.98px) {
+  .login__title {
+    font-size: 48px;
+  }
+}

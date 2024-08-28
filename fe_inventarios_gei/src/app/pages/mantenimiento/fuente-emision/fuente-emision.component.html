@@ -1,0 +1,267 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex align-items-center">
+        <h2>Fuentes de emisión</h2>
+        <app-alert class="ms-auto alto"></app-alert>
+      </div>
+      <br />
+      <div class="row">
+        <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 240px">
+          <div class=" spinner-border text-success" role="status">
+          </div>
+        </div>
+        <div *ngIf="!loadingTable" class="table-responsive">
+          <div class="table" style="font-size: 14px; display: table;">
+            <div class="table-header">
+              <div class="rows extra-bold">
+                <div class="cols first">Código</div>
+                <div class="cols second">Nombre de sector / subsector / fuente de emisión</div>
+                <div class="cols third">Descripción</div>
+                <div class="cols fourth">Alcance</div>
+                <div class="cols fifth">Editar</div>
+              </div>
+            </div>
+            <ng-container *ngFor="let first of lstSector; index as i">
+              <div class="rows extra-bold" style="background:#efefef;">
+                <div class="cols first">
+                  <div class="pointer arrow-down" (click)="isCollapsed[i] = !isCollapsed[i]"
+                    [ngClass]="isCollapsed[i] ? 'collapsed-active' : 'collapsed-inactive'"><i
+                      class="fa-solid fa-chevron-up"></i></div>
+                  <div class="number-center">{{first.sCodigoGPC}}</div>
+                </div>
+                <div class="cols second">
+                  <div *ngIf="!first.edit">
+                    {{first.sNombre}}
+                  </div>
+                  <div *ngIf="first.edit">
+                    <textarea maxlength="200" class="form-control form-control-sm w-fuente"
+                      name="textarea.first.sNombre" [ngModelOptions]=" {standalone: true}"
+                      [(ngModel)]="first.sNombre_mod"
+                      [ngClass]="{ 'is-invalid': !first.sNombre_mod || !regexOnlyLetters.test(first.sNombre_mod)}"
+                      [ngStyle]="{ 'height': first.sNombre_mod.length < 59 ? '31px' : (first.sNombre_mod.length < 118 ? '70px' : '124px') }">
+                    </textarea>
+                  </div>
+                </div>
+                <div class="cols third">
+                  <div *ngIf="!first.edit">
+                    {{first.sDescripcion}}
+                  </div>
+                  <div *ngIf="first.edit">
+                    <textarea maxlength="250" class="form-control form-control-sm w-fuente"
+                      [(ngModel)]="first.sDescripcion_mod" name="textarea.first.sDescripcion"
+                      [ngModelOptions]=" {standalone: true}"
+                      [ngStyle]="{ 'height': first.sDescripcion_mod.length < 59 ? '31px' : (first.sDescripcion_mod.length < 118 ? '70px' : '124px') }"></textarea>
+                  </div>
+                </div>
+                <div class="cols fourth"></div>
+                <div class="cols fifth">
+                  <div *ngIf="!first.edit">
+                    <img class="pointer" (click)="editarSector(first, 1)" src="assets/images/lapiz.svg" height="20" />
+                  </div>
+                  <div *ngIf="first.edit">
+                    <img class="pointer me-2" (click)="actualizarSector(first,1)" src="assets/images/save-black.svg"
+                      height="20" />
+                    <img class="pointer" (click)="first.edit=false" src="assets/images/save-white.svg" height="20" />
+                  </div>
+                </div>
+              </div>
+              <ng-container *ngFor="let second of first.subsectores;  index as b">
+                <div [ngbCollapse]="isCollapsed[i]" style="background: #f7f9fa">
+                  <div class="rows">
+                    <div class="cols first  extra-bold">
+                      <div [hidden]="second.fuentes?.length<1 && second.categorias?.length<1" class="pointer arrow-down"
+                        (click)="secondCollapsed(second)"
+                        [ngClass]="second.collapse  ? 'collapsed-inactive' : 'collapsed-active'">
+                        <i class="fa-solid fa-chevron-up"></i>
+                      </div>
+                      <div class="number-center">{{second.sCodigoGPC}}</div>
+                    </div>
+                    <div class="cols second extra-bold" style="padding-left: 20px;">
+                      <div *ngIf="!second.edit">
+                        {{second.sNombre}}
+                      </div>
+                      <div *ngIf="second.edit">
+                        <textarea maxlength="200" class="form-control form-control-sm w-fuente"
+                          name="textarea.second.sNombre" [ngModelOptions]=" {standalone: true}"
+                          [(ngModel)]="second.sNombre_mod"
+                          [ngClass]="{ 'is-invalid': !second.sNombre_mod || !regexOnlyLetters.test(second.sNombre_mod)}"
+                          [ngStyle]="{ 'height': second.sNombre_mod?.length < 59 ? '31px' : (second.sNombre_mod?.length < 118 ? '70px' : '124px') }">
+                        </textarea>
+                      </div>
+                    </div>
+                    <div class="cols third">
+                      <div *ngIf="!second.edit">
+                        {{second.sDescripcion}}
+                      </div>
+                      <div *ngIf="second.edit">
+                        <textarea maxlength="250" class="form-control form-control-sm w-fuente"
+                          [(ngModel)]="second.sDescripcion_mod" name="textarea.second.sDescripcion"
+                          [ngModelOptions]=" {standalone: true}"
+                          [ngStyle]="{ 'height': second.sDescripcion_mod?.length < 59 ? '31px' : (second.sDescripcion_mod?.length < 118 ? '70px' : '124px') }"></textarea>
+                      </div>
+                    </div>
+                    <div class="cols fourth"></div>
+                    <div class="cols fifth">
+                      <div *ngIf="!second.edit">
+                        <img class="pointer" (click)="editarSector(second, 2)" src="assets/images/lapiz.svg"
+                          height="20" />
+                      </div>
+                      <div *ngIf="second.edit">
+                        <img (click)="actualizarSector(second,2)" class="pointer me-2"
+                          src="assets/images/save-black.svg" height="20" />
+                        <img class="pointer" (click)="second.edit=false" src="assets/images/save-white.svg"
+                          height="20" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ng-container *ngFor="let third of second.fuentes; index as c">
+                  <div [ngbCollapse]="isCollapsed[i] || !second.collapse">
+                    <div class="rows">
+                      <div class="cols first extra-bold">{{third.sCodigoGPC}}</div>
+                      <div class="cols second extra-bold" style="padding-left: 25px;">
+                        <div *ngIf="!third.edit">
+                          {{third.sNombre}}
+                        </div>
+                        <div *ngIf="third.edit">
+                          <textarea maxlength="200" class="form-control form-control-sm w-fuente"
+                            name="textarea.third.sNombre" [ngModelOptions]=" {standalone: true}"
+                            [(ngModel)]="third.sNombre_mod"
+                            [ngClass]="{ 'is-invalid': !third.sNombre_mod || !regexOnlyLetters.test(third.sNombre_mod)}"
+                            [ngStyle]="{ 'height': third.sNombre_mod?.length < 59 ? '31px' : (third.sNombre_mod?.length < 118 ? '70px' : '124px') }">
+                          </textarea>
+                        </div>
+                      </div>
+                      <div class="cols third">
+                        <div *ngIf="!third.edit">
+                          {{third.sDescripcion}}
+                        </div>
+                        <div *ngIf="third.edit">
+                          <textarea maxlength="250" class="form-control form-control-sm w-fuente"
+                            [(ngModel)]="third.sDescripcion_mod" name="textarea.third.sDescripcion"
+                            [ngModelOptions]=" {standalone: true}"
+                            [ngStyle]="{ 'height': third.sDescripcion_mod?.length < 59 ? '31px' : (third.sDescripcion_mod?.length < 118 ? '70px' : '124px') }"></textarea>
+                        </div>
+                      </div>
+                      <div class="cols fourth">{{third.nAlcance}}</div>
+                      <div class="cols fifth">
+                        <div *ngIf="!third.edit">
+                          <img class="pointer" (click)="editarSector(third,3)" src="assets/images/lapiz.svg"
+                            height="20" />
+                        </div>
+                        <div *ngIf="third.edit">
+                          <img class="pointer me-2" (click)="actualizarSector(third,3)"
+                            src="assets/images/save-black.svg" height="20" />
+                          <img class="pointer" (click)="third.edit=false" src="assets/images/save-white.svg"
+                            height="20" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngFor="let third of second.categorias; index as c">
+                  <div [ngbCollapse]="isCollapsed[i] || !second.collapse" style="background: #f9f9f9">
+                    <div class="rows">
+                      <div class="cols first extra-bold">
+                        <div [hidden]="third.fuentes?.length<1" class="pointer arrow-down"
+                          (click)="thirdCollapsed(third)"
+                          [ngClass]="third.collapse  ? 'collapsed-inactive' : 'collapsed-active'">
+                          <i class="fa-solid fa-chevron-up"></i>
+                        </div>
+                        <div class="number-center">{{third.sCodigoGPC}}</div>
+                      </div>
+                      <div class="cols second extra-bold" style="padding-left: 25px;">
+                        <div *ngIf="!third.edit">
+                          {{third.sNombre}}
+                        </div>
+                        <div *ngIf="third.edit">
+                          <textarea maxlength="200" class="form-control form-control-sm w-fuente"
+                            name="textarea.third.sNombre" [ngModelOptions]=" {standalone: true}"
+                            [(ngModel)]="third.sNombre_mod"
+                            [ngClass]="{ 'is-invalid': !third.sNombre_mod || !regexOnlyLetters.test(third.sNombre_mod)}"
+                            [ngStyle]="{ 'height': third.sNombre_mod?.length < 59 ? '31px' : (third.sNombre_mod?.length < 118 ? '70px' : '124px') }">
+                          </textarea>
+                        </div>
+                      </div>
+                      <div class="cols third">
+                        <div *ngIf="!third.edit">
+                          {{third.sDescripcion}}
+                        </div>
+                        <div *ngIf="third.edit">
+                          <textarea maxlength="250" class="form-control form-control-sm w-fuente"
+                            [(ngModel)]="third.sDescripcion_mod" name="textarea.third.sDescripcion"
+                            [ngModelOptions]=" {standalone: true}"
+                            [ngStyle]="{ 'height': third.sDescripcion_mod?.length < 59 ? '31px' : (third.sDescripcion_mod?.length < 118 ? '70px' : '124px') }"></textarea>
+                        </div>
+                      </div>
+                      <div class="cols fourth">{{third.nAlcance}}</div>
+                      <div class="cols fifth">
+                        <div *ngIf="!third.edit">
+                          <img class="pointer" (click)="editarSector(third,4)" src="assets/images/lapiz.svg"
+                            height="20" />
+                        </div>
+                        <div *ngIf="third.edit">
+                          <img class="pointer me-2" (click)="actualizarSector(third,4)"
+                            src="assets/images/save-black.svg" height="20" />
+                          <img class="pointer" (click)="third.edit=false" src="assets/images/save-white.svg"
+                            height="20" />
+                        </div>
+                      </div>
+                    </div>
+                    <ng-container *ngFor="let fourth of third.fuentes; index as c">
+                      <div [ngbCollapse]="isCollapsed[i] || !third.collapse" style="background: white">
+                        <div class="rows px-0">
+                          <div class="cols first extra-bold">{{fourth.sCodigoGPC}}</div>
+                          <div class="cols second extra-bold" style="padding-left: 30px;">
+                            <div *ngIf="!fourth.edit">
+                              {{fourth.sNombre}}
+                            </div>
+                            <div *ngIf="fourth.edit">
+                              <textarea maxlength="200" class="form-control form-control-sm w-fuente"
+                                name="textarea.fourth.sNombre" [ngModelOptions]=" {standalone: true}"
+                                [(ngModel)]="fourth.sNombre_mod"
+                                [ngClass]="{ 'is-invalid': !fourth.sNombre_mod || !regexOnlyLetters.test(fourth.sNombre_mod)}"
+                                [ngStyle]="{ 'height': fourth.sNombre_mod?.length < 59 ? '31px' : (fourth.sNombre_mod?.length < 118 ? '70px' : '124px') }">
+                          </textarea>
+                            </div>
+                          </div>
+                          <div class="cols third">
+                            <div *ngIf="!fourth.edit">
+                              {{fourth.sDescripcion}}
+                            </div>
+                            <div *ngIf="fourth.edit">
+                              <textarea maxlength="250" style="margin-left: 10px;"
+                                class="form-control form-control-sm w-fuente" [(ngModel)]="fourth.sDescripcion_mod"
+                                name="textarea.fourth.sDescripcion" [ngModelOptions]=" {standalone: true}"
+                                [ngStyle]="{ 'height': fourth.sDescripcion_mod?.length < 59 ? '31px' : (fourth.sDescripcion_mod?.length < 118 ? '70px' : '124px') }"></textarea>
+                            </div>
+                          </div>
+                          <div class="cols fourth"> {{fourth.nAlcance}}</div>
+                          <div class="cols fifth">
+                            <div *ngIf="!fourth.edit">
+                              <img class="pointer" (click)="editarSector(fourth,5)" src="assets/images/lapiz.svg"
+                                height="20" />
+                            </div>
+                            <div *ngIf="fourth.edit">
+                              <img class="pointer me-2" (click)="actualizarSector(fourth,5)"
+                                src="assets/images/save-black.svg" height="20" />
+                              <img class="pointer" (click)="fourth.edit=false" src="assets/images/save-white.svg"
+                                height="20" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+.navbar {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+}
+
+.font-menu {
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.drop-items{
+  margin-right: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+  border-radius: 0.2rem;
+  background-color: rgb(244, 243, 243);
+}
+
+.user_menu {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  outline: none;
+}
+
+.user_menu:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  /* Color de fondo al pasar el mouse */
+}
+
+.user_menu:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  /* Color de fondo al hacer clic */
+}
+
+.user_menu img {
+  color: #000;
+  /* Color del icono, cámbialo según tus preferencias */
+}
+
+@media (max-width: 159px) {
+  .show-img {
+    display: none !important;
+  }
+}

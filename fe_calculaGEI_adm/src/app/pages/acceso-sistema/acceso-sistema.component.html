@@ -1,0 +1,53 @@
+<div class="container">
+  <label class="crud__title mt-4">Accesos del sistema</label>
+  <div class="crud__card mt-4">
+    <div *ngIf="loadingSkeleton" class="row align-items-center justify-content-center" style="height: 482px;">
+      <div class="spinner-grow text-primary" role="status">
+      </div>
+    </div>
+    <div *ngIf="!loadingSkeleton">
+      <div class="row align-items-center ms-0 ms-md-4 mt-3">
+        <div class="col-auto">
+          <label class="crud__label crud__label--sub">Seleccionar rol:</label>
+        </div>
+        <div style="width: 300px;">
+          <ng-select [items]="lstRol" [(ngModel)]="model.nIdRol" placeholder="Seleccionar Rol" (change)="fnListarMenu()"
+            class="ng-select-admin" [dropdownPosition]="'bottom'" [clearable]="false" bindValue="nIdRol"
+            bindLabel="sNombre" [notFoundText]="'No se encontraron resultados'">
+            <ng-template ng-notfound-tmp let-searchTerm="searchTerm" class="d-none">
+            </ng-template>
+          </ng-select>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center justify-content-md-start">
+        <div class="crud__subcard mt-5">
+          <div *ngFor="let item of lstMenu; let i=index">
+            <div class="control-group">
+              <label class="control control-checkbox">
+                {{item.sNombre}}
+                <input type="checkbox" [(ngModel)]="item.boCodEstado" [checked]="item.boCodEstado"
+                  (change)="changeFather($event,lstMenu,i)" />
+                <div class="control_indicator"></div>
+              </label>
+            </div>
+            <div *ngFor="let secondItem of item.liSeccion; let i=index">
+              <div class="control-group  ms-4">
+                <label class="control control-checkbox">
+                  {{secondItem.sNombre}}
+                  <input type="checkbox" [(ngModel)]="secondItem.boCodEstado" [checked]="secondItem.boCodEstado"
+                    (change)="changeChildren($event,item,item.liSeccion)" />
+                  <div class="control_indicator"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-row-reverse mt-5">
+        <button class="crud__button button-yellow" (click)="fnActualizarMenu()" [disabled]="loadingGuardar">
+          <span *ngIf="loadingGuardar" class="spinner-border spinner-border-sm me-2"></span>
+          <span>Guardar</span></button>
+      </div>
+    </div>
+  </div>
+</div>

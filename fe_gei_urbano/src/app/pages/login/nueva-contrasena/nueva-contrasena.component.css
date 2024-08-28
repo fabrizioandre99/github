@@ -1,0 +1,66 @@
+.form-label {
+  font-size: .8rem;
+  font-weight: 500;
+}
+
+.text-green {
+  color: #44c446;
+  font-weight: 500;
+}
+
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+  background-image: none;
+}
+
+.text-red {
+  color: #dc3545 !important;
+  font-weight: 500;
+}
+
+.dashboard_textinfo {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #00358A;
+}
+
+.row {
+  margin-right: calc(-.5 * 1.5rem);
+  margin-left: calc(-.5 * 1.5rem);
+}
+
+.icon_validacion {
+  height: 13px;
+}
+
+.container-fluid {
+  background-color: #f1f5f9;
+}
+
+.card {
+  border-radius: 1rem;
+  border: 0;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+}
+
+@media (min-width: 991.98px) {
+  .card {
+    width: 450px;
+  }
+}
+
+.dashboard_button_icon {
+  width: 32px;
+  height: 32px;
+}
+
+/**********************************************/
+/* ---------------Input-Group--------------- */
+
+.group .text-group {
+  top: 3px;
+  right: -30px;
+}

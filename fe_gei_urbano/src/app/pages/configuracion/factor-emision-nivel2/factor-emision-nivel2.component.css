@@ -1,0 +1,9 @@
+.titulo_pagina {
+    display: flex;
+    align-items: center;
+}
+
+.row_select  td{
+    background-color: #121343;
+    color: rgb(255, 255, 255);
+}

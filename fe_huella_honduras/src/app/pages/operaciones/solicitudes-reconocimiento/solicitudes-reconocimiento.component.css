@@ -1,0 +1,97 @@
+.indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.indicator-label,
+.indicator-value {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.indicator-label {
+    justify-content: flex-start;
+    margin-right: 10px;
+}
+
+.indicator-value {
+    justify-content: flex-end;
+    margin-left: 10px;
+}
+
+.progress-container {
+    flex: 2;
+    width: 100%;
+    position: relative;
+}
+
+.progress {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+
+.indicator span {
+    /*    font-family: 'Pluto' !important; */
+    font-size: 12px;
+    color: #000000;
+    font-weight: 300;
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+    border-color: #00903B !important;
+}
+
+.button_reconocimiento {
+    border-radius: 10px !important;
+}
+
+.button_reconocimiento mat-icon {
+    height: 30px !important;
+    margin-top: -3px;
+    margin-right: 6px !important;
+}
+
+.bg-success {
+    /* border-radius: 100px; */
+    background-color: #47D770 !important;
+}
+
+.bg-light {
+    background-color: #b8eccc !important;
+}
+
+.bg-danger {
+    background-color: #ee4e4e !important;
+}
+
+.progress {
+    background-color: #b8eccc !important;
+}
+
+/* ---------Modal--------- */
+
+.modal_detalle_solicitud mat-dialog-container .mat-mdc-dialog-surface {
+    background: #F2F6FF !important;
+}
+
+.modal_detalle_solicitud mat-dialog-container .mat-mdc-text-field-wrapper {
+    background: #F2F6FF;
+}
+
+@media (min-width: 768px) {
+    .modal_detalle_solicitud {
+        width: 855px;
+        min-width: 855px !important;
+    }
+}

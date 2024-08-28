@@ -1,0 +1,27 @@
+.modal-body .switch {
+  margin-top: 76px;
+}
+
+:host ::ng-deep .tooltip-inner {
+  background-color: red !important;
+}
+
+.first-col {
+  width: 52% !important;
+}
+
+.second-col {
+  width: 16%;
+}
+
+.thrid-col {
+  width: 16%;
+}
+
+.fourth-col {
+  width: 16%;
+}
+
+.modal__label--unidad {
+  font-size: 14px;
+}

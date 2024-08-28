@@ -1,0 +1,338 @@
+<div class="container" [ngClass]="{ 'padding_container': esAdmin }">
+  <div class="d-flex align-items-center mt-4">
+    <label class="crud__title" *ngIf="!esAdmin">Mis datos de actividad</label>
+    <label class="crud__title" *ngIf="esAdmin">Datos de actividad</label>
+  </div>
+  <div class="row align-items-end">
+    <div class="col-md-3 col-lg-2" *ngIf="esAdmin">
+      <label class="crud__label--sm">Sector</label>
+      <ng-select [notFoundText]="'No hay data'" id="sector" name="sector" placeholder="Seleccionar" [searchable]="false"
+        [clearable]="false" class="ng-select-admin" [(ngModel)]="sector" [items]="lstSector" bindLabel="sValor"
+        bindValue="sCodigo" required (change)="changeSector()"></ng-select>
+    </div>
+    <div class="col-md-4 col-lg-3 mt-2 mt-md-0" *ngIf="esAdmin">
+      <label class="crud__label--sm">Empresa</label>
+      <ng-select [notFoundText]="'No hay data'" [searchable]="false" name="mes" [clearable]="false"
+        class="ng-select-admin" [items]="lstEmpresas" bindLabel="sNombreComercial" bindValue="nIdEmpresa"
+        placeholder="Seleccione" [(ngModel)]="empresa" (change)="changeEmpresa();">
+      </ng-select>
+    </div>
+    <div class="col-md-2 w_periodo mt-2 mt-md-0">
+      <label class="crud__label--sm">Periodo</label>
+      <ng-select [notFoundText]="'No hay data'" [searchable]="false" name="periodo" [clearable]="false"
+        class="ng-select-admin" [items]="lstPeriodo" bindLabel="nAnio" bindValue="nIdPeriodo" placeholder="Seleccione"
+        [(ngModel)]="periodo" (change)="fnListarDatosActividad()">
+      </ng-select>
+    </div>
+    <div class="col-md-3 col-lg-3 col-xl-2 mt-2 mt-md-0">
+      <label class="crud__label--sm">Mes</label>
+      <ng-select [notFoundText]="'No hay data'" [searchable]="false" name="mes" [clearable]="false"
+        class="ng-select-admin" [items]="lstMes" bindLabel="sValor" bindValue="sCodigo" placeholder="Seleccione"
+        [(ngModel)]="codMes" (change)="fnListarDatosActividad()">
+      </ng-select>
+    </div>
+    <div class="ms-auto col-lg-5 mt-2 mt-md-0 d-flex justify-content-end align-items-end">
+      <div style="width: 190px;" *ngIf="porcentajeProgreso>0">
+        <label class="crud__label--sm">Progreso de avance</label>
+        <ngb-progressbar [value]="porcentajeProgreso"
+          [type]="porcentajeProgreso <= 30 ? 'danger' : (porcentajeProgreso < 60 ? 'warning' : 'success')"
+          placement="top">
+          <small class="progress-text">{{ porcentajeProgreso }} %</small>
+        </ngb-progressbar>
+      </div>
+      <button *ngIf="!esAdmin" placement="top" ngbTooltip="Descargar formatos" (click)="fnDescargarFormatoFNA()"
+        class="crud__button button-blue ms-3 d-flex align-items-center">
+        <img src="assets/images/icon-file-zip.svg" height="22" />
+        <span class="ms-2">Formatos DA</span>
+      </button>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="mt-4 col-md-10">
+      <div class="table-responsive crud__card">
+        <table class="table">
+          <thead class="table__header">
+            <tr class="text-center">
+              <th scope="col" class="text-start ps-3">Fuentes de emisión</th>
+              <th scope="col" class="text-start ps-3" style="width: 350px;">Datos de actividad</th>
+              <th scope="col" *ngIf="!esAdmin && codMes !== 'RAN' "></th>
+              <th scope="col">Evidencias</th>
+              <th scope="col">Última<br>actualización</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of lstDActividad; let i = index">
+            <tr class="table__body text-center" *ngIf="!item.boEsBiogenica" [ngStyle]=" { 'display' : i / pageSize>= page || i / pageSize < page - 1
+                  ? 'none' : 'table-row' , 'border-bottom' : (i + 1)===(page * pageSize) ? '0 solid transparent' : null,
+                  }">
+              <td class="text-start ps-3">
+                {{item.oFuenteEmision.sNombre}}
+              </td>
+              <td>
+                <div class="d-flex align-items-center" style="width: 350px;">
+                  <div style="width: 80%" [ngClass]="{ 'w-100': esAdmin }">
+                    <div *ngIf="item.edit">
+                      <!-- Input de subida de documentos-->
+                      <input [disabled]="item.loading" type="file" accept=".xlsx,.xls" #fileNActividad
+                        style="display: none;" (change)="changeFileDActividad($event, item, i)"
+                        [name]="'fileNActividad' + i">
+                      <div class="spinner-border crud__spinner--file" *ngIf="item.loading">
+                      </div>
+                      <label (click)="triggerHiddenFileInput(i)" (dragover)="handleDragOverDActividad($event)"
+                        (drop)="handleDropDActividad($event, item)" [attr.for]="'fileNActividad' + i"
+                        class="crud__file text-start"
+                        [ngClass]="{ 'is_invalid': item.noFormat, 'crud__file--loading': item.loading }">
+                        <span class="crud__file--text">{{ item.Filename }}</span>
+                      </label>
+                    </div>
+                    <div *ngIf="(!item.edit && item.boCodEstado) || (!item.edit && item.bdPorcentajeLocacion!==0)"
+                      class="text-start ps-2">
+                      <!-- Progressbar -->
+                      <a *ngIf="!item.boCodEstado" class="descarga progress_datosActividad--margin"
+                        (click)="fnDescargarDatoActividad(item)">
+                        {{item.sXlsDatoActividad}}</a>
+                      <span *ngIf="item.boCodEstado" style="font-size: 13px;" class="progress_datosActividad--margin">
+                        No se reportó información</span>
+                      <ngb-progressbar class="progress_datosActividad" [value]="item.bdPorcentajeLocacion"
+                        [type]="item.bdPorcentajeLocacion <= 30 ? 'danger' : (item.bdPorcentajeLocacion < 60 ? 'warning' : 'success')"
+                        placement="top">
+                      </ngb-progressbar>
+                      <small class="progress_datosActividad--margin">{{ item.bdPorcentajeLocacion }} %</small>
+                    </div>
+                  </div>
+                  <div style="width: 20%;" *ngIf="!esAdmin">
+                    <!-- Botones de registro de NActividad -->
+                    <div *ngIf="item.edit && !item.loading ">
+                      <button class="button-defect" type="submit" (click)="registrarNActividad(item)">
+                        <img class="pointer me-1" src="assets/images/icon-check-circle.svg" height="25" placement="top"
+                          ngbTooltip="Guardar" />
+                      </button>
+                      <img class="pointer" (click)="cancelarNActividad(item)" src="assets/images/icon-close-circle.svg"
+                        height="25" placement="top" ngbTooltip="Cancelar" />
+                    </div>
+                    <div *ngIf="item.edit && item.loading">
+                      <img class="me-1 image-disabled" src="assets/images/icon-check-circle--disabled.svg"
+                        height="25" />
+                      <img class="image-disabled" src="assets/images/icon-close-circle--disabled.svg" height="25" />
+                    </div>
+                    <div
+                      *ngIf="!item.edit && !(item.sRefXlsDatoActividad && !item.boCodEstado) && !item.boCodEstado && !esFinalizado">
+                      <button class="button-defect" (click)="editarNActividad(item)" type="button">
+                        <img class="pointer" src="assets/images/icon-file-plus.svg" height="24" />
+                      </button>
+                    </div>
+                    <div *ngIf="esFinalizado && !item.sRefXlsDatoActividad">
+                      <img class="image-disabled" src="assets/images/icon-file-plus.svg" height="24" />
+                    </div>
+                    <div *ngIf="!item.edit && (item.sRefXlsDatoActividad && !item.boCodEstado) && !esFinalizado">
+                      <button class="button-defect" (click)="openEliminarNActividad(item,contentEliminar)">
+                        <img src="assets/images/icon-tacho.svg" height="23" />
+                      </button>
+                    </div>
+                    <div *ngIf="esFinalizado && item.sRefXlsDatoActividad">
+                      <img src=" assets/images/icon-tacho.svg" class="image-disabled" height="23" />
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center" *ngIf="!esAdmin&& codMes !== 'RAN' ">
+                <!-- Toogle de actualizar estado -->
+                <div class=" form-check form-switch form-switch-md d-flex justify-content-center"
+                  *ngIf="!(!item.boCodEstado && item.sXlsDatoActividad && item.bdPorcentajeLocacion > 0)">
+                  <input [disabled]="item.loading || item.edit || esFinalizado" placement="top"
+                    [ngbTooltip]="!item.boCodEstado ? 'Activar en caso no se reporte información de la fuente en el mes' : 'Inactivar para agregar archivo'"
+                    [(ngModel)]="item.boCodEstado" class="form-check-input crud__toogle pointer" type="checkbox"
+                    (click)="fnActualizarEstado(item)">
+                </div>
+              </td>
+              <td>
+                <button class="button-defect" type="button" (click)="openEvidencia(item)">
+                  <img src="assets/images/icon-folder-plus.svg" height="21" *ngIf="!esAdmin && !esFinalizado" />
+                  <img src="assets/images/icon-folder.svg" height="21" *ngIf="esAdmin || esFinalizado" />
+                </button>
+              </td>
+              <td>
+                {{item.sUsuario}}<br>
+                {{item.sFechaMod}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-container *ngIf="noResultsDueToBiogenica()">
+          <div class=" text-center mt-5 mb-5">
+            <h5>No existen resultados.</h5>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-4" [ngClass]="{ 'pb-3': !esAdmin|| showPanel}"
+      *ngIf="lstDActividad.length > 0">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstDActividad.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstDActividad.length" [(page)]="page" [maxSize]="5"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+
+  <div class="row justify-content-center pb-3" [ngClass]="{ 'pb-5': !esAdmin }" *ngIf=" showPanel &&
+    lstDActividad.length !==0">
+    <div class="col-md-8">
+      <div class="accordion mt-2 " id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button id="accordion_button" class="accordion-button" type="button"
+              [attr.aria-expanded]="isAccordionOpen ? 'true' : 'false'" (click)="toggleAccordion()"
+              data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+              aria-controls="panelsStayOpen-collapseOne" style="background-color: white;">
+              <div class="d-flex align-items-center">
+                <span style="margin-top: 3.5px;font-family: Value Serif Pro;line-height: normal;
+                font-size: 20px;"> Evidencias: {{nombreFuenteEmision}} - {{nombreMes}}</span>
+              </div>
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse "
+            aria-labelledby="panelsStayOpen-headingOne" [class.show]="isAccordionOpen">
+            <div class="accordion-body">
+              <div class="row">
+                <div class="col-lg-5 col-xl-4">
+                  <label class="crud__label--sm ">Seleccionar locación</label>
+                  <ng-select (change)="fnListarEvidencia()" [notFoundText]="'No hay data'" [searchable]="false"
+                    name="locXEvidencia" [clearable]="false" class="ng-select-admin" [items]="lstLocXEvidencia"
+                    bindLabel="sNombre" bindValue="nIdLocacion" placeholder="Seleccionar locación"
+                    [(ngModel)]="locXEvidencia">
+                  </ng-select>
+                </div>
+              </div>
+              <div *ngIf="!esAdmin && locXEvidencia && !esFinalizado">
+                <div class="row col-lg-10 mt-3">
+                  <div class="col-xl-4">
+                    <label class="crud__label--sm">Cargar evidencia</label>
+                    <button placement="top" style="margin-left: 2px; "
+                      ngbTooltip="Formatos permitidos: .jpg .png .pfd .zip .rar" class="button-defect">
+                      <img style="margin-top: -1px;" src="assets/images/icon-info.svg" height="17" />
+                    </button>
+                  </div>
+                  <div class="ms-auto col-xl-6 p-lg-0 d-flex justify-content-end mt-2 mt-sm-0">
+                    <img style="margin-top: -1px;" src="assets/images/icon-info-blue.svg" height="17" />
+                    <label style="font-size: 12px;color: #2E54B2;">Tamaño permitido por archivo {{tamanio}}
+                      MB.</label>
+                  </div>
+                </div>
+                <div class="row align-items-end mt-1">
+                  <div class="col-lg-10">
+                    <input [disabled]="isUploading" multiple accept=".jpg, .png, .pdf, .zip, .rar" type="file"
+                      #fileFEvidencias (change)="changeEvidencia($event)" style="display: none;">
+                    <label [ngClass]="{  'dragging': dragging }" for="fileFEvidencias" class="crud_multiple_files"
+                      (click)="handleButtonNEvidencia()" (dragleave)="dragging = false"
+                      (dragover)="handleDragOverEvidencia($event)" (drop)="handleDropEvidencia($event)">
+                      <img src="assets/images/icon-cloud.svg" height="25" />
+                      <span *ngIf="!dragging" class="crud__file--text mt-1">Seleccione para cargar o arrastre y suelte
+                        los
+                        archivos
+                        aquí</span>
+                      <span *ngIf="dragging" class="crud__file--text mt-1">Soltar elementos</span>
+                      <div class="progress-container" [hidden]="!isUploading">
+                        <div class="progress-bar" [style.width]="progressValue + '%'"></div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-7 mt-3">
+                  <table class="table table_panel">
+                    <thead>
+                      <tr>
+                        <th scope="col" style="border-bottom: 2px solid black;
+                        background-color: #2E2E2E; color: white; ">Documentos</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      *ngFor="let item of lstEvidencia | slice: (page_panel-1) * pageSize_panel : (page_panel-1) * pageSize_panel + pageSize_panel">
+                      <tr class="table__body">
+                        <td class="ps-3">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <a class="descarga" (click)="fnDescargarEvidencia(item)"> {{item.sXlsEvidencia}}</a>
+                            <button *ngIf="!esAdmin && !esFinalizado" type="button" placement="top"
+                              ngbTooltip="Eliminar" class="button-defect" placement="top" ngbTooltip="Eliminar"
+                              (click)="openEliminarEvidencia(item,contentEliminar)">
+                              <img src="assets/images/icon-delete-circle.svg" height="20" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <div *ngIf=" lstEvidencia.length <= 0" style="border: 1px solid black;">
+                      <div class="text-center mt-4 mb-4">
+                        <h5 class="mb-0">No existen resultados.</h5>
+                      </div>
+                    </div>
+                  </table>
+                  <div class="d-flex justify-content-center mt-4 pb-3" *ngIf="lstEvidencia.length > 0">
+                    <ngb-pagination class="pagination-md" [collectionSize]="lstEvidencia.length" [(page)]="page_panel"
+                      [maxSize]="8" [pageSize]="pageSize_panel">
+                      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+                          height="15" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg"
+                          height="15" /></ng-template>
+                    </ngb-pagination>
+                    <ngb-pagination class="pagination-sm" [collectionSize]="lstEvidencia.length" [(page)]="page_panel"
+                      [maxSize]="5" [pageSize]="pageSize_panel">
+                      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+                          height="15" /></ng-template>
+                      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg"
+                          height="15" /></ng-template>
+                    </ngb-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex float-end" [ngClass]="{ 'mt-2': lstDActividad.length<=0}" *ngIf="esAdmin">
+    <button class="crud__button button-blue ms-2" type="button" (click)="retornar()">
+      <img src="assets/images/icon-back.svg" height="16" class="me-1" /> Volver</button>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div style="padding: 5px 25px 11px;">
+    <div class="modal-body ">
+      <label class="modal__title">Confirmación</label>
+      <div class="mt-3 d-flex justify-content-center">
+        <div *ngIf="eliminarNActividad"> ¿Está seguro de eliminar el nivel de actividad?</div>
+        <div *ngIf="eliminarEvidencia"> ¿Está seguro de eliminar la evidencia?</div>
+      </div>
+      <div *ngIf="eliminarNActividad" class="d-flex justify-content-center mt-4">
+        <button style="width: 100px;" (click)="modalEliminar.dismiss();eliminarNActividad=false"
+          class="crud__button button-white" type="button">
+          No</button>
+        <button style="width: 100px;" (click)="fnEliminarNActividad()" [disabled]="loadEliminar"
+          class="crud__button button-blue ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+      <div *ngIf="eliminarEvidencia" class="d-flex justify-content-center mt-4">
+        <button style="width: 100px;" (click)="modalEliminar.dismiss();eliminarEvidencia=false"
+          class="crud__button button-white" type="button">
+          No</button>
+        <button style="width: 100px;" (click)="fnEliminarEvidencia()" [disabled]="loadEliminar"
+          class="crud__button button-blue ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

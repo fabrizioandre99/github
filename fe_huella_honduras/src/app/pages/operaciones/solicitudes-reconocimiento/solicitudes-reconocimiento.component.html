@@ -1,0 +1,313 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Solicitudes de reconocimiento</h3>
+    <div class="d-flex justify-content-start mb-4 mt-3">
+        <ng-container *ngFor="let tipo of lstTipoSolicitud; let i = index">
+            <button *ngIf="selectedTipo === tipo.sCodigo" class="mt-2 mb-2" mat-flat-button color="primary"
+                class="button_reconocimiento" (click)="filtrarPorTipo(tipo.sCodigo)" [ngClass]="{'ms-2': i !== 0}">
+                <mat-icon svgIcon="ph-regular:check"></mat-icon> {{ tipo.sValor }}
+            </button>
+            <button *ngIf="selectedTipo !== tipo.sCodigo" class="mt-2 mb-2" mat-stroked-button
+                class="button_reconocimiento" (click)="filtrarPorTipo(tipo.sCodigo)" [ngClass]="{'ms-2': i !== 0}">
+                {{ tipo.sValor }}
+            </button>
+        </ng-container>
+    </div>
+
+    <div class="table_shadow">
+        <div class="table-responsive">
+            <table mat-table [dataSource]="tReconocimiento" class="mat-elevation-z8">
+                <!-- Columna Organización -->
+                <ng-container matColumnDef="organizacion">
+                    <th mat-header-cell *matHeaderCellDef> Organización </th>
+                    <td mat-cell *matCellDef="let item"> {{item.oInstitucion.sRazonSocial}} </td>
+                </ng-container>
+
+                <!-- Columna Año -->
+                <ng-container matColumnDef="anio">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Año </th>
+                    <td mat-cell *matCellDef="let item" class="text-center"> {{item.oPeriodo.nAnio}} </td>
+                </ng-container>
+
+                <!-- Columna Fecha de Postulación -->
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Fecha de postulación </th>
+                    <td mat-cell *matCellDef="let item" class="text-center"> {{item.sFecha}} </td>
+                </ng-container>
+
+                <!-- Columna Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                    <td mat-cell *matCellDef="let item" class="text-center">
+
+                        <button mat-icon-button (click)="verDetalleSolicitud(item)" matTooltip="Evaluar solicitud"
+                            style="color: #3A9AEE;">
+                            <mat-icon svgIcon="ph-duotone:list-magnifying-glass"></mat-icon>
+                        </button>
+
+                        <ng-container *ngIf="selectedTipo === 'CUAN'">
+                            <button mat-icon-button matTooltip="Aprobar" (click)="openAprobar(item)"
+                                style="color: #3BC262;">
+                                <mat-icon svgIcon="ph-duotone:check-fat"></mat-icon>
+                            </button>
+
+                            <button mat-icon-button matTooltip="Observar" style="color: #FF9800;"
+                                (click)="openObservar(item)">
+                                <mat-icon svgIcon="ph-duotone:eye"></mat-icon>
+                            </button>
+                        </ng-container>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="hReconocimiento"></tr>
+                <tr mat-row *matRowDef="let row; columns: hReconocimiento;"></tr>
+            </table>
+        </div>
+        <div *ngIf="tReconocimiento.data.length === 0">
+            <p class="text-center py-5 fs-20 m-0" style="background-color: white;">
+                No existen resultados
+            </p>
+        </div>
+
+        <mat-paginator #paginator [length]="tReconocimiento.data.length" class="border-top" [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]" [hidden]="tReconocimiento.data.length === 0">
+        </mat-paginator>
+
+    </div>
+</div>
+
+
+
+<!-- Modal Confirmacion -->
+<ng-template #modalConfirmacion>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>¿Está seguro de aprobar el reconocimiento?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit" color="primary"
+                (click)="enviarSolicitud('APRO')">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16">
+                    </mat-spinner></mat-icon>
+                Sí, estoy seguro</button>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<!-- Modal de observación de solicitud -->
+<ng-template #modalObservacion>
+    <h2 mat-dialog-title class="fw-500 text-center">Observar solicitud<br> de reconocimiento
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+    <div mat-dialog-content>
+        <!--  <label class="text-start fs-14">Ingresar observación:</label>  -->
+        <form [formGroup]="formModal">
+            <mat-form-field appearance="outline" class="mt-2 w-100">
+                <mat-label>Ingresar observación</mat-label>
+                <textarea style="resize: none;" matInput formControlName="observacion" rows="6" maxlength="250"
+                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');"></textarea>
+
+                <mat-error *ngIf="formModal.controls['observacion'].hasError('maxlength')">
+                    Máximo 250 caracteres permitidos.
+                </mat-error>
+            </mat-form-field>
+        </form>
+    </div>
+    <div mat-dialog-actions class="d-flex justify-content-end w-100 pt-0">
+        <button mat-button mat-dialog-close>Cancelar</button>
+        <button mat-flat-button type="submit" color="primary" [disabled]="formModal.invalid || loadingModal"
+            (click)="enviarSolicitud('OBS')">
+            <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16">
+                </mat-spinner></mat-icon>
+
+            Enviar</button>
+    </div>
+</ng-template>
+
+
+
+<!-- Modal detalle -->
+<ng-template #modalDetalle>
+    <h2 mat-dialog-title class="fw-500 fs-20 text-center pluto_normal">
+        Nivel de Reducción
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+    <mat-dialog-content>
+        <div class="row position-relative">
+            <div class="col-md-4 modal_border">
+                <div class="d-md-flex">
+                    <label class="fw-400 fs-16">Certificados de verificación</label>
+                </div>
+                <div class="mt-3"> Año base:<br>
+                    <a class="text-primary text-decoration-underline pointer"
+                        (click)="fnDescargaArchivo(modalRed?.oPeriodo.oVerificacion.sNombre.sCodigoDocumento,modalRed?.oPeriodo?.oVerificacion?.sNombre)">
+                        {{modalRed?.oPeriodo?.oVerificacion?.sNombre}}
+                    </a>
+                    <br><br> Año de reducción:<br>
+                    <a class="text-primary text-decoration-underline pointer mt-2"
+                        (click)="fnDescargaArchivo(modalRed?.oDocRequisito.sCodigoDocumento,modalRed?.oDocRequisito?.sNombre)">
+                        {{modalRed?.oDocRequisito?.sNombre}}
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-8 modal_border">
+                <div class="d-md-flex justify-content-center">
+                    <label class="fw-500 fs-16">Indicadores de reducción</label>
+                </div>
+                <!-- Emisiones totales -->
+                <div class="p-2">
+                    <div class="indicator" *ngIf="modalRed?.bdReduccion >= 0">
+                        <div class="indicator-label">
+                            <span>Emisiones totales</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    [style.width]="modalRed?.porcMin" [matTooltip]="modalRed?.tooltipRed"
+                                    matTooltipPosition="left" matTooltipClass="custom-tooltip"></div>
+                                <div class="progress-bar bg-light" role="progressbar" [style.width]="modalRed?.porcMax"
+                                    [matTooltip]="modalRed?.tooltipBase" matTooltipPosition="right"
+                                    matTooltipClass="custom-tooltip">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="indicator-value" [matTooltip]="modalRed?.porcMax" matTooltipPosition="above"
+                            matTooltipClass="custom-tooltip">
+                            <span>{{modalRed?.bdReduccion}} [tCO₂e] </span>
+                            <mat-icon svgIcon="ph-regular:arrow-down" style="width: 20px;color: #3BC262;"></mat-icon>
+                        </div>
+                    </div>
+
+                    <div class="indicator" *ngIf="!(modalRed?.bdReduccion >= 0)">
+                        <div class="indicator-label">
+                            <span>Emisiones totales</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar bg-light" role="progressbar" [style.width]="modalRed?.porcMin"
+                                    [matTooltip]="modalRed?.tooltipBase" matTooltipPosition="left"
+                                    matTooltipClass="custom-tooltip"></div>
+                                <div class="progress-bar bg-danger" role="progressbar" [style.width]="modalRed?.porcMax"
+                                    [matTooltip]="modalRed?.tooltipRed" matTooltipPosition="right"
+                                    matTooltipClass="custom-tooltip">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="indicator-value">
+                            <span>{{modalRed?.bdReduccion}} [tCO₂e] </span>
+                            <mat-icon svgIcon="ph-regular:arrow-up" style="width: 20px;color: brown;"></mat-icon>
+                        </div>
+                    </div>
+                    <!-- Lista de indicadores -->
+                    <div *ngFor="let ind of modalRed?.liIndicador; let i = index">
+                        <div *ngIf="ind.bdReduccion>=0" class="indicator">
+                            <div class="indicator-label">
+                                <span>{{ind.sIndicador}}</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" [style.width]="ind.porcMin"
+                                        [matTooltip]="ind.tooltipRed" matTooltipPosition="left"
+                                        matTooltipClass="custom-tooltip"></div>
+                                    <div class="progress-bar bg-light" role="progressbar" [style.width]="ind.porcMax"
+                                        [matTooltip]="ind.tooltipBase" matTooltipPosition="right"
+                                        matTooltipClass="custom-tooltip"></div>
+                                </div>
+                            </div>
+                            <div class="indicator-value text-end">
+                                <span>{{ind.bdReduccion}} [tCO₂e/{{ind.sUnidad}}]</span>
+                                <mat-icon svgIcon="ph-regular:arrow-down"
+                                    style="width: 20px;color: #3BC262;"></mat-icon>
+                            </div>
+                        </div>
+                        <div *ngIf="!(ind.bdReduccion>=0)" class="indicator">
+                            <div class="indicator-label">
+                                <span>{{ind.sIndicador}}</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress">
+                                    <div class="progress-bar bg-light" role="progressbar" [style.width]="ind.porcMin"
+                                        [matTooltip]="ind.tooltipBase" matTooltipPosition="left"
+                                        matTooltipClass="custom-tooltip"></div>
+                                    <div class="progress-bar bg-danger" role="progressbar" [style.width]="ind.porcMax"
+                                        [matTooltip]="ind.tooltipRed" matTooltipPosition="right"
+                                        matTooltipClass="custom-tooltip"></div>
+                                </div>
+                            </div>
+                            <div class="indicator-value text-end">
+                                <span>{{ind.bdReduccion}} [tCO₂e/{{ind.sUnidad}}]</span>
+                                <mat-icon svgIcon="ph-regular:arrow-up" style="width: 20px;color: brown;"></mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="pt-0">
+        <button mat-stroked-button (click)="openObservar(itemRedComNeu)">Observar</button>
+        <button mat-flat-button color="primary" [disabled]="loadingModal" (click)="openAprobar(itemRedComNeu)">
+            <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+            Aprobar
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #modalDetalleCompensaNeutraliza>
+    <h2 mat-dialog-title class="fw-500 fs-20 text-center pluto_normal">
+        Nivel de {{modalCompNeu.sTipoSolicitud}}
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+    <mat-dialog-content>
+        <div class="row position-relative">
+            <div class="col-md">
+                <div class="d-md-flex justify-content-center">
+                    <label class="fw-500 fs-16">Unidades de bonos de carbono comprados</label>
+                </div>
+
+                <div class="p-2">
+                    <div class="indicator">
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    [matTooltip]="modalCompNeu.tooltip" [style.width]="modalCompNeu.porcMin">
+                                    {{modalCompNeu.porcMin}}</div>
+                                <div class="progress-bar bg-light" role="progressbar"
+                                    [style.width]="modalCompNeu.porcMax" [matTooltip]="modalCompNeu.tooltip"
+                                    matTooltipPosition="above" matTooltipClass="custom-tooltip">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="indicator-value">
+                            <span>{{modalCompNeu.bdBonosCarbono}} [tCO₂e compensadas] </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <a class="text-primary text-decoration-underline pointer mt-2"
+                            (click)="fnDescargaArchivo(modalCompNeu.oDocRequisito.sCodigoDocumento,modalCompNeu.oDocRequisito.sNombre)">
+                            {{modalCompNeu.oDocRequisito.sNombre}}
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions class="pt-0">
+        <button mat-stroked-button (click)="openObservar(itemRedComNeu)">Observar</button>
+        <button mat-flat-button color="primary" [disabled]="loadingModal" (click)="openAprobar(itemRedComNeu)">
+            <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+            Aprobar
+        </button>
+    </div>
+</ng-template>

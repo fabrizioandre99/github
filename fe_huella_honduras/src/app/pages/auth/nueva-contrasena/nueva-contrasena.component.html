@@ -1,0 +1,110 @@
+<div class="verificacion_container container d-flex align-items-center justify-content-around">
+    <mat-card [class.shake-animation]="shake">
+        <form [formGroup]="nuevaContrasenaForm" (ngSubmit)="fnNuevaContrasena()">
+            <mat-card-header>
+                <mat-card-title class="fw-700 fs-20">Crear nueva contraseña</mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content class="mt-4">
+                <!-- Contraseña -->
+                <div class="row ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="newContrasena"
+                            maxlength="20"
+                            oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')">
+                        <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <!-- <div class="border p-3 rounded"> -->
+                <div class="validation-item">
+                    <mat-icon *ngIf="!f['newContrasena'].value?.match('^.{8,}$')" svgIcon="ph-fill:x-circle"
+                        class="icon-red"></mat-icon>
+                    <mat-icon *ngIf="f['newContrasena'].value?.match('^.{8,}$')" svgIcon="ph-fill:check-circle"
+                        class="icon-green"></mat-icon>
+                    <label [ngClass]="{ 'text-green': f['newContrasena'].value?.match('^.{8,}$'),
+                                  'text-red': !f['newContrasena'].value?.match('^.{8,}$') }"
+                        class="validation-item-label">
+                        Ingresar una contraseña de al menos 8 caracteres.
+                    </label>
+                </div>
+
+                <div class="validation-item">
+                    <mat-icon *ngIf="!f['newContrasena'].value?.match('(?=.*[A-Z])')" svgIcon="ph-fill:x-circle"
+                        class="icon-red"></mat-icon>
+                    <mat-icon *ngIf="f['newContrasena'].value?.match('(?=.*[A-Z])')" svgIcon="ph-fill:check-circle"
+                        class="icon-green"></mat-icon>
+                    <label [ngClass]="{ 'text-green': f['newContrasena'].value?.match('(?=.*[A-Z])'),
+                                  'text-red': !f['newContrasena'].value?.match('(?=.*[A-Z])')}"
+                        class="validation-item-label">
+                        Ingresar al menos una letra mayúscula.
+                    </label>
+                </div>
+
+                <div class="validation-item">
+                    <mat-icon *ngIf="!f['newContrasena'].value?.match('[0-9]')" svgIcon="ph-fill:x-circle"
+                        class="icon-red"></mat-icon>
+                    <mat-icon *ngIf="f['newContrasena'].value?.match('[0-9]')" svgIcon="ph-fill:check-circle"
+                        class="icon-green"></mat-icon>
+                    <label [ngClass]="{ 'text-green': f['newContrasena'].value?.match('[0-9]'),
+                                  'text-red': !f['newContrasena'].value?.match('[0-9]')}"
+                        class="validation-item-label">
+                        Ingresar al menos un número.
+                    </label>
+                </div>
+                <!--   </div> -->
+
+                <!-- Confirmar Contraseña -->
+                <div class="row mt-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Confirmar contraseña</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="verifContrasena"
+                            maxlength="20"
+                            oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')">
+                        <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+
+            <mat-card-actions class="d-flex justify-content-end">
+                <button type="submit" mat-flat-button color="primary" [disabled]="loading">
+                    <mat-icon *ngIf="loading"><mat-spinner color="primary" diameter="16">
+                        </mat-spinner></mat-icon>Guardar</button>
+            </mat-card-actions>
+        </form>
+    </mat-card>
+</div>
+
+
+
+<!-- Modal de Solicitud enviada -->
+<ng-template #modalOlvideContrasena>
+
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+
+
+        <mat-icon class="mt-4" svgIcon="ph-fill:check-circle"
+            style="color:#009E0F;height: clamp(5rem, 23vw, 93px); width: 100%;"></mat-icon>
+
+
+        <h2 mat-dialog-title class="fw-500 pt-0 mt-0">¡Su contraseña ha sido actualizada!</h2>
+        <mat-dialog-content class="mat-typography">
+
+            <label class="text-start">Haga click en continuar para retonar al inicio de sesión.</label>
+
+
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-flat-button type="button" color="primary" (click)="navigateToLogin()">Continuar</button>
+        </mat-dialog-actions>
+    </div>
+
+
+</ng-template>

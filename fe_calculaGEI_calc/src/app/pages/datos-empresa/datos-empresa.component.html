@@ -1,0 +1,58 @@
+<form [formGroup]="empresaForm" (ngSubmit)="onSubmit()">
+  <img class="arrow-float" src="assets/images/arrow-left.svg" (click)="retornar()" />
+  <img class="arrow-sm-float" src="assets/images/arrow-left-sm.svg" (click)="retornar()" height="30" />
+  <div class="float-lg-end mt-3 me-lg-1">
+    <img src="assets/images/celepsa.png" class="celepsa-image" />
+  </div>
+  <div class="body pb">
+    <div class="header">
+      <h2 class="text-center">Completa los datos de tu empresa</h2>
+      <app-barra-lateral></app-barra-lateral>
+    </div>
+    <div class="content card-form pt-5 px-3 px-md-5 pb-lg-5">
+      <div class="form-group">
+        <label> Nombre de la empresa</label>
+        <input type="text" class="form-control" formControlName="razon_social" [(ngModel)]="empresa.razon_social"
+          placeholder="Empresa" [ngClass]="{ 'is-invalid': submitted && f.razon_social.errors }" />
+        <div *ngIf="submitted && f.razon_social.errors">
+          <div class="warning-label" *ngIf="f.razon_social.errors.required">
+            Por favor ingresa el nombre de la empresa.
+          </div>
+          <div class="warning-label" *ngIf="f.razon_social.errors.pattern">
+            Por favor ingresa un nombre de empresa válido.
+          </div>
+        </div>
+      </div>
+      <div class="form-group mt-3">
+        <label>Número de RUC</label>
+        <input type="number" pattern=".{11}" class="form-control" formControlName="ruc" [(ngModel)]="empresa.ruc"
+          placeholder="RUC" [ngClass]="{ 'is-invalid': submitted && f.ruc.errors }" maxlength="11"
+          oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+          onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+        <div *ngIf=" submitted && f.ruc.errors">
+          <div class="warning-label" *ngIf="f.ruc.errors.required">Por favor ingresa el número de RUC.</div>
+          <div class="warning-label" *ngIf="f.ruc.errors.pattern">Por favor ingresa un número de RUC válido.
+          </div>
+        </div>
+      </div>
+      <div class="form-group mt-3">
+        <label>Tipo de industria</label>
+        <ng-select [(ngModel)]="empresa.sectorDto" placeholder="Tipo" class="custom" formControlName="sectorDto"
+          [items]="lstSector" [dropdownPosition]="'bottom'" [clearable]="false"
+          [ngClass]="{ 'is-invalid': submitted && f.sectorDto.errors }" bindValue="id_sector" bindLabel="nombre"
+          [searchable]="false">
+        </ng-select>
+        <div *ngIf="submitted && f.sectorDto.errors" class="invalid-feedback">
+          <div class="warning-label" *ngIf="f.sectorDto.errors.required">Por favor selecciona el tipo de
+            industria.
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-lg-5" style="margin-top: auto;">
+        <button type="submit" class="button-celepsa btn-form button-blue"
+          [ngClass]="{ 'button-gray': this.empresaForm.invalid }">Continuar</button>
+      </div>
+    </div>
+    <label class="footer">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+  </div>
+</form>

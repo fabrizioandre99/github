@@ -1,0 +1,13 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <div class="collapse navbar-collapse navbar-header" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item active" [class.changeColor]="isSubmenuActive(1)">
+          <a class="nav-link" routerLink="/factor-emision" [class.changeColor]="isSubmenuActive(1)">Nivel 1</a>
+        </li>
+        <li class="nav-item" [class.changeColor]="isSubmenuActive(2)">
+          <a class="nav-link" routerLink="/factor-emision-nivel2" [class.changeColor]="isSubmenuActive(2)">Nivel 2</a>
+        </li>
+      </ul>
+    </div>
+  </nav>

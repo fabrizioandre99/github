@@ -1,0 +1,39 @@
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
+      <div> <label class="title__hcc" [ngClass]="{ 'me-0': router.url.includes('/#') || router.url == '/' }">
+          SOFTWARE DE CÁLCULO Y GESTIÓN DE HUELLA DE CARBONO</label></div>
+      <div><img src="assets/images/logo-intercorp.svg" class="logo__hcc" /></div>
+      <div *ngIf="!router.url.includes('/#') && router.url !== '/'" class="user_image--mobile" (click)="openDropdown()">
+        <img src="assets/images/icon-user.svg" height="40" />
+      </div>
+    </div>
+    <div class="d-flex align-items-center"
+      *ngIf="!router.url.includes('/#') && router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'">
+      <div class="d-inline-block me-2 me-md-3 crud__ngbDropdown">
+        <button class="crud__dropdown d-flex align-items-stretch">
+          <div class="d-flex flex-column flex-grow-1">
+            <div class="d-flex justify-content-center align-items-center">
+              <span class="user-mobile me-md-2" style="margin-top: 3px;">{{user}}</span>
+              <button placement="top" (click)="logout()" ngbTooltip="Salir" class="button-defect" type="button"> <img
+                  src="assets/images/icon-power-solid.svg" width="15" /></button>
+            </div>
+            <span class="font-menu"
+              style="line-height: 27px; margin-top: -4px; font-size: 12px;">{{nombreComercial}}</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+<div ngbDropdown #dropMenu="ngbDropdown"
+  *ngIf="!router.url.includes('/#') && router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'">
+  <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownBasic1">
+    <button *ngIf="nombreComercial!=='undefined'" class="dropdown-item item-mobile font-menu"
+      ngbDropdownItem>{{nombreComercial}}</button>
+    <button (click)="logout()" class="dropdown-item font-menu d-flex align-items-center " ngbDropdownItem>
+      <img src="assets/images/icon-power.svg" height="15" class="me-2" />
+      Salir
+    </button>
+  </div>
+</div>

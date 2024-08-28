@@ -1,0 +1,29 @@
+.form-label {
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.form-control-lg {
+  font-size: 16px;
+}
+
+.dashboard_button_icon {
+  width: 32px;
+  height: 32px;
+}
+
+/**********************************************/
+/* ---------------Input-Group--------------- */
+
+.input-group {
+  padding-right: 0;
+}
+
+
+.group .text-group {
+  width: 69px;
+  color: #0D3154;
+  position: absolute;
+  right: -28px;
+  top: 5.4px;
+}

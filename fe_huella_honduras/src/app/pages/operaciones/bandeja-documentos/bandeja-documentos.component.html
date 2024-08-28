@@ -1,0 +1,86 @@
+<div class="container">
+    <h3 class="dash_title">Bandeja de documentos</h3>
+
+    <div class="table_shadow mt-3">
+        <div class="table-responsive">
+            <table mat-table [dataSource]="tDocumentos" class="mat-elevation-z8 shadow-sm border rounded">
+                <ng-container matColumnDef="item">
+                    <th mat-header-cell *matHeaderCellDef>Item</th>
+                    <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="sNombre">
+                    <th mat-header-cell *matHeaderCellDef>Nombre documento</th>
+                    <td mat-cell *matCellDef="let element">
+                        <ng-container *ngIf="!editingDocument || editingDocument.nIdDocumento !== element.nIdDocumento">
+                            <a (click)="fnDescargaArchivo(element.sCodigoDocumento, element.sNombre)"
+                                class="text-primary text-decoration-underline pointer">
+                                {{ element.sNombre }}
+                            </a>
+                        </ng-container>
+                        <ng-container *ngIf="editingDocument && editingDocument.nIdDocumento === element.nIdDocumento">
+                            <div class="file-input-container w-100" (dragover)="onDragOver($event)"
+                                (dragleave)="onDragLeave($event)" (drop)="onDrop($event, element)"
+                                [ngClass]="{ 'invalid': element.touched && !element.selectedFile }">
+                                <span class="file-input-text">{{ element.selectedFileName || element.sNombre ||
+                                    'Seleccionar archivo' }}</span>
+                                <mat-icon class="file-input-icon" svgIcon="ph-duotone:folder-open"></mat-icon>
+                                <input type="file" class="file-input" accept=".xls, .xlsx, .pdf"
+                                    (change)="onFileSelected($event, element)">
+
+                            </div>
+                        </ng-container>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sDescripcion">
+                    <th mat-header-cell *matHeaderCellDef>Descripción de documento</th>
+                    <td mat-cell *matCellDef="let element">
+                        <div *ngIf="!editingDocument || editingDocument.nIdDocumento !== element.nIdDocumento">
+                            {{ element.sDescripcion }}
+                        </div>
+                        <div *ngIf="editingDocument && editingDocument.nIdDocumento === element.nIdDocumento"
+                            [formGroup]="form">
+                            <mat-form-field appearance="outline" class="w-100 form_xs fs-14">
+                                <textarea matInput formControlName="descripcion" cdkTextareaAutosize></textarea>
+                            </mat-form-field>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sFecha">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Fecha ult.<br> actualización</th>
+                    <td mat-cell *matCellDef="let element" class="text-center">{{ element.sFecha }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="sUsuario">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Usuario<br> actualización</th>
+                    <td mat-cell *matCellDef="let element" class="text-center">{{ element.oUsuario?.sUsuario }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="accion">
+                    <th mat-header-cell *matHeaderCellDef>Acción</th>
+                    <td mat-cell *matCellDef="let element" class="text-center">
+                        <button *ngIf="!editingDocument || editingDocument.nIdDocumento !== element.nIdDocumento"
+                            mat-icon-button matTooltip="Editar" (click)="editar(element)" style="color: #60929e">
+                            <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                        </button>
+                        <div *ngIf="editingDocument && editingDocument.nIdDocumento === element.nIdDocumento">
+                            <button mat-icon-button matTooltip="Guardar" (click)="guardarEdicion(element)"
+                                style="color: #47D770">
+                                <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                            </button>
+                            <button mat-icon-button matTooltip="Cancelar" (click)="cancelarEdicion()"
+                                style="color:#EE3725">
+                                <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="hDocumentos"></tr>
+                <tr mat-row *matRowDef="let row; columns: hDocumentos;"></tr>
+            </table>
+        </div>
+    </div>
+</div>

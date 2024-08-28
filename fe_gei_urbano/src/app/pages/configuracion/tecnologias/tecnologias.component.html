@@ -1,0 +1,312 @@
+<div *ngIf="loadRegOEdit || loadEliminar || fShowSkeleton || fShowSkeletonVehiculo" class="progress-bar-container">
+    <div class="progress-bar-load"></div>
+  </div>
+  
+  <div class="container px-4 margin-container">
+    <label class="dashboard_title mt-3">Listado de tecnologías de vehículos</label>
+    
+    <div class="row mt-3">
+      <div class="col-md-2 col-lg-2">
+        <label class="dashboard_label--sm">Categoría</label>
+        <ng-select [(ngModel)]="sCodCategoria" placeholder="Seleccionar" (change)="fnListarCategorias()"
+          class="dashboard_select fs-14" [items]="lstCategorias" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="sCodigo" [disabled]="boDisableCategoria" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+      <div class="col-md-3 col-lg-3">
+        <label class="dashboard_label--sm">Tipo de combustible</label>
+        <ng-select [(ngModel)]="sCodCombustible" placeholder="Seleccionar" (change)="fnListarCombustible()"
+          class="dashboard_select fs-14" [items]="lstCombustible" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="sCodFactor" bindLabel="sTipoCombustible" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+      <div class="col-md-3 col-lg-3">
+        <label class="dashboard_label--sm">Tipo de vehículo</label>
+        <ng-select [(ngModel)]="sCodTipoVehiculo" placeholder="Seleccionar" (change)="fnListarTipoVehiculo()"
+          class="dashboard_select fs-14" [items]="lstTipoVehiculo" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+
+      <div class="ms-auto col-lg-3 text-end mt-2 mt-md-0 align-content-center">
+        <button class="btn btn-primary fs-14" (click)="openRegistrarTecnologia(contentRegistrarTecnologia)">
+          <div class="d-flex align-items-center">
+            <img src=" assets/images/icon_plus.svg" height="20" />
+            <span class="ms-2">Nueva tecnología</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  
+    <div class="mt-4">
+      <div class="table-responsive dashboard_table_card">
+        <table class="table">
+          <thead class="table__header">
+            <tr>
+              <th scope="col" class="text-center">Item</th>
+              <th scope="col" class="text-center">Tecnología</th>
+              <th scope="col" class="text-start">Periodo de <br>fabricación </th>
+              <th scope="col" class="text-center">Rendimiento <br> [g/Km]</th>
+              <th scope="col" class="text-center">Factor de emisión</th>
+              <th scope="col" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeleton">
+            <tbody *ngFor="let item of lstSkeletonA">
+              <tr class="table__body">
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstTecnologia; index as i">
+              <tr class="table__body" [ngStyle]="{
+                'display': i / pageSizeA >= pageA || i / pageSizeA < pageA - 1 ? 'none' : 'table-row',
+                'border-bottom': (i + 1) === (pageA * pageSizeA) ? '0 solid transparent' : null}">
+                <td class=" text-center">{{i+1}}</td>
+                <td class="text-center">{{item.sNombre}}</td>
+                <td><span>{{item.nAnioInicio}} </span> - <span>{{item.nAnioFin}} </span></td>
+                <td class="text-center">{{item.bdRendimiento}}</td>
+
+                <td class="text-center">
+                  <button type="button" (click)="redictFactorEmision(item)" class="dashboard_button_icon">
+                    <span *ngIf="item.nIdRuta===idRutaSelected"><img height="30"
+                        src="assets/images/icon_factor.svg" /></span>
+                    <span *ngIf="item.nIdRuta!=idRutaSelected"><img height="30" src="assets/images/icon_factor.svg" /></span>
+                  </button>
+                </td>
+
+                <td class="text-center">
+                  <button type="button" (click)="openEditarTecnologia(contentRegistrarTecnologia,item)" class="dashboard_button_icon">
+                    <img height="30" src="assets/images/icon_edit.svg" />
+                  </button>
+  
+                  <button type="button" (click)="openEliminarTecnologia(contentEliminar, item)" class="dashboard_button_icon">
+                    <img height="30" src="assets/images/icon_delete.svg" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="!fShowSkeleton">
+          <ng-container *ngIf="lstTecnologia.length <= 0">
+            <div class="text-center mt-5 mb-5 dashboard_noresultados">
+              <label class="fw-500">No existen resultados{{lstRutas.length > 0 ? ' para "' +
+                model.sNombre + '"' : ''}}.</label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="!fShowSkeleton && lstTecnologia.length > 0"
+      class="d-flex justify-content-center mt-3">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstTecnologia.length"
+        [(page)]="pageA" [maxSize]="5" [pageSize]="pageSizeA">
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstTecnologia.length"
+        [(page)]="pageA" [maxSize]="3" [pageSize]="pageSizeA">
+      </ngb-pagination>
+    </div>
+  </div>
+  
+  <!-- Modal Confirmar Registrar Tecnologia-->
+  <ng-template #contentRegistrarTecnologia let-modalRegistrarNivel>
+    <form (ngSubmit)="fnRegistrarTecnologia(registrarTecnologiaForm)" #registrarTecnologiaForm="ngForm" novalidate>
+      <div class="modal-padding">
+        <div class="modal-header" style="border-bottom: none;">
+          <label *ngIf="!isEditarTecnologia" class="modal__title fw-600">Registrar tecnología</label>
+          <label *ngIf="isEditarTecnologia" class="modal__title fw-600">Editar Tecnología </label>
+          <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+            (click)="modalRegistrarNivel.dismiss();"></button>
+        </div>
+        <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarTecnologia}">
+          <div class="row">
+            <div class="col-md-6">
+                <label class="dashboard_label--sm">Categoría de la flota</label>
+                <ng-select [(ngModel)]="model.sCodCategoria" placeholder="Seleccionar" name="Categoria" [disabled]="isEditarTecnologia"
+                  class="dashboard_select fs-14" [items]="lstCategorias" [dropdownPosition]="'bottom'" [clearable]="false"
+                  bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+                </ng-select>
+            </div>
+  
+            <div class="col-md-6">
+                <label class="dashboard_label--sm">Tipo de combustible</label>
+                <ng-select [(ngModel)]="model.sCodCombustible" placeholder="Seleccionar" name="tipo_combustible" [disabled]="isEditarTecnologia"
+                  class="dashboard_select fs-14" [items]="lstCombustible" [dropdownPosition]="'bottom'" [clearable]="false"
+                  bindValue="sCodFactor" bindLabel="sTipoCombustible" [searchable]="false" [notFoundText]="'No hay data'">
+                </ng-select>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="dashboard_label--sm" for="nombres_tecnologia">Nombre de la tecnología</label>
+              <input id="nombres_tecnologia" type="text" class="form-control form-control-sm dashboard_input"
+                [(ngModel)]="model.sNombre" name="nombres_tecnologia" required #sNombre="ngModel"  [disabled]="isEditarTecnologia"
+                [ngClass]="{ 'is-invalid': registrarTecnologiaForm.submitted && sNombre.errors?.['required']
+                ||registrarTecnologiaForm.submitted && sNombre.errors?.['pattern']}" maxlength="150"
+                pattern="^(?=.*[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ])[\sA-Za-z0-9ñÑáéíóúÁÉÍÓÚ]+$"
+                (keypress)="validarAlTipear(patronTecnologia,$event)">
+              <div
+                *ngIf="registrarTecnologiaForm.submitted && sNombre.errors?.['required'] || registrarTecnologiaForm.submitted 
+                    && !cumpleconPatron(patronVacio,model.sNombre)">
+                <small class="text-danger">Ingrese el nombre.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="dashboard_label--sm">Tipo de vehículo</label>
+              <ng-select [(ngModel)]="model.sCodTipoVehiculo" placeholder="Seleccionar" name="tipo_vehiculo" 
+                [disabled]="isEditarTecnologia" #tipo_vehiculo="ngModel" required
+                [ngClass]="{'is-invalid': registrarTecnologiaForm.submitted && tipo_vehiculo.errors?.['required']}"
+                class="dashboard_select fs-14" [items]="lstTipoVehiculo" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+              </ng-select>
+              <div *ngIf="registrarTecnologiaForm.submitted && tipo_vehiculo.errors?.['required']">
+                <small class="text-danger">Seleccione el tipo de vehículo.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row  mt-3">
+            <div class="col-md-6">
+              <label class="dashboard_label--sm" for="rendimiento">Rendimiento</label>
+              
+              <div class="input-group">
+                <input id="rendimiento" type="text" class="form-control form-control-sm dashboard_input" maxlength="6"
+                    [(ngModel)]="model.bdRendimiento" name="rendimiento" required #bdRendimiento="ngModel" 
+                    [ngClass]="{'is-invalid': registrarTecnologiaForm.submitted && bdRendimiento.errors?.['required']
+                      || registrarTecnologiaForm.submitted && bdRendimiento.errors?.['pattern']}"
+                    oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                    pattern="^(?!\.)(\d{1,3}|\d{1,3}[.]|\d{0,3}\.\d{0,2}?)$" (keypress)="permitirNumerosYPunto($event)">
+                <span class="input-group-text fs-13" id="km">g/Km</span>
+              </div>
+              
+              <div *ngIf="registrarTecnologiaForm.submitted && bdRendimiento.errors?.['required']">
+                <small class="text-danger">Ingrese el rendimiento.</small>
+              </div>
+  
+              <div *ngIf="registrarTecnologiaForm.submitted  && !cumpleconPatron(patronDecimal,model.bdRendimiento) &&
+                !bdRendimiento.errors?.['required'] ">
+                <small class="text-danger">Ingrese una cantidad valida.</small>
+              </div>
+  
+              <div *ngIf="registrarTecnologiaForm.submitted && bdRendimiento.errors?.['pattern']
+                && cumpleconPatron(patronDecimal,model.bdRendimiento)">
+                <small class="text-danger">Ingrese un máx. de 3 unidades y 2 decimales.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+                <label class="dashboard_label--sm">Periodo de fabricación </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3">
+              <div class="input-group">
+                <input  id="inicio" type="text" class="form-control form-control-sm dashboard_input" maxlength="4"
+                  [(ngModel)]="model.nAnioInicio" name="nAnioInicio" required #nAnioInicio="ngModel" 
+                  [ngClass]="{'is-invalid': registrarTecnologiaForm.submitted && nAnioInicio.errors?.['required']
+                    || registrarTecnologiaForm.submitted && nAnioInicio.errors?.['pattern']}"
+                  pattern="^(1|2)(0|9)[0-9][0-9]$">
+              </div>
+              <div *ngIf="registrarTecnologiaForm.submitted && nAnioInicio.errors?.['required']">
+                <small class="text-danger">Ingrese el año de inicio.</small>
+              </div>
+              <div *ngIf="registrarTecnologiaForm.submitted && nAnioInicio.errors?.['pattern']">
+                <small class="text-danger">Ingrese un año de inicio válido.</small>
+              </div>
+            </div>
+            
+            <div class="col-1">-</div>
+            
+            <div class="col-3">
+              <div class="input-group">
+                <input id="fin" type="text" class="form-control form-control-sm dashboard_input" maxlength="4"
+                    [(ngModel)]="model.nAnioFin" name="nAnioFin" required #nAnioFin="ngModel" 
+                    [ngClass]="{'is-invalid': registrarTecnologiaForm.submitted && nAnioFin.errors?.['required']
+                      || registrarTecnologiaForm.submitted && nAnioFin.errors?.['pattern']}"
+                    pattern="^(1|2)(0|9)[0-9][0-9]$">
+                </div>
+              <div *ngIf="registrarTecnologiaForm.submitted && nAnioFin.errors?.['required']">
+                  <small class="text-danger">Ingrese el año de finalización.</small>
+              </div>
+              <div *ngIf="registrarTecnologiaForm.submitted && nAnioFin.errors?.['pattern']">
+                <small class="text-danger">Ingrese un año de finalización válido.</small>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+            (click)="modalRegistrarNivel.dismiss()">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+              class="spinner-border spinner-border-sm me-1"></span>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  
+  <!-- Modal Eliminar-->
+  <ng-template #contentEliminar let-modalEliminar>
+    <div class="modal_confirmacion">
+      <div class="modal-body">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+            style="background-color: #FEE9E9 !important;">
+            <img src=" assets/images/icon_alert.svg" height="25" />
+          </div>
+          <div class="ms-3">
+            <label class="modal__title  fw-600">Confirmación</label>
+            <label class="mt-2 d-block fs-14">¿Está seguro de eliminar la tecnología?</label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button [disabled]="loadEliminar" (click)="modalEliminar.dismiss()" class="btn btn-light fc-black fs-14"
+            type="button">
+            Cancelar</button>
+          <button [disabled]="loadEliminar" (click)="fnEliminarTecnologia()" class="btn btn-danger fs-14 ms-2" type="submit">
+            <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+            Sí, estoy seguro</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  

@@ -1,0 +1,99 @@
+<div id="loading" class="fondo-presa loading text-center">
+  <div class="loading-contener">
+    <img class="loader" src="assets/images/icon-loading.svg" />
+    <h2 class="mt-5">Estamos calculando la<br> huella de carbono<br> energética de tu empresa </h2>
+  </div>
+</div>
+<img src="assets/images/arrow-left-sm.svg" class="arrow-sm-float" routerLink="/datos-contacto" height="30" />
+<label class="dialog-float-sm">Regresar a la calculadora</label>
+<div class="float-lg-end mt-3 me-lg-1">
+  <img src="assets/images/celepsa.png" class="celepsa-image" />
+</div>
+<div class="bar">
+  <img src="assets/images/arrow-left.svg" class="arrow-float" routerLink="/datos-contacto" />
+  <label class="ms-2 dialog-float">Regresar a la calculadora</label>
+  <div class="bar-body"> <img src="assets/images/icon-energy.svg" height="72" class="ms-1" />
+    <h5 class="mt-4"> Sin tomar en cuenta el porcentaje<br> de energía renovable,</h5>
+    <h1>La emisión<br>relativa anual<br>de tu empresa<br>es de:</h1>
+  </div>
+</div>
+<div class="container">
+  <div class="body">
+    <div class="header">
+      <div class="title-sm text-center mb-4">
+        <label class="text-porcentaje">Sin tomar en cuenta el porcentaje de energía renovable,</label><br>
+        la emisión anual de tu empresa sería:
+      </div>
+      <h2 class="text-center" style="font-weight: 800">{{lstEmision.total_mi_empresa}} toneladas</h2>
+      <h2 class="text-center">de CO<sub>2</sub>eq por año*</h2>
+    </div>
+    <div class="content-emision">
+      <div class="d-flex align-items-center justify-content-center">
+        <div *ngIf="lstEmision.mi_empresa?.length > 1"> <img class="arrow-prev me-2 pointer"
+            src=" assets/images/arrow-left-redict.svg" height="30" data-bs-target="#carouselExampleControls"
+            data-bs-slide="prev"></div>
+        <div class="main text-center">
+          <div id="carouselExampleControls" class="carousel slide  d-flex align-items-center" data-bs-interval="false">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <label class="title" *ngIf="lstEmision.mi_empresa?.length > 0">
+                  {{lstEmision.mi_empresa[0]?.nombre}}<br>
+                  En comparación con las empresas del país:
+                </label>
+                <div class="chart mt-4">
+                  <canvas #firstChart></canvas>
+                </div>
+              </div>
+              <div [ngClass]="lstEmision.mi_empresa?.length>1? 'carousel-item' : 'd-none'">
+                <label class="title" *ngIf="lstEmision.mi_empresa?.length>1 ">{{lstEmision.mi_empresa[1]?.nombre}}<br>
+                  En comparación con las empresas del
+                  país:
+                </label>
+                <div class="chart mt-4">
+                  <canvas #secondChart></canvas>
+                </div>
+              </div>
+              <div [ngClass]="lstEmision.mi_empresa?.length>2? 'carousel-item' : 'd-none'">
+                <label class="title" *ngIf="lstEmision.mi_empresa?.length>1 ">
+                  {{lstEmision.mi_empresa[2]?.nombre}}<br>
+                  En comparación con las empresas del país:
+                </label>
+                <div class="chart mt-4">
+                  <canvas #thirdChart></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="lstEmision.mi_empresa?.length > 1"><img class="arrow-next ms-2 pointer"
+            src=" assets/images/arrow-right-redict.svg" height="30" data-bs-target="#carouselExampleControls"
+            data-bs-slide="next">
+        </div>
+      </div>
+    </div>
+    <div class="buttons-arrows-emision d-flex justify-content-between mb-4 mt-4">
+      <div *ngIf="lstEmision.mi_empresa?.length > 1"><img class="arrow-left-redict"
+          src="assets/images/arrow-left-redict.svg" height="30" class="pointer"
+          data-bs-target="#carouselExampleControls" data-bs-slide="prev" />
+      </div>
+      <div *ngIf="lstEmision.mi_empresa?.length > 1"><img class="arrow-right-redict"
+          src=" assets/images/arrow-right-redict.svg" height="30" class="pointer"
+          data-bs-target="#carouselExampleControls" data-bs-slide="next" /></div>
+    </div>
+    <div class="text-center">
+      <button type="button" class="button-celepsa btn-emision button-blue mt-0 mt-sm-4 "
+        routerLink="/felicitaciones">Quiero tomar
+        acción</button>
+      <div class="detalle mt-2">
+        <label>*El cálculo de huella energética está basado en
+          la huella de carbono Perú y la metodología</label><br>
+        <label class="fst-italic">Tool to calculate the emission factor for an electricity system.</label>
+        <br>
+        <label class="mt-2">**Las emisiones de la huella energética de las empresas, corresponden a datos
+          históricos<br>
+          publicados en la
+          Huella de carbono Perú.</label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,196 @@
+/* ------------ Estilos de las cards ------------*/
+mat-form-field {
+    width: 100%;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--color-primario);
+    --bs-btn-hover-bg: var(--color-primario);
+    --bs-btn-active-bg: var(--color-primario);
+}
+
+.solicitud_title {
+    color: var(--color-title-primario);
+}
+
+.solicitud_card__title {
+    font-weight: 500;
+    color: var(--color-text-secundario);
+    margin-bottom: 24px;
+    font-size: 18px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.solicitud_card {
+    background-color: white;
+    padding: 0 46px 39px 46px;
+    box-shadow: 0px 0px 18px 12px rgba(168, 187, 255, 0.2);
+    border-radius: 16px;
+}
+
+mat-stepper {
+    background: transparent !important;
+}
+
+/* ------------ Modificar la altura de los inputs ------------*/
+.mat-mdc-text-field-wrapper {
+    height: 46px !important;
+}
+
+/* ------------ Eliminar los botones del header (por defecto)------------*/
+.mat-horizontal-stepper-header-container {
+    display: none !important;
+}
+
+/* ------------ Modificar el tamaño entre la separación de cada input ------------*/
+.mat-mdc-form-field-subscript-wrapper {
+    line-height: 25px !important;
+}
+
+/* ------------ Modificar la velocidad del step ------------*/
+.mat-horizontal-stepper-content {
+    transition: margin-left 200ms cubic-bezier(0.35, 0, 0.25, 1) !important;
+}
+
+/* ------------ Multistep header ---------------- */
+.solicitud_steps span {
+    font-size: 11px;
+    line-height: 13px;
+}
+
+.btn-outline-primary:hover .icon-hover-0 {
+    display: block !important;
+}
+
+.btn-outline-primary:hover .icon-hover-1 {
+    display: none !important;
+}
+
+.solicitud_steps__line {
+    width: 2px;
+    display: inline-block;
+    align-self: stretch;
+    min-height: 1em;
+    background-color: var(--color-primario);
+    margin: 0 10px;
+}
+
+.btn-outline-primary {
+    border: 0;
+}
+
+
+/* ------------- Archivo adjunto ------------------ */
+.solicitud_file_adjuntos {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    color: white;
+    background-color: #33A662;
+    border-radius: var(--mdc-filled-button-container-shape);
+    padding: 7px;
+    overflow: hidden;
+
+}
+
+.solicitud_file_adjuntos span {
+    flex: 1;
+    margin-left: 5px;
+    margin-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.solicitud_file_adjuntos mat-icon {
+    cursor: pointer;
+}
+
+/* .solicitud_file_adjuntos mat-icon:last-child {
+    margin-left: 12px;
+} */
+
+/* ------------- Avión de papel ------------------ */
+.frame {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: absolute;
+    top: -439px;
+    left: 0;
+    background-color: transparent;
+}
+
+.mdc-dialog__surface {
+    overflow-y: visible !important;
+}
+
+.plane-container {
+    width: 100px;
+    height: auto;
+    position: absolute;
+    top: 306px;
+    left: 62px;
+    animation: moveDiagonal 2s cubic-bezier(0.42, 0, 1, 1) 3s forwards;
+    z-index: 1000;
+}
+
+.plane {
+    width: 115%;
+    height: auto;
+    transform: rotate(-15deg);
+}
+
+.plane {
+    position: absolute;
+    left: 110px;
+    top: 86px;
+    animation: move 1.5s linear infinite;
+}
+
+@keyframes moveDiagonal {
+    /*     0% {
+        top: 306px;
+        left: 62px;
+    }
+
+    100% {
+        top: -100%;
+        left: 100%;
+        transform: rotate(-15deg);
+    } */
+}
+
+.mat-select-trigger {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.select-width-calculator {
+    visibility: hidden;
+    position: absolute;
+    white-space: nowrap;
+}
+
+/*-------------- Modo Móvil --------------*/
+@media (width <=992px) {
+    .solicitud_card {
+        padding: 0 35px 39px 35px;
+    }
+
+    .mat-horizontal-content-container {
+        padding: 0 21px 24px 21px;
+    }
+
+    .row>* {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}

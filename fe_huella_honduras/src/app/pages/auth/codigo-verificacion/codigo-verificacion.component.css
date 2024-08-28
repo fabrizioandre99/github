@@ -1,0 +1,59 @@
+.verificacion_container {
+    height: calc(100vh - 114px);
+}
+
+mat-card {
+    padding: 1rem;
+    width: 400px;
+    box-shadow: 0px 0px 32px 12px rgba(168, 187, 255, 0.2);
+}
+
+
+/************************************************/
+/*-------------------- OTP-------------------- */
+.otp_container {
+    display: flex;
+    flex-wrap: wrap;
+    /* Asegura que los elementos pasen a la siguiente línea si no caben */
+    gap: 0.3em;
+    justify-content: center;
+    font-size: 24px;
+    max-width: 100%;
+}
+
+
+.otp_input {
+    height: 2.1em;
+    width: 2em;
+    text-align: center;
+    border-radius: 4px;
+    font-size: inherit;
+    border: 1px solid #dee2e6;
+}
+
+.otp_input:focus {
+    outline: 0;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+}
+
+.otp_input:disabled {
+    border-color: #eee;
+}
+
+.otp_input_invalid {
+    border: 1px solid red;
+}
+
+
+.ng-otp-input-wrapper .otp-input:not(:last-child) {
+    margin-right: 13px !important;
+}
+
+
+@media (width >=768px) {
+    .otp-input {
+        width: 45px !important;
+        font-size: 32px;
+    }
+}

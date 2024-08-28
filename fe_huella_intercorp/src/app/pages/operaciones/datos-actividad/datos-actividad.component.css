@@ -1,0 +1,165 @@
+.crud__file {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0.5px solid #2E2E2E;
+  background-color: #FFF;
+  background-image: url('src/assets/images/icon-file.svg');
+  background-repeat: no-repeat;
+  background-position: 96% center;
+  background-size: calc(0.95em + 0.575rem) calc(0.95em + 0.575rem);
+}
+
+.crud__file--text {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 88%;
+  display: list-item;
+  text-overflow: ellipsis;
+}
+
+.is_invalid {
+  border: 0.5px solid red !important;
+}
+
+.table_panel {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table_panel th:first-child {
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.table_panel td {
+  border: 1px solid black;
+  border-top: none;
+}
+
+.accordion-body {
+  padding-top: 0;
+}
+
+.crud__spinner--file {
+  position: absolute;
+  margin-top: 8px;
+  width: 1rem;
+  margin-left: 111px;
+  height: 1rem;
+  color: #2E2E2E;
+}
+
+.crud__file--loading {
+  background-image: none;
+  pointer-events: none;
+}
+
+.crud_multiple_files {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 0.5px solid #2E2E2E;
+  background-color: #FFF;
+
+  background-repeat: no-repeat;
+  background-position: 96% center;
+  background-size: calc(0.95em + 0.575rem) calc(0.95em + 0.575rem);
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 90px;
+
+  overflow: hidden;
+  position: relative;
+}
+
+.padding_container {
+  padding-bottom: 4rem;
+}
+
+.crud__file--text {
+  transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.crud_multiple_files.dragging {
+  border-color: #2e54b2;
+
+}
+
+.crud_multiple_files.dragging .crud__file--text {
+  color: #2e54b2;
+  font-weight: 400;
+}
+
+.crud_multiple_files.dragging img {
+  filter: invert(43%) sepia(95%) saturate(2000%) hue-rotate(202deg) brightness(90%) contrast(88%);
+}
+
+.progress-container {
+  width: 100%;
+  background-color: #eeeeee;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.progress-bar {
+  border-radius: 0;
+  height: 6px;
+  background: linear-gradient(to right, #5E7CC4, #5E7CC4);
+  animation: progress 8s linear reverse forwards;
+  transition: width 0.35s ease-out;
+}
+
+.justify-content-start {
+  justify-content: start !important;
+}
+
+@media (min-width: 768px) {
+  .w_periodo {
+    width: 150px;
+  }
+
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.align-top {
+  white-space: nowrap;
+  padding: 0;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.form-switch.form-switch-md .form-check-input {
+  height: 1.5rem;
+  width: calc(2rem + 0.75rem);
+  border-radius: 3rem;
+}
+
+.progress_datosActividad--margin {
+  margin-left: 12px;
+}
+
+.descarga {
+  font-size: 13px;
+  padding-right: 30px;
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
+  text-overflow: ellipsis;
+
+}

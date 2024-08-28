@@ -1,0 +1,49 @@
+* {
+  font-family: 'SF Pro Display', sans-serif;
+}
+
+.navbar {
+  background-color: #EDF6FF;
+  border-bottom: 1px solid #BABABA;
+}
+
+.header__title {
+  font-weight: 600;
+}
+
+.header__username {
+  font-weight: 400;
+  font-size: 14px;
+  width: 229px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logo__size {
+  height: 42px;
+}
+
+.estilos-admin .header__title {
+  position: absolute;
+  left: 50%;
+  top: 31%;
+  transform: translate(-50%, 0);
+}
+
+
+.estilos-admin .header__container-username {
+  display: none !important;
+}
+
+/*****************************************/
+/* ------------ Modo Móvil-------------- */
+@media (max-width: 991.98px) {
+  .header__title {
+    display: none;
+  }
+
+  .header__username {
+    width: 96px;
+  }
+}

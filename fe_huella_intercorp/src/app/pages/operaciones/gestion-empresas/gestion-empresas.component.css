@@ -1,0 +1,11 @@
+@media (min-width: 991.98px) and (max-width: 1300px) {
+  .crud__label--codigo {
+    margin-left: -5px;
+  }
+}
+
+@media (min-width: 991.98px) {
+  .col-md-5 .crud__input--search {
+    width: 306px;
+  }
+}

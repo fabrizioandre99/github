@@ -1,0 +1,425 @@
+<div class="container pb-4">
+
+    <h3 class="dash_title">Gestión de usuarios</h3>
+
+    <mat-tab-group class="mt-4 dash_tab rounded">
+        <mat-tab label="Usuarios organizacionales">
+
+            <div class="d-flex flex-column flex-md-row mb-3 form_sm">
+                <mat-form-field class="w_organizacion" appearance="outline">
+                    <mat-label>Buscar organización</mat-label>
+                    <input matInput [(ngModel)]="filtroOrganizacion" (ngModelChange)="aplicarFiltro()" />
+                </mat-form-field>
+            </div>
+
+            <div class="table-responsive" [hidden]="tOrganizacional.filteredData.length === 0">
+                <table mat-table [dataSource]="tOrganizacional" matSort
+                    class=" mat-elevation-z8 shadow-sm border rounded">
+                    <tr mat-header-row *matHeaderRowDef="hOrganizacional"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hOrganizacional;"></tr>
+
+                    <ng-container matColumnDef="organizacion">
+                        <th mat-header-cell *matHeaderCellDef class="text-center w_table_organizacion">Organización</th>
+                        <td mat-cell *matCellDef="let item" class="text-center"
+                            style="max-width: 200px; overflow: hidden;">
+                            <button (click)="openModalDetalle(item)" mat-button
+                                style="white-space: normal; max-width: 100%;">
+                                {{ item.oInstitucion.sRazonSocial }}
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="usuario">
+                        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+                        <td mat-cell *matCellDef="let item">{{ item.sUsuario }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="datosContacto">
+                        <th mat-header-cell *matHeaderCellDef>Datos de contacto</th>
+                        <td mat-cell *matCellDef="let item">
+                            {{ item.sCorreo }}<br />{{ item.sTelefono }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="declaracionParticipacion">
+                        <th mat-header-cell *matHeaderCellDef class="text-start">Declaración de participación</th>
+                        <td mat-cell *matCellDef="let item">
+                            <a class="text-primary text-decoration-underline pointer"
+                                (click)="fnDescargaArchivo(item.oInstitucion.oDocumento)">
+                                {{ item.oInstitucion.oDocumento.sNombre }}
+                            </a>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="estado">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <mat-slide-toggle [checked]="item.boEstado"
+                                (change)="fnActualizarEstado(item, $event)"></mat-slide-toggle>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar"
+                                (click)="openModalActualizar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" matTooltip="Restablecer contraseña"
+                                style="color: #a30000;" (click)="openRestablecer(item)">
+                                <mat-icon svgIcon="ph-duotone:lock-simple"></mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+
+            <mat-paginator class="mt-3" [hidden]="tOrganizacional.filteredData.length === 0" #paginatorOrganizacional
+                [length]="tOrganizacional.filteredData.length" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+
+            <p class="text-center my-5 fs-20" *ngIf="tOrganizacional.data.length === 0 && filtroOrganizacion">
+                No existen resultados para "<span class="truncated-text">{{ filtroOrganizacion }}</span>"
+            </p>
+
+
+            <p class="text-center my-5 fs-20" *ngIf="tOrganizacional.data.length === 0 && !filtroOrganizacion">No
+                existen resultados</p>
+
+        </mat-tab>
+
+        <mat-tab label="Usuarios de la SERNA">
+
+            <div class="d-flex flex-column flex-md-row mb-3 form_sm  align-items-start">
+                <mat-form-field class=" w_organizacion" appearance="outline">
+                    <mat-label>Buscar por nombres y apellidos</mat-label>
+                    <input matInput [(ngModel)]="filtroSerna" (ngModelChange)="aplicarFiltro()" />
+                </mat-form-field>
+                <button [disabled]="loadingModal" mat-flat-button color="primary" type="button"
+                    class="button_add ms-auto" (click)="openModalRegistrar(null)">
+                    <mat-icon *ngIf="!loadingModal" svgIcon="ph-regular:plus"></mat-icon>
+                    <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+                    Nuevo usuario
+                </button>
+            </div>
+
+            <div class="table-responsive" [hidden]="tSerna.filteredData.length === 0">
+                <table mat-table [dataSource]="tSerna" matSort class="mat-elevation-z8 shadow-sm border rounded">
+                    <tr mat-header-row *matHeaderRowDef="hSerna"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hSerna;"></tr>
+
+                    <ng-container matColumnDef="datosUsuario">
+                        <th mat-header-cell *matHeaderCellDef>Datos de usuario</th>
+                        <td mat-cell *matCellDef="let item">
+                            {{ item.sUsuario }} <br /> {{ item.sNombre }} {{ item.sApellidos }} <br /> {{
+                            item.oRol.sNombre }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="datosContacto">
+                        <th mat-header-cell *matHeaderCellDef>Datos de contacto</th>
+                        <td mat-cell *matCellDef="let item">
+                            {{ item.sCorreo }}<br />{{ item.sTelefono }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="estado">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <mat-slide-toggle [checked]="item.boEstado"
+                                (change)="fnActualizarEstado(item, $event)"></mat-slide-toggle>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar"
+                                (click)="openModalRegistrar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" matTooltip="Restablecer contraseña"
+                                style="color: #a30000;" (click)="openRestablecer(item)">
+                                <mat-icon svgIcon="ph-duotone:lock-simple"></mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+
+
+
+            <mat-paginator class="mt-3" [hidden]="tSerna.filteredData.length === 0" #paginatorSerna
+                [length]="tSerna.filteredData.length" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+
+            <p class="text-center my-5 fs-20" *ngIf="tSerna.data.length === 0 && filtroSerna">
+                No existen resultados para "<span class="truncated-text">{{ filtroSerna }}</span>"
+            </p>
+
+            <p class="text-center my-5 fs-20" *ngIf="tSerna.data.length === 0 && !filtroSerna">No
+                existen resultados</p>
+
+        </mat-tab>
+    </mat-tab-group>
+</div>
+
+<!-- Modales -->
+<ng-template #modalDetalle>
+    <h2 mat-dialog-title class="fw-500 fs-20 text-center pluto_normal">
+        Datos de la organización
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+
+    <mat-dialog-content class="form_sm form_modal">
+        <div class="row position-relative">
+
+            <!-- Datos generales -->
+            <div class="col-md-6 modal_border ps-md-3 pe-md-4">
+                <div class="d-md-flex justify-content-center">
+                    <label class="fw-500 fs-16 pluto_normal">Datos generales</label>
+                </div>
+
+                <mat-form-field class="mt-3" appearance="outline">
+                    <mat-label>R.T.N.</mat-label>
+                    <input matInput [(ngModel)]="modal.oInstitucion.sNumeroRtn" disabled>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Razón social de la organización</mat-label>
+                    <textarea matInput [(ngModel)]="modal.oInstitucion.sRazonSocial" disabled
+                        cdkTextareaAutosize></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Dirección</mat-label>
+                    <textarea matInput [(ngModel)]="modal.oInstitucion.sDireccion" disabled
+                        cdkTextareaAutosize></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Ciiu</mat-label>
+                    <textarea matInput [(ngModel)]="modal.oInstitucion.oCiiu.sDescripcion" disabled
+                        cdkTextareaAutosize></textarea>
+                </mat-form-field>
+            </div>
+
+            <!-- Representante legal -->
+            <div class="col-md-6 modal_border ps-md-4 pe-md-3">
+                <div class="d-md-flex justify-content-center">
+                    <label class="fw-500 fs-16 pluto_normal">Representante legal</label>
+                </div>
+
+                <mat-form-field class="mt-3" appearance="outline">
+                    <mat-label>Número de D.N.I.</mat-label>
+                    <input matInput [(ngModel)]="modal.oInstitucion.sDocRepresentante" disabled>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Nombres</mat-label>
+                    <textarea matInput [(ngModel)]="modal.oInstitucion.sNombreRepresentante" disabled
+                        cdkTextareaAutosize></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Apellidos</mat-label>
+                    <textarea matInput [(ngModel)]="modal.oInstitucion.sApellidosRepresentante" disabled
+                        cdkTextareaAutosize></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Género</mat-label>
+                    <input matInput [(ngModel)]="modal.oInstitucion.sGenero" disabled>
+                </mat-form-field>
+                <mat-checkbox [(ngModel)]="modal.oInstitucion.boPertenecePiah" disabled>
+                    Pertenece a la comunidad de pueblos indígenas y afrohondureños</mat-checkbox>
+            </div>
+        </div>
+    </mat-dialog-content>
+</ng-template>
+
+<!-- Modal Actualización -->
+<ng-template #modalActualizacion>
+    <form [formGroup]="formModal" (ngSubmit)="fnActualizarUsuarioExterno(modal)">
+        <h2 mat-dialog-title class="fw-500 fs-20 text-center pluto_normal">
+            Actualizar usuario
+            <button mat-icon-button mat-dialog-close class="close-button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </h2>
+
+        <mat-dialog-content class="form_sm form_modal">
+            <div class="row position-relative">
+
+                <!-- Datos personales -->
+                <label class="fw-500 fs-16 pluto_normal">Datos de usuario</label>
+                <mat-form-field appearance="outline" class="mt-3">
+                    <mat-label>Usuario</mat-label>
+                    <input matInput [value]="modal.sUsuario" disabled>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Perfil de usuario</mat-label>
+                    <input matInput [value]="modal.oRol.sNombre" disabled>
+                </mat-form-field>
+
+                <!-- Datos de contacto -->
+                <label class="fw-500 fs-16 pluto_normal">Datos de contacto</label>
+                <mat-form-field class="mt-3" appearance="outline">
+                    <mat-label>Número de D.N.I.</mat-label>
+                    <input matInput formControlName="sNumDocumento" type="text" inputmode="numeric" maxlength="13"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Nombres</mat-label>
+                    <input matInput formControlName="sNombre" type="text" maxlength="50"
+                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Apellidos</mat-label>
+                    <input matInput formControlName="sApellidos" type="text" maxlength="150"
+                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="sCorreo" type="text" maxlength="320">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Teléfono</mat-label>
+                    <input matInput formControlName="sTelefono" type="text" inputmode="numeric" maxlength="9"
+                        (input)="formatPhone($event)">
+                </mat-form-field>
+            </div>
+        </mat-dialog-content>
+        <div mat-dialog-actions class="dialog-container align-self-center pt-0">
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button mat-flat-button type="submit" color="primary" [disabled]="loadingModal">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+                Actualizar
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Modal registrar usuario SERNA -->
+<ng-template #modalRegistro>
+    <form [formGroup]="formModal" (ngSubmit)="fnRegistrarUsuarioSerna(modal)">
+        <h2 mat-dialog-title class="fw-500 fs-20 text-center pluto_normal">
+            {{ modal.nIdUsuario == -1 ? 'Registrar usuario SERNA' : 'Actualizar usuario SERNA' }}
+        </h2>
+
+        <mat-dialog-content class="form_sm form_modal">
+            <div class="row position-relative">
+                <div class="col-md-6 modal_border ps-md-3 pe-md-4">
+
+                    <!-- Alerta -->
+                    <div class="mb-4" *ngIf="boDocumentoInvalido">
+                        <app-alert [msgError]="sDocumentoInvalido"></app-alert>
+                    </div>
+
+                    <!-- Datos personales -->
+                    <div class="d-md-flex justify-content-center">
+                        <label class="fw-500 fs-16 pluto_normal">Datos personales</label>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="mr-8  mt-3">
+                        <mat-select aria-label="Select an option" formControlName="sCodTipoDocumento">
+                            <mat-option *ngFor="let oParametro of lstTipoDocumento" [value]="oParametro.sCodigo">
+                                {{ oParametro.sValor }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Número de documento</mat-label>
+                        <input matInput formControlName="sNumDocumento" type="text" inputmode="numeric" maxlength="13"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombres</mat-label>
+                        <input matInput formControlName="sNombre" formControlName="sNombre" type="text" maxlength="50"
+                            oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Apellidos</mat-label>
+                        <input matInput formControlName="sApellidos" type="text" maxlength="150"
+                            oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-md-6 modal_border ps-md-4 pe-md-3">
+
+                    <!-- Datos de contacto -->
+                    <div class="d-md-flex justify-content-center">
+                        <label class="fw-500 fs-16 pluto_normal">Datos de contacto</label>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="mt-3">
+                        <mat-label>Correo electrónico</mat-label>
+                        <input matInput formControlName="sCorreo" type="text" maxlength="320"
+                            placeholder="Correo electrónico corporativo" (blur)="modificarUsuario()">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teléfono</mat-label>
+                        <input matInput formControlName="sTelefono" type="text" inputmode="numeric" maxlength="9"
+                            (input)="formatPhone($event)">
+                    </mat-form-field>
+
+                    <!-- Datos de usuario -->
+                    <div class="d-md-flex justify-content-center">
+                        <label class="fw-500 fs-16 pluto_normal">Datos de usuario</label>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="mt-3"
+                        [ngClass]="{'remove_wrapper': modal.nIdUsuario == -1}">
+                        <mat-label>Usuario</mat-label>
+                        <input matInput formControlName="sUsuario">
+                    </mat-form-field>
+
+                    <mat-checkbox class="mt-1" formControlName="boEstado" #checkbox *ngIf="modal.nIdUsuario == -1">
+                        {{ checkbox.checked ? 'Activo' : 'Inactivo' }}
+                    </mat-checkbox>
+
+                    <br>
+                    <label class="fw-500 fs-15 pluto_normal" [ngClass]="{'mt-3': modal.nIdUsuario == -1}">Perfil de
+                        usuario</label>
+                    <br>
+
+                    <mat-radio-group formControlName="nIdRol">
+                        <mat-radio-button *ngFor="let oRol of lstRol" [value]="oRol.nIdRol" appearance="outline"
+                            class="mr-8">
+                            {{ oRol.sNombre }}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <div mat-dialog-actions class="dialog-container">
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button mat-flat-button type="submit" color="primary" [disabled]="loadingModal">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+                {{ modal.nIdUsuario == -1 ? 'Registrar' : 'Actualizar' }}</button>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Modal restablecer contraseña -->
+<ng-template #modalRestablecer>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>El sistema enviará un correo electrónico al usuario para restablecer su contraseña.<br> ¿Está seguro de
+                continuar con esta acción?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingRestablecer" mat-flat-button type="submit" color="primary"
+                (click)="fnReenviarMail()">
+                <mat-icon *ngIf="loadingRestablecer"><mat-spinner color="primary"
+                        diameter="16"></mat-spinner></mat-icon>
+                Sí estoy seguro
+            </button>
+        </div>
+    </div>
+</ng-template>

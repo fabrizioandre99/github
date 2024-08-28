@@ -1,0 +1,173 @@
+<!-- <div class="detect_size">
+  Tamaño de width: {{ pantallaAncho }},
+  Valor inicial: {{initialCutout}},
+  Valor cambiado: {{valorAsignado}}.
+</div>
+ -->
+<div class="container">
+  <label class="crud__title mt-4">Evolución anual</label>
+  <div class="row mt-3">
+    <div class="col-lg-7">
+      <button (click)="sfFiltros=!sfFiltros;" class="crud__button button-blue d-flex" style="align-items: center;">
+        <img src=" assets/images/icon-filter.svg" height="15" />
+        <span class="ms-2">Filtros</span>
+        <img class="ms-2" src=" assets/images/icon-arrow.svg" height="10"
+          [ngClass]="sfFiltros ? 'collapsed-active' : 'collapsed-inactive'" />
+      </button>
+    </div>
+    <div class="col-lg-4 ms-auto d-flex justify-content-end align-items-end">
+      <button [disabled]="isLoadDescargar || noHayLocacion || lstPartCategoria.length<=0 && lstPartVentas.length<=0"
+        class=" crud__button button-blue d-flex align-items-center" (click)="convertToImage()">
+        <img *ngIf="!isLoadDescargar" src="assets/images/icon-pie.svg" height="22" />
+        <span *ngIf="isLoadDescargar" class="spinner-border spinner-border-sm me-1"></span>
+        <span class="ms-2">Descargar
+          PDF</span>
+      </button>
+    </div>
+  </div>
+  <div class="crud__panel fs-15 ps-md-5 pe-4 pe-lg-5 mt-3" *ngIf="sfFiltros">
+    <div class="row">
+      <div class="d-flex align-items-center">
+        <div class="col-2 col-lg-1">Locación</div>
+        <div class="col-9 col-sm-10 col-md-4">
+          <ng-select [notFoundText]="'No hay data'" name="locacion" [clearable]="false" class="ng-select-admin"
+            [items]="lstLocacion" [(ngModel)]="model.nIdLocacion" name="locacion" bindLabel="sNombre"
+            bindValue="nIdLocacion" placeholder="Seleccione una opción" (change)="aplicarFiltros()">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="crud__panel fs-15 ps-md-5 pe-4 pe-lg-5 mt-3" *ngIf="!sfFiltros">
+    <div class="row">
+      <div class="d-flex align-items-center">
+        <div class="col-2 col-lg-1">Locación</div>
+        <label>{{ modelfilter.locacion }}</label>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="crud__panel">
+        <div class="text-center">
+          <label class="crud__title--chart" style="line-height: 29px;">Emisiones GEI por categoría <br>
+            Locación: <label style="font-weight: 300;">{{ modelfilter.locacion }}</label>
+            <br>[tCO₂e]
+          </label>
+        </div>
+        <div [ngClass]="{ 'd-none': lstPartCategoria.length<=0}">
+          <div class="chart-container chart-container-xs mt-4">
+            <canvas id="chartCategoria"></canvas>
+          </div>
+          <ul class="custom-legend d-lg-flex  flex-wrap justify-content-center mt-4" style="width: 100%;">
+            <li *ngFor="let item of legendItemsCategoria; let i = index" (click)="toggleCategoria(i)" class="ps-lg-4">
+              <span [style.backgroundColor]="item.fillStyle"></span>
+              <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+            </li>
+          </ul>
+        </div>
+        <div class="d-flex align-items-center justify-content-center height-sm"
+          [ngClass]="{ 'd-none chart-height-xl': lstPartCategoria.length>0}">
+          <h5 class="mb-0 card-title text-center">No hay data.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="crud__panel">
+        <div class=" text-center ">
+          <label class="crud__title--chart" style="line-height: 29px;">Emisiones GEI por ventas<br>
+            Locación: <label style="font-weight: 300;">{{ modelfilter.locacion }}</label>
+            <br>[tCO₂e/PEN]
+          </label>
+        </div>
+        <div [ngClass]="{ 'd-none': lstPartVentas.length<=0}">
+          <div class="chart-container mt-4">
+            <canvas id="chartVentas"></canvas>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center height-sm"
+          [ngClass]="{ 'd-none chart-height-xl': lstPartVentas.length>0}">
+          <h5 class="mb-0 card-title text-center">No hay data.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+</div>
+
+<div style=" width: 1320px; position: absolute; margin-left: -500vh;margin-top: -500vh;">
+  <div id="dowloandPdf">
+    <div class="m-4">
+      <div class="text-center">
+        <label class="crud__title" translate="no"
+          style="font-size: 30px; margin-top: 10px; margin-bottom: 11px;">Reporte de
+          evolución anual</label>
+        <br>
+        <label translate="no" class="crud__title crud__tite--nombreEmpresa">{{
+          nombreComercial}}</label>
+      </div>
+      <div class="crud__panel fs-15 ps-md-5 pe-4 pe-lg-5 mt-3">
+        <div class="row">
+          <div class="d-flex align-items-center">
+            <div class="col-2 col-lg-1">Locación</div>
+            <label>{{ modelfilter.locacion }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="crud__panel">
+            <div class=" text-center ">
+              <label translate="no" class="crud__title--chart" style="line-height: 29px;">Emisiones GEI por categoría
+                <br>
+                Locación: <label style="font-weight: 300;">{{ modelfilter.locacion }}</label>
+                <br>[tCO₂e]
+              </label>
+            </div>
+            <div [ngClass]="{ 'd-none': lstPartCategoria.length<=0}">
+              <div class="chart-container chart-container-sm mt-4">
+                <canvas id="chartCategoria_mod"></canvas>
+              </div>
+              <ul id="chartLegCategoria" class="custom-legend d-flex  flex-wrap justify-content-center mt-4"
+                style="width: 100%;">
+                <li *ngFor="let item of legendItemsCategoria_mod; let i = index" (click)="toggleCategoria(i)"
+                  class="ps-lg-4">
+                  <span [style.backgroundColor]="item.fillStyle"></span>
+                  <label translate="no" [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                </li>
+              </ul>
+            </div>
+            <div class="d-flex align-items-center justify-content-center height-sm"
+              [ngClass]="{ 'd-none chart-height-xl': lstPartCategoria.length>0}">
+              <h5 class="mb-0 card-title text-center">No hay data.</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="crud__panel">
+            <div class="text-center">
+              <label class="crud__title--chart" style="line-height: 29px;">Emisiones GEI por ventas<br>
+                Locación: <label style="font-weight: 300;">{{ modelfilter.locacion }}</label>
+                <br>[tCO₂e/PEN]
+              </label>
+            </div>
+            <div [ngClass]="{ 'd-none': lstPartVentas.length<=0}">
+              <div class="chart-container mt-4">
+                <canvas id="chartVentas_mod"></canvas>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center height-sm"
+              [ngClass]="{ 'd-none chart-height-xl': lstPartVentas.length>0}">
+              <h5 class="mb-0 card-title text-center">No hay data.</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br> <br>
+  </div>
+</div>

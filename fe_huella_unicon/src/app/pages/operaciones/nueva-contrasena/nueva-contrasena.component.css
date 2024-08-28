@@ -1,0 +1,87 @@
+.text-green {
+  color: #44c446;
+  font-weight: 500;
+}
+
+.text-red {
+  color: #dc3545 !important;
+  font-weight: 500;
+}
+
+.login__card {
+  padding: 22px 32px;
+}
+
+.crud__textinfo {
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 16px;
+  color: #00358A;
+}
+
+.row {
+  margin-right: calc(-.5 * 1.5rem);
+  margin-left: calc(-.5 * 1.5rem);
+}
+
+.icon_validacion {
+  height: 13px;
+}
+
+/**********************************************/
+/* ---------------Input-Group--------------- */
+
+.input-group {
+  padding-right: 85px;
+}
+
+.group {
+  margin: 0 auto;
+  position: relative;
+}
+
+.group .text-group {
+  line-height: 36px;
+  width: 69px;
+  color: #0D3154;
+  position: absolute;
+  right: -30px;
+  top: -1px;
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+
+  .login__card {
+    padding: 1.289vw 1.875vw;
+  }
+
+  .crud__textinfo {
+    font-size: 0.791vw;
+    line-height: 0.937vw;
+  }
+
+  .icon_validacion {
+    height: 0.762vw;
+  }
+
+  /**********************************************/
+  /* ---------------Input-Group--------------- */
+
+  .input-group {
+    padding-right: 4.979vw;
+  }
+
+
+  .group .text-group {
+    line-height: 2.109vw;
+    width: 4.042vw;
+    right: -1.757vw;
+    top: -0.059vw;
+  }
+
+
+}

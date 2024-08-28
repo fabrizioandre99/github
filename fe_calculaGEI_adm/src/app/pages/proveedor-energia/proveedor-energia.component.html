@@ -1,0 +1,222 @@
+<div class="container">
+  <div class="row align-items-center mt-4">
+    <div class="col"> <label class="crud__title">Proveedores de energía</label></div>
+    <div class="col-md-4 d-flex justify-content-end  mt-3 mt-sm-0"> <button class="crud__button button-yellow"
+        (click)="openModalRegistrar(contentRegistrar)">
+        <img src="assets/images/icon-userplus.svg" height="25" />
+        <span class="ms-2">Nuevo proveedor</span></button></div>
+  </div>
+  <div class="crud__card mt-4 p-2">
+    <div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="table__header">
+            <tr>
+              <th scope="col" class="first-col ps-3">
+                Proveedor de Energía
+              </th>
+              <th scope="col" class="second-col text-center">Estado </th>
+              <th scope="col" class="thrid-col text-center">Editar</th>
+              <th scope="col" class="fourth-col text-center">Eliminar</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeleton">
+            <tbody *ngFor="let repeat of lstSkeleton">
+              <tr class="table__body" style="border:inherit">
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td class="text-center">
+                  <p class="placeholder-glow m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td class="text-center">
+                  <p class="placeholder-glow m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td class="text-center">
+                  <p class="placeholder-glow m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstSector; index as i">
+              <tr class="table__body" [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                <td class="ps-4">{{item.sNombre}}</td>
+                <td class="text-center">
+                  <label class="switch">
+                    <input type="checkbox" (change)="toogleTable($event,item)" [(ngModel)]="item.boCodEstado">
+                    <span class="slider round"></span>
+                  </label>
+                </td>
+                <td class="text-center"> <img src="assets/images/icon-editar.svg" class="pointer"
+                    (click)="fnEditarProveedor(item,contentRegistrar)" height="25" /></td>
+                <td class="text-center"> <img src="assets/images/icon-tacho.svg" class="pointer"
+                    (click)="fnEliminarProveedor(item)" height="30" /></td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+    <br>
+    <ng-container *ngIf="!fShowSkeleton  && lstSector.length <= 0">
+      <div class=" text-center mt-4 mb-5">
+        <h5>No existen resultados.</h5>
+      </div>
+    </ng-container>
+    <div class="d-flex justify-content-center mt-2" *ngIf="!fShowSkeleton">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstSector.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstSector.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Registrar Usuario -->
+<ng-template #contentRegistrar let-modalRegistrar>
+  <form name="form" (ngSubmit)="fnInsertarProveedor(ProveedorForm);" #ProveedorForm="ngForm">
+    <div class="modal-body modal__body--admin">
+      <div class="d-flex justify-content-center">
+        <label class="modal__title--admin" *ngIf="!isEditProveedor">Registrar Proveedor de Energía</label>
+        <label class="modal__title--admin" *ngIf="isEditProveedor">Editar Proveedor de Energía</label>
+      </div>
+      <div class="row mt-2">
+        <div class="col-9">
+          <div class="form-group">
+            <label class="modal__label mt-5">Proveedor de energía:</label>
+            <input type="text" name="nombre" class="form-control crud__input" [ngClass]="{ 'is-invalid':(!model.oProveedorEnergia?.sNombre?.trim() && ProveedorForm.submitted)||
+            (sNombre.errors?.['pattern'] && ProveedorForm.submitted)}" [(ngModel)]="model.oProveedorEnergia.sNombre"
+              spellcheck="false" onkeypress="return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$/.test(event.key)" maxlength="150"
+              pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$" #sNombre="ngModel" />
+            <div *ngIf="!model.oProveedorEnergia?.sNombre?.trim() && ProveedorForm.submitted">
+              <small class="text-danger">Campo requerido.</small>
+            </div>
+            <div *ngIf="sNombre.errors?.['pattern'] && ProveedorForm.submitted">
+              <small class="text-danger">Solo puede escribir letras y puntos.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label class="switch">
+              <input type="checkbox" name="nCodEstado" [(ngModel)]="model.oProveedorEnergia.nCodEstado"
+                #nCodEstado="ngModel" (change)="toogleModal($event)">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="showFactores">
+        <div class="row mt-3">
+          <div class="d-flex align-items-center">
+            <label class="modal__label">Ingresar los factores de emisión</label>
+            <img src="assets/images/icon-question-admin.svg" class="pointer ms-1" height="21" placement="top"
+              ngbTooltip="Para activar el proveedor debe registrar los factores de emisión del último año del sistema." />
+          </div>
+        </div>
+        <div class="row mt-md-3">
+          <div class="col-md-4 mt-2 mt-md-0">
+            <div class="form-group">
+              <label class="modal__label">Factor emisión<br> CO<sub>2 </sub>
+                <label class="modal__label--unidad">[tCO2/KWh]</label>
+              </label>
+              <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}" [(ngModel)]="model.nFeCO2"
+                name="feCO2" #nFeCO2="ngModel" class="form-control crud__input"
+                [ngClass]="{ 'is-invalid':(nFeCO2.errors?.['required'] && ProveedorForm.submitted)||(nFeCO2.errors?.['pattern'] && ProveedorForm.submitted)}"
+                required />
+              <div *ngIf="nFeCO2.errors?.['required'] && ProveedorForm.submitted">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+              <div *ngIf="nFeCO2.errors?.['pattern'] && ProveedorForm.submitted">
+                <small class="text-danger">Valor incorrecto.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mt-2 mt-md-0">
+            <div class="form-group">
+              <label class="modal__label">Factor emisión<br> CH<sub>4 </sub>
+                <label class="modal__label--unidad">[tCH<sub>4</sub>/KWh]</label>
+              </label>
+              <!-- <label class="modal__label">Factor emisión CH<sub>4</sub> [tCH<sub>4</sub>/KWh]</label> -->
+              <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}" [(ngModel)]="model.nFeCH4"
+                name="feCH4" #nFeCH4="ngModel" class="form-control crud__input"
+                [ngClass]="{ 'is-invalid':(nFeCH4.errors?.['required'] && ProveedorForm.submitted)||(nFeCH4.errors?.['pattern'] && ProveedorForm.submitted)}"
+                required />
+              <div *ngIf="nFeCH4.errors?.['required'] && ProveedorForm.submitted">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+              <div *ngIf="nFeCH4.errors?.['pattern'] && ProveedorForm.submitted">
+                <small class="text-danger">Valor incorrecto.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mt-2 mt-md-0">
+            <div class="form-group">
+              <label class="modal__label">Factor emisión<br> N<sub>2</sub>O
+                <label class="modal__label--unidad">[tN<sub>2</sub>O/KWh]</label>
+              </label>
+              <!-- <label class="modal__label">Factor emisión N<sub>2</sub>O [tN<sub>2</sub>O/KWh]</label> -->
+              <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}" [(ngModel)]="model.nFeN2O"
+                name="feN2O" #nFeN2O="ngModel" class="form-control crud__input"
+                [ngClass]="{ 'is-invalid':(nFeN2O.errors?.['required'] && ProveedorForm.submitted)||(nFeN2O.errors?.['pattern'] && ProveedorForm.submitted)}"
+                required />
+              <div *ngIf="nFeN2O.errors?.['required'] && ProveedorForm.submitted">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+              <div *ngIf="nFeN2O.errors?.['pattern'] && ProveedorForm.submitted">
+                <small class="text-danger">Valor incorrecto.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-md-3">
+          <div class="col-md-4 mt-2 mt-md-0">
+            <div class="form-group">
+              <label class="modal__label" style="white-space: nowrap;">Factor emisión<br> CO<sub>2</sub>eq
+                <label class="modal__label--unidad"> [tCO<sub>2</sub>eq/KWh]</label>
+              </label>
+              <!-- <label class="modal__label">Factor emisión CO<sub>2</sub>eq [tCO<sub>2</sub>eq/KWh]</label> -->
+              <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}" [(ngModel)]="model.nFeCO2eq"
+                name="feCO2eq" #nFeCO2eq="ngModel" class="form-control crud__input"
+                [ngClass]="{ 'is-invalid':(nFeCO2eq.errors?.['required'] && ProveedorForm.submitted)||(nFeCO2eq.errors?.['pattern'] && ProveedorForm.submitted)}"
+                required />
+              <div *ngIf="nFeCO2eq.errors?.['required'] && ProveedorForm.submitted">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+              <div *ngIf="nFeCO2eq.errors?.['pattern'] && ProveedorForm.submitted">
+                <small class="text-danger">Valor incorrecto.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <button class="crud__button button-yellow" type="submit" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span><span>Guardar</span></button>
+        <button class="crud__button button-red ms-2" type="button" (click)="fnCloseModal()">
+          <span>Cancelar</span></button>
+      </div>
+    </div>
+  </form>
+</ng-template>

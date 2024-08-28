@@ -1,0 +1,26 @@
+.header {
+  margin-top: 80px;
+  margin-bottom: 10px;
+}
+
+label {
+  color: #0D3154;
+}
+
+.borde {
+  background-color: white;
+  height: 100%;
+  margin: 0 auto;
+  width: 0.5px;
+}
+
+.arrow-sm {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .arrow-sm {
+    display: unset;
+  }
+
+}

@@ -1,0 +1,30 @@
+<div class="dashboard_sibebar" [ngClass]="{'dashboard_sibebar_collapsed': isCollapsedMenu}"
+  (mouseenter)="onOpenMenu()" (mouseleave)="onCLoseMenu()">
+  <div class="px-4 pt-1 d-flex align-items-center" [ngClass]="{'ps-2': isCollapsedMenu}">
+    <img src="assets/images/logo.png" height="80" />
+    <label class="fs-16 ms-2 dashboard_sibebar_title" [ngClass]="{'d-none': isCollapsedMenu}">Sistema de emisiones de GEI
+      del
+      transporte
+      público</label>
+  </div>
+  <nav id="sidebarMenu" class="sidebar mt-4">
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let menu of lstMenu" [class.changeColor]="isMenuActive(menu)">
+        <a class="nav-link" href="#" (click)="toggleSubmenu(menu.nIdMenu, $event)">
+          <img src="{{ menu.sIcono }}.svg" class="icon" [class.active-image]="isMenuActive(menu)">
+          <label [ngClass]="{'d-none': isCollapsedMenu}" [class.active-submenu]="isMenuActive(menu)">{{ menu.sNombre
+            }}</label>
+          <img *ngIf="menu.liSubMenu.length > 0" [ngClass]="{'d-none': isCollapsedMenu}"
+            src="assets/images/icon_arrow.svg" class="arrow" [class.rotated]="isSubmenuOpen(menu.nIdMenu)"
+            [class.active-image]="isMenuActive(menu)">
+        </a>
+        <ul class="submenu collapse ms-4" [id]="'submenu' + menu.nIdMenu"
+          [ngClass]="{'show': isSubmenuOpen(menu.nIdMenu), 'force-collapsed': isCollapsedMenu}">
+          <li class="nav-item" *ngFor="let submenu of menu.liSubMenu">
+            <a class="nav-link" [class.active-submenu]="isSubenuActive(submenu)" routerLink="{{ submenu.sAppUrl }}" >{{ submenu.sNombre }}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</div>

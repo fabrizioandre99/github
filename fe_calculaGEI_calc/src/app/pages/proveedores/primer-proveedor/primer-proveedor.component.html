@@ -1,0 +1,180 @@
+<form [formGroup]="proveedor1Form" (ngSubmit)="onSubmit()">
+  <img class="arrow-float" src="assets/images/arrow-left.svg" (click)="retornar()" />
+  <img class="arrow-sm-float" src="assets/images/arrow-left-sm.svg" (click)="retornar()" height="30" />
+  <div class="float-lg-end mt-3 me-lg-1">
+    <img src="assets/images/celepsa.png" class="celepsa-image" />
+  </div>
+  <div class="body pb">
+    <div class="header">
+      <h2 class="text-center">Completa los datos de tu<br> consumo energético</h2>
+      <app-barra-lateral></app-barra-lateral>
+    </div>
+    <div class="content card-form pt-5 px-md-5 pb-lg-4">
+      <div class="form-group">
+        <label>Proveedor de energía 1</label>
+        <ng-select [readonly]="fShow" [items]="lstProveedor" [(ngModel)]="proveedor1.proveedorEnergiaDto"
+          placeholder="Nombre del proveedor" class="custom" formControlName="proveedorEnergiaDto"
+          [dropdownPosition]="'bottom'" [clearable]="false" bindValue="id_proveedor_ee" bindLabel="nombre"
+          [searchFn]="fnSearch" [ngClass]="{ 'is-invalid': submitted && f.proveedorEnergiaDto.errors }">
+          <ng-template ng-notfound-tmp let-searchTerm="searchTerm" class="d-none">
+          </ng-template>
+        </ng-select>
+        <div *ngIf="submitted && f.proveedorEnergiaDto.errors">
+          <div class="warning-label" *ngIf="f.proveedorEnergiaDto.errors.required">
+            Por favor ingresa el nombre del proveedor.
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center mt-3">
+        <img src="assets/images/icon-triangle.svg" height="16" class="me-2" />
+        <label>Si no seleccionas un proveedor usamos el
+          consumo de energía de la red nacional SEIN</label>
+      </div>
+      <div class="form-group mt-3">
+        <label class="d-inline">Consumo de energía por mes (Promedio últimos 12 meses)<img src="assets/images/info.svg"
+            height="16" class="ms-1 pointer" data-bs-toggle="modal" data-bs-target="#mesModal" /></label>
+        <div class="group">
+          <input type="number" class="form-control input-group" formControlName="consumo_prom_ee"
+            [(ngModel)]="proveedor1.consumo_prom_ee" placeholder="Número" min=0 max="999999999999999.99"
+            oninput="if (!this.checkValidity()) {this.value = this.value.match(/^\d{0,15}(?:\.\d{0,2})?/)}"
+            [ngClass]="{ 'is-invalid': submitted && f.consumo_prom_ee.errors }">
+          <div class="text-group">kWh/mes</div>
+        </div>
+        <div *ngIf="submitted && f.consumo_prom_ee.errors">
+          <div class="warning-label" *ngIf="f.consumo_prom_ee.errors.required">
+            Por favor ingresa el consumo promedio.
+          </div>
+          <div class="warning-label" *ngIf="f.consumo_prom_ee.errors.min">
+            Por favor ingresa un número positivo.
+          </div>
+          <div class="warning-label" *ngIf="f.consumo_prom_ee.errors.max">
+            El número ingresado es demasiado grande.
+          </div>
+        </div>
+      </div>
+      <div class="form-group mt-3">
+        <label>¿Cuentan con certificado de energía renovable?<img src="
+          assets/images/info.svg" height="16" class="image-info ms-1 pointer" data-bs-toggle="modal"
+            data-bs-target="#renovableModal" /></label>
+        <div class="form-check mt-2">
+          <input class="form-check-input" (change)="decision()" formControlName="decision"
+            [(ngModel)]="proveedor1.decision" type="radio" id="c1" value="Si">
+          <label class="form-check-label" for="c1">
+            Sí tenemos
+          </label>
+        </div>
+
+        <div *ngIf="proveedor1.decision=='Si'" class="ps-4">
+          <div class="form-check">
+            <input class="form-check-input" formControlName="cert_renovable" [(ngModel)]="proveedor1.cert_renovable"
+              type="radio" id="c2" value="AENOR">
+            <label class="form-check-label" for="c2">
+              AENOR
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" formControlName="cert_renovable" [(ngModel)]="proveedor1.cert_renovable"
+              type="radio" id="c3" value="IREC">
+            <label class="form-check-label" for="c3">
+              IREC
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" formControlName="cert_renovable" [(ngModel)]="proveedor1.cert_renovable"
+              type="radio" id="c4" value="SGS">
+            <label class="form-check-label" for="c4">
+              SGS
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" formControlName="cert_renovable" [(ngModel)]="proveedor1.cert_renovable"
+              type="radio" id="c4" value="Otros">
+            <label class="form-check-label" for="c4">
+              Otros
+            </label>
+          </div>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" (change)="decision()" formControlName="decision"
+            [(ngModel)]="proveedor1.decision" type="radio" id="c5" value="No">
+          <label class="form-check-label" for="c5">
+            No tenemos
+          </label>
+        </div>
+        <div *ngIf="submitted && f.decision.errors || submitted && f.cert_renovable.errors">
+          <div class="warning-label">Por favor selecciona una opción.
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-lg-3" style="margin-top: auto;" [hidden]="numero==2 || numero==3">
+        <button class="button-celepsa btn-form button-proveedor button-blue"
+          [ngClass]="{ 'button-gray': this.proveedor1Form.invalid }">Continuar</button>
+      </div>
+      <div class="buttons-arrows-bottom d-flex justify-content-between" style="margin-top: auto;">
+        <div><br></div>
+        <div><img class="arrow-right-redict pointer mt-4 mt-lg-1" [hidden]="numero==1"
+            src="assets/images/arrow-right-redict.svg" height="35" (click)="onSubmit()" /></div>
+      </div>
+    </div>
+    <label class="footer">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+  </div>
+</form>
+<!-- Modal Energia Renovable-->
+<div class="modal fade" id="renovableModal" tabindex="-1" aria-labelledby="renovableLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title" id="renovableModalLabel">Certificados de energía renovable</label>
+        <img src="assets/images/icon-aspa.svg" class="icon-aspa-black close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+        <img src="assets/images/icon-aspa-white.svg" class="icon-aspa-white close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+      </div>
+      <div class="modal-body">
+        Los certificados de energía renovable aseguran que la fuente de generación de dicha energía eléctrica es de
+        origen 100% renovables y son asignados de manera exclusiva a algún usuario del sistema. De esta manera, dichos
+        certificados indican cuándo, dónde y quién generó dicha energía eléctrica.
+        <br><br>Los atributos de estos certificados son verificados por un tercero independiente y cumplen con
+        criterios predefinidos (estándar).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Energia por mes-->
+<div class="modal fade" id="mesModal" tabindex="-1" aria-labelledby="mesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title" id="mesModalLabel">Consumo de energía por mes</label>
+        <img src="assets/images/icon-aspa.svg" class="icon-aspa-black close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+        <img src="assets/images/icon-aspa-white.svg" class="icon-aspa-white close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+      </div>
+      <div class="modal-body">
+        Completa los datos de tus facturas o tus boletas de energía eléctrica. Debes sacar el promedio de 12 meses de
+        consumo.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Energia Actual-->
+<div class="modal fade" id="actualModal" tabindex="-1" aria-labelledby="actualModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title" id="actualModalLabel">Proveedor actual de energía</label>
+        <img src="assets/images/icon-aspa.svg" class="icon-aspa-black close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+        <img src="assets/images/icon-aspa-white.svg" class="icon-aspa-white close-modal pointer" height="12"
+          data-bs-dismiss="modal" aria-label="Close" />
+      </div>
+      <div class="modal-body">
+        En caso tu empresa tenga varias sedes, indica cuál es tu proveedor principal.
+      </div>
+    </div>
+  </div>
+</div>

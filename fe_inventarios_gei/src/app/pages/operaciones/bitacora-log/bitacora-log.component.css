@@ -1,0 +1,35 @@
+.buscar {
+  background: none;
+  color: #a2a2a2;
+  font-style: italic;
+  text-align: center
+}
+
+.buscar:placeholder-shown {
+  background: none;
+  background-size: 1.25rem;
+  background-position: 0;
+  border: 0.0938rem solid #a2a2a2;
+}
+
+.buscar::placeholder {
+  padding-left: 0;
+  font-weight: 400;
+  color: #a2a2a2
+}
+
+table {
+  white-space: normal;
+}
+
+td,
+th {
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+
+.buscar {
+  color: black;
+  font-style: normal;
+}

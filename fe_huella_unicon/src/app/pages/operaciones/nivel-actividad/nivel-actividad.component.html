@@ -1,0 +1,644 @@
+<div class="gradiente justify-content-center d-flex align-items-center" *ngIf="loadingDescargar">
+  <div class="snippet" data-title="dot-flashing">
+    <div class="stage">
+      <div class="dot-flashing"></div>
+    </div>
+  </div>
+</div>
+<div class="container margin-container">
+  <label class="crud__title">Nivel de actividad </label>
+  <div class="row">
+    <div class="col-lg-2 w-periodo">
+      <label class="crud__label--sm">Periodo</label>
+      <ng-select class="ng-select-admin" [disabled]="disabledForNoIdPeriodo" (change)="changePeriodo()"
+        [(ngModel)]="model.oPeriodo.nIdPeriodo" [items]="lstPeriodo" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="nIdPeriodo" bindLabel="nAnio" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+      {{model.oPeriodo.nCodEstado}}
+    </div>
+    <div class="col-lg-2 w-mes">
+      <label class="crud__label--sm">Mes</label>
+      <ng-select class="ng-select-admin" [disabled]="disabledForNoIdPeriodo" (change)="changeMes()"
+        [(ngModel)]="model.sCodMes" [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false"
+        [clearable]="false">
+        <ng-option *ngFor="let item of lstMes" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-md-5 col-lg-3 mt-2 mt-md-0 d-flex align-items-end">
+      <input [disabled]="disabledForNoIdPeriodo" class="form-control crud__input crud__input--search"
+        [(ngModel)]="model.oFuenteEmision.sNombre" placeholder="Buscar por fuente de emisión">
+    </div>
+  </div>
+  <div class="row mt-2 mt-md-2">
+    <div class="d-flex align-items-center justify-content-end">
+      <button [disabled]="disabledForNoIdPeriodo || model.nCodEstado==2|| model.nCodEstado==3 ||!model.boConNA"
+        (click)="openConfirmacion(contentConfirmacion)" class="crud__button button-blue">
+        Finalizar Registro
+      </button>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-4 col-lg-3">
+      <button (click)="fnDescargarFNA()"
+        class="crud__button button-blue d-flex align-items-center ms-md-2  mt-2 mt-md-0">
+        <img src="assets/images/icon-file-zip.svg" height="22" />
+        <span class="ms-2">Descargar FNA</span>
+      </button>
+    </div>
+    <div class="col-lg-9 ms-auto d-flex justify-content-end align-items-end">
+      <button *ngIf="model.nCodEstado==4" [ngClass]="{ 'd-none': lstNivelActividad.length <= 0}"
+        class="crud__button button-red-obs d-flex align-items-center me-2" (click)="openObservar(contentObservar)">
+        <img src="assets/images/icon-eye.svg" class="icon-eye-obs" />
+        <span class="ms-2">Observación</span>
+      </button>
+      <button [disabled]="disabledForNoIdPeriodo || model.nCodEstado==0" (click)="redictResultadosGei()"
+        [ngClass]="{ 'd-none': lstNivelActividad.length <= 0}"
+        class="crud__button button-white d-flex align-items-center mt-2 mt-md-0">
+        <img class="icon_resul_gei" src="assets/images/icon-resul-gei.svg" />
+        <span class="ms-2">Resultados GEI</span>
+      </button>
+      <button [disabled]="disabledForNoIdPeriodo || model.nCodEstado==2|| model.nCodEstado==3"
+        (click)="openRegistrarActividad(contentRegistrarActividad)"
+        class="crud__button button-blue d-flex align-items-center  mt-2 ms-2 mt-md-0">
+        <img src="assets/images/icon-plus.svg" height="25" />
+        <span class="ms-2">Registrar nivel de actividad</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="table-responsive crud__card">
+      <table class="table">
+        <thead class="table__header">
+          <tr class="text-center">
+            <th scope="col">Fuentes de emisión</th>
+            <th scope="col">Nivel de actividad</th>
+            <th scope="col">Observación</th>
+            <th scope="col">Evidencias</th>
+            <th scope="col">Eliminar</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container>
+          <tbody *ngFor="let item of lstNivelActividad| Busqueda: model; index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null,
+              'background-color': item.boObservado ? '#ffca95' : 'transparent'
+            }">
+              <!--               <td class="text-center">{{item.nIdNivelActividad}}</td> -->
+              <td class="text-center">{{item.oFuenteEmision.sNombre}}</td>
+              <td class="text-center">
+                <a class="descarga" (click)="fnDescargarNActividad(item)"> {{item.sXlxNivelActividad}}</a>
+                <br><a class="descarga" (click)="fnDescargarPMixer(item)"> {{item.sXlxProduccionMixer}}</a>
+              </td>
+              <td class="text-center">
+                <div *ngIf="item.boObservado==true">
+                  <button class="button-defect" (click)="openObservacion(contentObservacion,item)"
+                    [disabled]="observarAbierto">
+                    <img class="icon_eye_table" src="assets/images/icon-eye.svg" />
+                  </button>
+                </div>
+              </td>
+              <td class=" text-center">
+                <img class="icon_folder_plus  pointer" (click)="openRegistrarEvidencia(contentRegistrarEvidencia,item)"
+                  src="assets/images/icon-folder-plus.svg" placement="top" ngbTooltip="Registrar evidencias" />
+              </td>
+              <td class="text-center">
+                <button *ngIf="model.nCodEstado!==3  && model.nCodEstado!==2" class="button-defect"
+                  (click)="openEliminar(contentEliminar,item)">
+                  <img class="icon_tacho" src="assets/images/icon-tacho.svg" placement="top" ngbTooltip="Eliminar nivel de actividad
+                  y resultado GEI" />
+                </button>
+                <img *ngIf="model.nCodEstado==3 ||model.nCodEstado==2" class="icon_tacho button-defect image-disabled"
+                  src="assets/images/icon-tacho.svg" />
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton && (lstNivelActividad| Busqueda: model)?.length <= 0">
+        <div class="text-center mt-5 mb-5">
+          <h5>No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="(lstNivelActividad| Busqueda: model)?.length > 0 && !fShowSkeleton"
+    class="d-flex justify-content-center mt-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="(lstNivelActividad | Busqueda: model)?.length"
+      [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="(lstNivelActividad | Busqueda: model)?.length"
+      [(page)]="page" [maxSize]="5" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Modal Confirmar Registrar Nivel Actividad-->
+<ng-template #contentRegistrarActividad let-modalRegistrarNivel>
+  <form (ngSubmit)="fnRegistrarNActividad(registrarNActividadForm)" #registrarNActividadForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Registrar nivel de actividad</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close"
+          (click)="modalRegistrarNivel.dismiss()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop">
+        <div class="row">
+          <div class="col-md-2">
+            <label class="crud__label--sm">Periodo</label>
+            <ng-select class="ng-select-admin ng-select-removeArrow" [(ngModel)]="model.oPeriodo.nIdPeriodo"
+              [ngModelOptions]="{standalone: true}" disabled>
+              <ng-option *ngFor="let item of lstPeriodo" [value]="item.nIdPeriodo">{{item.nAnio}}</ng-option>
+            </ng-select>
+          </div>
+          <div class="col-md-3">
+            <label class="crud__label--sm">Mes</label>
+            <ng-select class="ng-select-admin" [(ngModel)]="model.sCodMes_Reg" [dropdownPosition]="'bottom'"
+              [searchable]="false" [clearable]="false" [ngModelOptions]="{standalone: true}">
+              <ng-option *ngFor="let item of lstMes" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+            </ng-select>
+          </div>
+          <div class="col-md-6">
+            <label class="crud__label--sm">Fuentes de emisión</label>
+            <ng-select class="ng-select-admin" placeholder="Seleccionar" (change)=" changeFuentesEmision()"
+              [(ngModel)]="model.nIdFuenteEmision" #nIdFuenteEmision="ngModel" name="nIdFuenteEmision"
+              [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false"
+              required
+              [ngClass]="{ 'is-invalid': registrarNActividadForm.submitted && nIdFuenteEmision.errors?.['required']}">
+              <ng-option *ngFor="let item of lstFuenteEmision"
+                [value]="item.nIdFuenteEmision">{{item.sNombre}}</ng-option>
+            </ng-select>
+            <div *ngIf="registrarNActividadForm.submitted && nIdFuenteEmision.errors?.['required']">
+              <small class="text-danger">Seleccione la fuente de emisión.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center"> <label class="crud__label--sm">Nivel de
+                actividad</label>
+              <img class="icon_info pointer" src="assets/images/icon-info.svg" placement="top"
+                ngbTooltip="Formato permitido: xls ó xlsx" />
+            </div>
+            <div class="form-file pointer"
+              [ngClass]="{ 'is-invalid':(registrarNActividadForm.submitted && !uploadNActividad && !noFormatNActividad) ||noFormatNActividad}"
+              (dragover)="dragOverHandler($event)" (drop)="dropHandler($event, 'fileNActividad')">
+              <label for="fileNActividad" class="textfile w-100 bd-highlight pointer" #fileNActividad>Seleccionar
+                archivo</label>
+              <div class="flex-shrink-1 bd-highlight">
+                <input type="file" class="pointer" multiple accept=".xlsx,.xls" id="fileNActividad"
+                  name="fileNActividad" (change)="changeFileNActividad($event)" required>
+              </div>
+            </div>
+            <div *ngIf="registrarNActividadForm.submitted && !uploadNActividad && !noFormatNActividad">
+              <small class="text-danger ms-1">Inserte el archivo.</small>
+            </div>
+            <div *ngIf="noFormatNActividad">
+              <small class="text-danger ms-1">El archivo debe tener formato .xls o .xlsx</small>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="fShowProduccion">
+            <div class="d-flex align-items-center"> <label class="crud__label--sm">Producción de concreto por unidad de
+                mixer </label>
+              <img class="icon_info pointer" src="assets/images/icon-info.svg" placement="top"
+                ngbTooltip="Formato permitido: xls ó xlsx" />
+            </div>
+            <div class="form-file pointer"
+              [ngClass]="{ 'is-invalid': (registrarNActividadForm.submitted && !uploadUnMixer && model.nIdFuenteEmision==7 && !noFormatUnMixer) ||noFormatUnMixer && model.nIdFuenteEmision==7}"
+              (dragover)="dragOverHandler($event)" (drop)="dropHandler($event, 'fileUnMixer')">
+              <label for="fileUnMixer" class="textfile w-100 bd-highlight pointer" #fileUnMixer>Seleccionar
+                archivo</label>
+              <div class="flex-shrink-1 bd-highlight">
+                <input type="file" class="pointer" multiple accept=".xlsx,.xls" id="fileUnMixer" name="fileUnMixer"
+                  (change)="changeFileUnMixer($event)" required>
+              </div>
+            </div>
+            <div
+              *ngIf="registrarNActividadForm.submitted && !uploadUnMixer && model.nIdFuenteEmision==7 && !noFormatUnMixer">
+              <small class="text-danger">Inserte el archivo.</small>
+            </div>
+            <div *ngIf="noFormatUnMixer && model.nIdFuenteEmision==7">
+              <small class="text-danger ms-1">El archivo debe tener formato .xls o .xlsx</small>
+            </div>
+            <label class="crud__label--sm  align-items-center d-flex mt-1">
+              <img src="assets/images/icon-dowloand.svg" class="icon_dowloand me-1" />
+              Descargar: <a (click)="fnDescargarFormatoProd()" class="descarga">FormatoProdConcretoMixer.xls</a></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="crud__button button-white" (click)="modalRegistrarNivel.dismiss()">
+          Cancelar
+        </button>
+        <button [disabled]="loadRegistrarNA" type="submit" class="crud__button button-blue ms-2"> <span
+            *ngIf="loadRegistrarNA" class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Confirmar Registrar Nivel Incertidumbre-->
+<ng-template #contentRegistrarIncertidumbre let-modalRegistrarIncertidumbre>
+  <form (ngSubmit)="fnRegistrarNIncertidumbre(registrarIncertidumbreForm)" #registrarIncertidumbreForm="ngForm"
+    novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Registrar nivel de incertidumbre</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close"
+          (click)="modalRegistrarIncertidumbre.dismiss()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop">
+        <div class="d-flex align-items-center">
+          <label class="crud__label--sm">Periodo</label>
+          <div class="col-md-2 w-periodoNIncert ms-2">
+            <ng-select class="ng-select-admin ng-select-removeArrow" [(ngModel)]="model.oPeriodo.nIdPeriodo"
+              name="nIdPeriodo" [ngModelOptions]="{standalone: true}" disabled>
+              <ng-option *ngFor="let item of lstPeriodo" [value]="item.nIdPeriodo">{{item.nAnio}}</ng-option>
+            </ng-select>
+          </div>
+        </div>
+        <label class="modal__title text-start mt-4">Fuentes de emisión</label>
+        <div class="crud__card crud__card--modal mt-2">
+          <ng-container *ngIf="fShowSkIncerXFuente">
+            <div *ngFor="let item of lstSkIncerXFuent; index as i">
+              <div class="form-group row align-items-center mt-3 mb-3">
+                <div class="col-sm-6">
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </div>
+                <div class="col-sm-6">
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkIncerXFuente">
+            <div *ngFor="let item of lstIncerXFuente; index as i">
+              <div class="form-group row align-items-center mt-3"
+                [style.display]="i / pageSizeA_modal >= pageA_modal || i / pageSizeA_modal < pageA_modal - 1 ? 'none' : null">
+                <label class="col-sm-6 crud__label--sm">{{item.oFuenteEmision.sNombre}}
+                </label>
+                <div class="col-sm-6">
+                  <ng-select
+                    [ngClass]="{ 'is-invalid': registrarIncertidumbreForm.submitted && !lstIncerXFuente[i].sCodIncertidumbre}"
+                    (change)="i===0 ? changeFirstSelect() : null" [(ngModel)]="lstIncerXFuente[i].sCodIncertidumbre"
+                    [ngModelOptions]="{standalone: true}" placeholder="Seleccionar incertidumbre"
+                    class="ng-select-admin" [items]="lstNivelIncer" [dropdownPosition]="'bottom'" [clearable]="false"
+                    bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="form-check d-flex align-items-center mt-3">
+              <input [disabled]="!lstIncerXFuente[0].sCodIncertidumbre" [(ngModel)]="isSameLevel" name="sameLevel"
+                (change)="changeSameLevel()" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label crud__label--sm ms-1" for="flexCheckDefault">
+                Seleccionar el mismo nivel de incertidumbre para todas las fuentes
+              </label>
+            </div>
+            <div *ngIf="lstIncerXFuente.length > 0" class="d-flex justify-content-center mt-3 pb-3">
+              <ngb-pagination class="pagination-md" [collectionSize]="lstIncerXFuente.length" [(page)]="pageA_modal"
+                [maxSize]="8" [pageSize]="pageSizeA_modal">
+                <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+              </ngb-pagination>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="crud__button button-white" (click)="modalRegistrarIncertidumbre.dismiss()">
+          Cancelar
+        </button>
+        <button [disabled]="loadNIcertidumbre" type="submit" class="crud__button button-blue ms-2">
+          <span *ngIf="loadNIcertidumbre" class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Registrar evidencia -->
+<ng-template #contentRegistrarEvidencia let-modalRegistrarEvidencia>
+  <form (ngSubmit)="fnRegistrarEvidencia(registrarEvidenciaForm)" #registrarEvidenciaForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Evidencia documentaria</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close"
+          (click)="modalRegistrarEvidencia.dismiss()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop ">
+        <div class="div" [hidden]=" model.nCodEstado==3|| model.nCodEstado==2">
+          <div class="row mt-1">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center"> <label class="crud__label--sm">Adjunta evidencia del nivel de
+                  actividad</label>
+                <img class="icon_info pointer" src="assets/images/icon-info.svg" placement="top"
+                  ngbTooltip="Formatos permitidos: .pdf,.png,.jpg" />
+              </div>
+              <div class="form-file pointer" [ngClass]="{ 'is-invalid': noFormatMfDoc}"
+                (dragover)="dragOverHandler($event)" (drop)="dropHandler($event, 'fileMfDocumento')">
+                <label for="fileMfDocumento" class="textfile w-100 bd-highlight pointer" #fileMfDocumento>Seleccionar
+                  archivo</label>
+                <div class="flex-shrink-1 bd-highlight">
+                  <input type="file" class="pointer" multiple (change)="changeFileMfDocumento($event)"
+                    accept=".pdf,.png,.PNG,.jpg,.JPG" id="fileMfDocumento" name="fileExcel" required>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto d-flex align-items-end">
+              <button [disabled]="loadRegistrarEV" type="submit"
+                class="crud__button crud__button--large  button-blue d-flex align-items-center mt-2 mt-md-0">
+                <img *ngIf="!loadRegistrarEV" src="assets/images/icon-plus.svg" height="25" />
+                <span *ngIf="loadRegistrarEV" class="spinner-border spinner-border-sm me-1"></span>
+                <span class="ms-1">Agregar </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="noFormatMfDoc">
+          <small class="text-danger ms-1">El archivo debe estar en formato .pdf,.png o .jpg</small>
+        </div>
+        <div class="crud__card crud__card--modal p-0 mt-2"
+          [ngClass]="{'mt-4': !(  model.nCodEstado==3 || sharedData.itemPeriodo?.disDatCompl)}">
+          <div class="table-responsive">
+            <table class="table my-table">
+              <thead class="table__header">
+                <th scope="col" class="ps-3">Documentos</th>
+              </thead>
+              <ng-container *ngIf="fShowSkEvidencia">
+                <tbody *ngFor="let item of lstSkeleton">
+                  <tr class="table__body table__body--skeleton">
+                    <td>
+                      <p class="placeholder-glow rounded m-0">
+                        <span class="placeholder col-12 placeholder-sm"></span>
+                      </p>
+                    </td>
+                    <td>
+                      <p class="placeholder-glow rounded m-0">
+                        <span class="placeholder col-12 placeholder-sm"></span>
+                      </p>
+                    </td>
+                    <td>
+                      <p class="placeholder-glow rounded m-0">
+                        <span class="placeholder col-12 placeholder-sm"></span>
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-container>
+              <tbody
+                *ngFor="let item of lstEvidencia | slice: (pageB_modal-1) * pageSizeB_modal : (pageB_modal-1) * pageSizeB_modal + pageSizeB_modal">
+                <tr class="table__body">
+                  <td class="ps-3">{{item.sNombreDocumento}}</td>
+                  <td class="text-center">
+                    <img class="icon_file_evidencia pointer" src="assets/images/icon-file-evidencia.svg" placement="top"
+                      ngbTooltip="Descargar evidencia" (click)="fnDescargarEvidencia(item)" />
+                  </td>
+                  <td class="text-center">
+                    <button *ngIf="model.nCodEstado!==3" type="button" class="button-defect"
+                      (click)="fnEliminarEvidencia(item)">
+                      <img src="assets/images/icon-tacho.svg" class="icon_tacho" />
+                    </button>
+                    <img *ngIf="model.nCodEstado==3" class="icon_tacho button-defect image-disabled"
+                      src="assets/images/icon-tacho.svg" />
+                  </td>
+                </tr>
+              </tbody>
+              <ng-container *ngIf="!fShowSkEvidencia && lstEvidencia.length <= 0">
+                <div class="text-center mt-5 mb-5">
+                  <h5>No existen resultados.</h5>
+                </div>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+        <div *ngIf="lstEvidencia.length > 0" class="d-flex justify-content-center mt-3">
+          <ngb-pagination class="pagination-md" style="height: 35px;" [collectionSize]="lstEvidencia.length"
+            [(page)]="pageB_modal" [maxSize]="8" [pageSize]="pageSizeB_modal">
+            <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Confirmación-->
+<ng-template #contentConfirmacion let-modalConfirmacion>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <label class="modal__title">Confirmación</label>
+      <label class="modal__text mt-3  fs-16">Al completar el registro de datos de actividad para el periodo deberá
+        registrar el
+        nivel de
+        incertidumbre.</label>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalConfirmacion.dismiss()" class=" crud__button button-white" type="button">
+          Cancelar</button>
+        <button (click)="openRegistrarIncertidumbre(contentRegistrarIncertidumbre)"
+          class="crud__button button-blue ms-2" type="submit">
+          Continuar</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <label class="modal__title">Confirmación</label>
+      <label class="mt-3 text-center d-block fs-16">¿Está seguro de eliminar el nivel de actividad?</label>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarNivelActividad()" class="crud__button button-blue ms-2"
+          type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Observación-->
+<ng-template #contentObservacion let-modalObservacion>
+  <form (ngSubmit)="fnRegistrarObservacion(ObservacionForm)" #ObservacionForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Observación</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close"
+          (click)="observarAbierto = false; modalObservacion.dismiss(); ">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop modal-body--withoutBottom ">
+        <label class="fs-16">Los siguientes tramos no se encuentran registrados, indique las distancias para completar
+          el proceso de cálculo
+          de emisiones.</label>
+        <div class="table-responsive crud__card crud__card--modal p-0 mt-4">
+          <table class="table">
+            <thead class="table__header table__header--obs">
+              <th scope="col" class="ps-3">Origen</th>
+              <th scope="col" class="ps-2">Destino</th>
+              <th scope="col" class="text-center">Distancia [Km]</th>
+            </thead>
+            <ng-container *ngIf="fShowSkObservacion">
+              <tbody *ngFor="let item of lstSkeleton">
+                <tr class="table__body" style="border:inherit">
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="!fShowSkObservacion">
+              <tbody *ngFor="let item of lstTramoNoConfig; index as i">
+                <tr class="table__body" [ngStyle]="{
+                  'display': i / pageSizeC_modal >= pageC_modal || i / pageSizeC_modal < pageC_modal - 1 ? 'none' : 'table-row',
+                  'border-bottom': (i + 1) === (pageC_modal * pageSizeC_modal) ? '0 solid transparent' : null
+                }">
+                  <td class="ps-3">{{item.sOrigen}}</td>
+                  <td>{{item.sDestino}}</td>
+                  <td>
+                    <input type="number" [(ngModel)]="lstTramoNoConfig[i].bdDistacia"
+                      [ngModelOptions]="{standalone: true}" class="form-control form-control-sm crud__input text-end"
+                      #bdDistacia="ngModel" required pattern="^(0+|\d{1,5}(.\d{1,2})?)$" [ngClass]="{
+                      'is-invalid': (ObservacionForm.submitted && bdDistacia.errors?.['required']) ||
+                                    (ObservacionForm.submitted && bdDistacia.errors?.['pattern'])
+                    }" (change)="onInputChanged(i)">
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+          <ng-container *ngIf="!fShowSkObservacion && lstTramoNoConfig.length <= 0">
+            <div class="text-center mt-4 mb-4">
+              <h5>No existen resultados.</h5>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="lstTramoNoConfig.length > 0" class="d-flex justify-content-center mt-3">
+        <ngb-pagination class="pagination-md" [collectionSize]="lstTramoNoConfig.length" [(page)]="pageC_modal"
+          [maxSize]="8" [pageSize]="pageSizeC_modal">
+          <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+        </ngb-pagination>
+        <ngb-pagination class="pagination-sm" [collectionSize]="lstTramoNoConfig.length" [(page)]="pageC_modal"
+          [maxSize]="5" [pageSize]="pageSizeC_modal">
+          <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+        </ngb-pagination>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="crud__button button-white"
+        (click)="observarAbierto = false; modalObservacion.dismiss(); ">
+        Cancelar
+      </button>
+      <button [disabled]="loadObservacion" type="submit" class="crud__button button-blue ms-2"> <span
+          *ngIf="loadObservacion" class="spinner-border spinner-border-sm me-1"></span>
+        Guardar
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Observar -->
+<ng-template #contentObservar let-modalObservar>
+  <form novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Observación de periodo</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close" (click)="modalObservar.dismiss()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="crud__label--sm">Periodo</label>
+            <input class="form-control crud__input" disabled [(ngModel)]="modelObs.nAnio" name="nAnioObs">
+          </div>
+          <div class="col-md-12  mt-2 mt-md-2" *ngIf="modelObs.sXlsObservacion">
+            <div class="d-flex align-items-center">
+              <label class="crud__label--sm">Documento de observación</label>
+            </div>
+            <a class="descarga" (click)="fnDescargarDocObs()"> {{modelObs.sXlsObservacion}}</a>
+          </div>
+          <div class="col-md-12  mt-2">
+            <label for="comentario_modal_na" class="crud__label--sm">Comentario</label>
+            <textarea id="comentario_modal_na" style="color:black!important" class="form-control crud__input"
+              minlength="5" maxlength="1000" disabled [(ngModel)]="modelObs.sObservacion" #observacion="ngModel"
+              required name="observacion"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,272 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <label class="crud__title">Bandeja de clientes</label>
+  </div>
+  <div class="d-md-flex align-items-center ms-lg-5 mt-2 mt-md-4">
+    <label class="crud__label crud__label--sub">Desde</label>
+    <div class="col-md-2 col ms-md-2">
+      <input class="form-control crud__calendar pointer" placeholder="aaaa/mm/dd" ngbDatepicker
+        [(ngModel)]="firstCalendar" #oFirstCalendar="ngbDatepicker" (click)="oFirstCalendar.toggle()"
+        [minDate]="{year: today.getFullYear() -1, month: 1, day: 1}"
+        [maxDate]="{year: today.getFullYear()+1, month: 12, day: 31}" (ngModelChange)="changeFirstDate($event)"
+        [ngClass]="{ 'is-invalid': invalid_firstDate}" />
+    </div>
+    <label class="crud__label crud__label--sub ms-md-3 mt-2 mt-md-0">Hasta</label>
+    <div class="col-md-2 ms-md-2">
+      <input class="form-control crud__calendar pointer" [(ngModel)]="secondCalendar" placeholder="aaaa/mm/dd"
+        ngbDatepicker #oSecondCalendar="ngbDatepicker" (click)="oSecondCalendar.toggle()"
+        [minDate]="{year: today.getFullYear() -1, month: 1, day: 1}"
+        [maxDate]="{year: today.getFullYear()+1, month: 12, day: 31}" (ngModelChange)="changeSecondDate($event)"
+        [ngClass]="{ 'is-invalid': invalid_secondDate}" />
+    </div>
+    <button class="crud__button button-yellow ms-md-4 mt-3 mt-md-0" (click)="fShow=!fShow">
+      <img src="assets/images/icon-filtro.svg" height="16" />
+      <span class="ms-2">Filtros</span></button>
+  </div>
+  <div class="justify-content-center d-flex" *ngIf="fShow">
+    <div class="crud__card mt-4 mb-4 p-3 col-md-11">
+      <div class="row">
+        <div class="col-md-4">
+          <ng-select class="ng-select-admin" [(ngModel)]="model.id_sector" [clearable]="false"
+            [notFoundText]="'No se encontraron resultados'" placeholder="Buscar por tipo de industria">
+            <ng-option [value]="-1">Todos</ng-option>
+            <ng-option *ngFor="let item of lstIndustria" [value]="item.id_sector">{{item.nombre}}</ng-option>
+          </ng-select>
+        </div>
+        <div class="col-md-4  mt-3 mt-md-0">
+          <ng-select class="ng-select-admin" [(ngModel)]="model.nIdProveedor" [clearable]="false"
+            [notFoundText]="'No se encontraron resultados'" placeholder="Buscar por proveedor">
+            <ng-option [value]="-1">Todos</ng-option>
+            <ng-option *ngFor="let item of lstProveedor" [value]="item.nIdProveedor">{{item.sNombre}}</ng-option>
+          </ng-select>
+        </div>
+        <div class="col-md-4 mt-3 mt-md-0">
+          <input type="text" class="form-control crud__input" [(ngModel)]="model.sRazonSocial"
+            placeholder="Buscar por nombre de empresa" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-row-reverse mt-0 mt-md-2">
+    <button class="crud__button button-yellow" [hidden]="lstClientes?.length <= 0" (click)="fnDescargarFormato()">
+      <span> <img src="assets/images/icon-xls.svg" height="25" />
+        <span class="ms-2">Descargar</span></span></button>
+  </div>
+  <div class="crud__card mt-4 p-2">
+    <div *ngIf="fShowSkeleton" class="loading-mobile row align-items-center justify-content-center"
+      style="height: 170px;">
+      <div class="spinner-border text-primary mt-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div id="table-mobile">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="cf table__header">
+            <tr>
+              <th scope="col" class="text-center">Fecha de<br>
+                Registro</th>
+              <th scope="col">Industria</th>
+              <th scope="col" class="text-center">Empresa</th>
+              <th scope="col">Datos de contacto</th>
+              <th scope="col">Datos de consumo</th>
+              <th scope="col" class=" text-end">Total<br>
+                emisiones GEI<br>
+                (tCO<sub>2</sub>eq/año)</th>
+              <th scope="col" class="text-center">Ver<br> reporte</th>
+              <th scope="col" class="text-center">Depurar</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeleton">
+            <tbody *ngFor="let item of lstSkeleton" class="loading-desktop">
+              <tr class="table__body" style="border:inherit">
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                  <p class="placeholder-glow rounded m-0 mb-2">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let first of lstClientes| Busqueda: model; index as i">
+              <tr class="table__bandeja"
+                [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                <td data-title="Fecha de Registro">{{first.sFechaReg}}</td>
+                <td data-title="Industria">{{first.oSectorDto.nombre}}</td>
+                <td class="text-lg-center" data-title="Empresa"><label class="font-700">RUC: </label> {{first.nRuc}}<br>
+                  {{first.sRazonSocial}}</td>
+                <td data-title="Datos de contacto">{{first.sNombApellidoContacto}}<br>
+                  <label class="font-700">E: </label> {{first.sCorreoContacto}}<br>
+                  <label class="font-700">A: </label> {{first.sAreaContacto}}
+                </td>
+                <td data-title="Datos de consumo" class="td-datos-consumo">
+                  <div *ngFor="let second of first.Emisiones; index as i" class="mb-3">
+                    <label class="font-700">Proveedor energía: </label> {{second.oProveedorEnergia.sNombre}}<br>
+                    <label class="font-700">Consumo: </label> {{second.nConsumoPromedioEE}} kW.h/año<br>
+                    <label class="font-700">CER: </label> {{second.sCertRenovable}}<br>
+                    <label class="font-700">Emisiones GEI: </label> {{second.nEmisionCO2Eq}} tCO<sub>2</sub>eq
+                  </div>
+                </td>
+                <td class="text-lg-end" data-title="Total">{{first.nTotalEmision.toFixed(4)}}</td>
+                <td class="text-center" data-title="Ver reporte"> <button class="button-defect" [disabled]="openModal"
+                    (click)="fnVerReporte(first,contentReporte)"><img src="assets/images/icon-chartbar.svg"
+                      class="pointer" height="30" /></button></td>
+                <td class="text-center" data-title="Depurar"><img src="assets/images/icon-tacho.svg" class="pointer"
+                    (click)="openModalEliminar(first,contentConfirmacion)" height="30" /></td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+
+    <br>
+    <ng-container *ngIf="!fShowSkeleton && (lstClientes| Busqueda: model)?.length <= 0">
+      <div class="text-center mt-4 mb-5">
+        <h5>No existen resultados.</h5>
+      </div>
+    </ng-container>
+    <div class="d-flex justify-content-center mt-2"
+      *ngIf="(lstClientes| Busqueda: model)?.length > 0 && !fShowSkeleton">
+      <ngb-pagination class="pagination-md" [collectionSize]="(lstClientes | Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="8" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="(lstClientes | Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="3" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+
+  <!-- Modal Reporte-->
+  <ng-template #contentReporte let-modalReporte>
+    <img class="close-modal" src="assets/images/icon-aspa-white.svg" height="25" (click)="modalReporte.dismiss()" />
+    <img *ngIf="model.emisiones_length > 1" class="arrow-prev pointer" src="assets/images/arrow-left-redict.svg"
+      height="30" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <div class="main text-center">
+      <div id="carouselExampleControls" class="carousel slide  d-flex align-items-center" data-bs-interval="false">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="modal__admin modal-body-chart text-center">
+              <label class="modal__title--admin">Reporte comparativo de GEI</label><br>
+              <label class="modal__label mt-3">{{model.primera_empresa}}</label><br>
+              <label class="modal__label">Reporte comparativo con las empresas del país </label>
+              <div class="chart mt-4">
+                <canvas id="firstChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="model.emisiones_length>1? 'carousel-item' : 'd-none'">
+            <div class="modal__admin modal-body-chart text-center">
+              <label class="modal__title--admin">Reporte comparativo de GEI</label><br>
+              <label class="modal__label">{{model.segunda_empresa}}</label><br>
+              <label class="modal__label">Reporte comparativo con las empresas del país </label>
+              <div class="chart mt-4">
+                <canvas id="secondChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="model.emisiones_length>2? 'carousel-item' : 'd-none'">
+            <div class="modal__admin modal-body-chart text-center">
+              <label class="modal__title--admin">Reporte comparativo de GEI</label><br>
+              <label class="modal__label">{{model.tercera_empresa}}</label><br>
+              <label class="modal__label">Reporte comparativo con las empresas del país </label>
+              <div class="chart mt-4">
+                <canvas id="thirdChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img *ngIf="model.emisiones_length > 1" class="arrow-next pointer" src="assets/images/arrow-right-redict.svg"
+      height="30" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <div class="buttons-arrows-mobile d-flex justify-content-between mb-4 mt-4">
+      <div *ngIf="model.emisiones_length > 1"><img class="arrow-left-redict" src="assets/images/arrow-left-redict.svg"
+          height="30" class="pointer" data-bs-target="#carouselExampleControls" data-bs-slide="prev" />
+      </div>
+      <div *ngIf="model.emisiones_length > 1"><img class="arrow-right-redict"
+          src=" assets/images/arrow-right-redict.svg" height="30" class="pointer"
+          data-bs-target="#carouselExampleControls" data-bs-slide="next" /></div>
+    </div>
+
+  </ng-template>
+
+  <!-- Modal Confirmar Eliminar-->
+  <ng-template #contentConfirmacion let-modalConfirmacion>
+    <div class="modal__admin">
+      <div class="modal-body">
+        <div class="d-flex justify-content-center">
+          <label class="modal__title--admin">Confirmación</label>
+        </div>
+        <div class="d-flex justify-content-center mt-2">
+          <label> ¿Está seguro de eliminar el registro?</label>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+          <button class="crud__button button-yellow" (click)="fnEliminarCliente()" [disabled]="loadingEliminar"
+            type="submit">
+            <span *ngIf="loadingEliminar" class="spinner-border spinner-border-sm me-2"></span>
+            <span>Sí</span></button>
+          <button class="crud__button button-red ms-2" type="button" (click)="modalConfirmacion.dismiss()">
+            <span>No</span></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>

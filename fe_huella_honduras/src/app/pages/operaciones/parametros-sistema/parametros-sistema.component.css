@@ -1,0 +1,9 @@
+.mdc-form-field>label {
+    font-size: 15px !important;
+    margin-left: 1px !important;
+    margin-top: 2px;
+}
+
+.w_parametro .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}

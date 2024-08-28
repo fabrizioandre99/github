@@ -1,0 +1,80 @@
+<div *ngIf="loadingPagina || fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container">
+
+    <!-- Evolución mensual  -->
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="crud__panel h-100">
+          <label class="crud__title--chart d-flex justify-content-center text-center" style="line-height: 29px;">
+            Evolución anual de emisiones de GEI
+            <br>[tCO₂e]
+          </label>
+          <div [ngClass]="{ 'd-none': lstRptRuta.length<=0}">
+            <div class="chart-container mt-4">
+              <canvas id="chartRuta"></canvas>
+            </div>
+            <ul id="chartLegFuente" class="custom-legend d-lg-flex  flex-wrap justify-content-center mt-4"
+              style="width: 100%;">
+              <li *ngFor="let item of legendItemsRuta; let i = index" (click)="toggleFuente(i, 1)" class="ps-lg-4">
+                <span [style.backgroundColor]="item.fillStyle"></span>
+                <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-center" *ngIf="fShowSkeleton" 
+              style="height: 445px;" [ngClass]="{'d-none chart-height': lstRptRuta.length>0}">
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="spinner-grow text-primary" role="status"></div>
+            </div>
+        </div>
+
+          <div class="d-flex align-items-center justify-content-center" *ngIf="!fShowSkeleton" 
+              style="height: 445px;" [ngClass]="{ 'd-none chart-height': lstRptRuta.length>0}">
+            <h5 class="mb-0  card-title text-center">No hay data.</h5>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <br>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="crud__panel h-100">
+        <label class="crud__title--chart d-flex justify-content-center text-center" style="line-height: 29px;">
+          Emisiones de GEI anual por tipo de combustible
+        </label>
+        <div [ngClass]="{ 'd-none': lstRptCombustible.length<=0}">
+          <div class="chart-container mt-4">
+            <canvas id="chartCombustible"></canvas>
+          </div>
+          <ul id="chartLegFuente" class="custom-legend d-lg-flex  flex-wrap justify-content-center mt-4"
+            style="width: 100%;">
+            <li *ngFor="let item of legendItemsCombustible; let i = index" class="ps-lg-4" (click)="toggleFuente(i, 2)">
+              <span [style.backgroundColor]="item.fillStyle"></span>
+              <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+            </li>
+          </ul>
+        </div>
+
+          <div class="d-flex align-items-center justify-content-center" *ngIf="fShowSkeleton" 
+              style="height: 445px;" [ngClass]="{'d-none chart-height': lstRptRuta.length>0}">
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="spinner-grow text-primary" role="status"></div>
+            </div>
+        </div>
+
+          <div class="d-flex align-items-center justify-content-center" *ngIf="!fShowSkeleton" 
+              style="height: 445px;" [ngClass]="{ 'd-none chart-height': lstRptCombustible.length>0}">
+            <h5 class="mb-0  card-title text-center">No hay data.</h5>
+          </div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+
+</div>

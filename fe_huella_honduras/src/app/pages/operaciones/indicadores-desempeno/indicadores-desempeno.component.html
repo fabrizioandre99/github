@@ -1,0 +1,130 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Indicadores de desempeño</h3>
+    <div class="d-flex flex-column flex-md-row form_sm mt-3">
+        <mat-form-field class="w_anio" appearance="outline">
+            <mat-label>Año</mat-label>
+            <input [(ngModel)]="getPeriodo.nAnio" matInput placeholder="Año" maxlength="4" disabled>
+        </mat-form-field>
+    </div>
+
+    <div class="table-responsive">
+        <table mat-table [dataSource]="tIndicador" class="mat-elevation-z8 shadow-sm border rounded">
+            <!-- Columna Seleccionar -->
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Seleccionar</th>
+                <td mat-cell *matCellDef="let item; let i = index" class="text-center">
+                    <mat-checkbox [(ngModel)]="item.boEstado" (change)="changeCambiarEstado(i, item)" [disabled]="haySolicitudActiva || esUsuarioInterno"></mat-checkbox>
+                </td>
+            </ng-container>
+            <!-- Columna Tipo de indicador -->
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef>Tipo de indicador</th>
+                <td mat-cell *matCellDef="let item" class="form_xs">{{ item.sIndicador }}</td>
+            </ng-container>
+            <!-- Columna Unidad -->
+            <ng-container matColumnDef="unidad">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Unidad</th>
+                <td mat-cell *matCellDef="let item; let i = index" class="form_xs text-center">
+                    <ng-container *ngIf="item.nIdIndicadorPeriodo === -1 || item.boEstado; else valorSinEditar">
+                        <mat-form-field appearance="outline" class="w-100"
+                            *ngIf="item.sIndicador.slice(0, 3) !== 'Otr'; else inputUnidad">
+                            <mat-select [formControl]="getControl(i, 'sCodUnidad')" placeholder="Seleccionar">
+                                <mat-option *ngFor="let unidad of getFilteredUnidades(item.sIndicador)"
+                                    [value]="unidad.sCodigo">
+                                    {{ unidad.sValor }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="getControl(i, 'sCodUnidad').invalid && getControl(i, 'sCodUnidad').touched">
+                                Este campo es obligatorio
+                            </mat-error>
+                        </mat-form-field>
+                        <ng-template #inputUnidad>
+                            <mat-form-field appearance="outline">
+                                <input matInput placeholder="Ingresar unidad"
+                                    [formControl]="getControl(i, 'sCodUnidad')">
+                                <mat-error
+                                    *ngIf="getControl(i, 'sCodUnidad').invalid && getControl(i, 'sCodUnidad').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </ng-template>
+                    </ng-container>
+                    <ng-template #valorSinEditar>
+                        {{ item.sUnidad }}
+                    </ng-template>
+                </td>
+            </ng-container>
+            <!-- Columna Valor -->
+            <ng-container matColumnDef="valor">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Valor</th>
+                <td mat-cell *matCellDef="let item; let i = index" class="form_xs text-center">
+                    <ng-container *ngIf="item.nIdIndicadorPeriodo === -1 || item.boEstado; else valorSinEditar">
+                        <mat-form-field appearance="outline">
+                            <input matInput placeholder="Valor" [formControl]="getControl(i, 'bdValor')" type="text"
+                                (input)="calcularResultado(i); restringirValor($event, item.sIndicador)"
+                                [attr.maxlength]="item.sIndicador.slice(0, 4) === 'Pers' ? 10 : 13">
+                            <mat-error *ngIf="getControl(i, 'bdValor').invalid && getControl(i, 'bdValor').touched">
+                                Este campo es obligatorio
+                            </mat-error>
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-template #valorSinEditar>
+                        {{ item.bdValor }}
+                    </ng-template>
+                </td>
+            </ng-container>
+            <!-- Columna Resultado -->
+            <ng-container matColumnDef="resultado">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Resultado</th>
+                <td mat-cell *matCellDef="let item; let i = index" class="text-center">{{ item.resultado |
+                    number:'1.2-2' }}
+                </td>
+            </ng-container>
+            <!-- Columna Acciones -->
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                <td mat-cell *matCellDef="let item; let i = index" class="text-center">
+                    <div *ngIf="item.boEstado">
+                        <button mat-icon-button matTooltip="Guardar" style="color: #47D770" [disabled]="haySolicitudActiva || esUsuarioInterno"
+                            (click)="fnRegistrarIndicador(i)">
+                            <mat-icon svgIcon="ph-duotone:floppy-disk"></mat-icon>
+                        </button>
+                        <!--    <button mat-icon-button matTooltip="Cancelar" style="color:#EE3725">
+                        <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                    </button> -->
+                    </div>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="hIndicador"></tr>
+            <tr mat-row *matRowDef="let row; columns: hIndicador;"></tr>
+        </table>
+
+
+        <div class="dash_noData text-center border border-top-0 py-4 fs-18" style=" background-color: white;"
+            *ngIf="lstIndicador.length === 0">
+            <p>No hay resultados</p>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button mat-stroked-button color="primary" type="button" class="button_add" (click)="redictLimitesInforme()">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Límites de informe
+        </button>
+    </div>
+</div>
+
+<!-- Modal informacion (validación) -->
+<ng-template #modalInformacion>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Información</h2>
+        <div mat-dialog-content>
+            <p>{{modal_msg}}</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-flat-button type="submit" (click)="redictHuellaCarbono()">
+                Aceptar
+            </button>
+        </div>
+    </div>
+</ng-template>

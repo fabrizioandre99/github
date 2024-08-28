@@ -1,0 +1,107 @@
+.nav-link {
+  color: white;
+  background-color: #83BD75;
+  border-color: #83BD75;
+  padding: 0.4rem 3rem;
+}
+
+app-alert {
+  position: relative;
+  top: 60px;
+  right: 12px;
+  width: 288px;
+  height: 0px;
+  display: block;
+}
+
+.card-header {
+  background: white;
+}
+
+a {
+  font-weight: 700;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 7px;
+}
+
+.modal-body {
+  padding: 9px 24px 0;
+}
+
+.modal-footer {
+  padding: 8px 21px;
+}
+
+.nombre::placeholder {
+  background: none;
+  color: #a2a2a2;
+  font-style: italic;
+  font-weight: 400;
+}
+
+input {
+  display: block;
+  margin: 0 auto;
+}
+
+.w-telefono {
+  width: 110px !important;
+}
+
+.w-correo {
+  width: 190px !important;
+}
+
+.w-estado {
+  width: 100px;
+  margin: 0 auto;
+}
+
+
+/* Tabla */
+tr th:first-child {
+  width: 8%;
+}
+
+tr th:nth-child(2) {
+  width: 20%;
+}
+
+tr th:nth-child(3) {
+  width: 10%;
+}
+
+tr th:nth-child(4) {
+  width: 17%;
+}
+
+tr th:nth-child(5) {
+  width: 10%;
+}
+
+tr th:nth-child(6) {
+  width: 7%;
+}
+
+tr th:nth-child(7) {
+  width: 7%;
+}
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+  border-color: #FF0000;
+  background-image: url(src/assets/images/alert.svg);
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+@media (min-width: 1199.98px) {
+  .alto {
+    margin-top: -22px;
+    margin-right: -6px;
+  }
+}

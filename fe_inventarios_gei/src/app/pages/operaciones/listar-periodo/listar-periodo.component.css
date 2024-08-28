@@ -1,0 +1,29 @@
+.auto {
+  margin-top: 0.625rem;
+}
+
+.col-form-label-sm {
+  padding-bottom: 0;
+}
+
+table td {
+  height: 53px
+}
+
+.form-check {
+  padding-left: auto;
+}
+
+
+@media only screen and (min-width: 950px) {
+  .auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  :host ::ng-deep ngb-alert {
+    margin-top: -5px;
+  }
+}

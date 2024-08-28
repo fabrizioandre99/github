@@ -1,0 +1,28 @@
+<nav class="navbar" style="z-index: 9">
+  <div class="container-fluid">
+    <div class="d-flex align-items-center logo__general">
+      <img class="logo__hcc" [ngClass]="{ 'margin-hcc': router.url == '/' || router.url == '/codigo-confirmacion'
+      || router.url == '/nueva-contrasena'}" src="assets/images/logo-isotipo.png" />
+      <div class="log__vr"></div>
+      <label class="logo__text" [ngClass]="{ 'margin-text': router.url == '/' || router.url == '/codigo-confirmacion'
+      || router.url == '/nueva-contrasena'}">HUELLA DE<br> CARBONO<br>UNICON</label>
+    </div>
+    <div class="d-flex align-items-center"
+      *ngIf="!hasQueryParams() && router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'">
+      <div ngbDropdown #myDrop1="ngbDropdown" class="d-inline-block  me-md-3">
+        <button class="header__dropdown" id="dropdownBasic1" ngbDropdownAnchor (focus)="myDrop1.open()">
+          <label class="user-mobile me-md-1">{{user}}</label>
+          <img src="assets/images/img-user.svg" class="user_image me-md-2" />
+        </button>
+        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <button class="dropdown-item item-mobile font-menu" ngbDropdownItem>{{user}}</button>
+          <button class="dropdown-item font-menu" ngbDropdownItem>{{rol}}</button>
+          <button (click)="logout()" class="dropdown-item font-menu d-flex align-items-center" ngbDropdownItem>
+            <img src="assets/images/icon-power.svg" class="me-2 header__icon--salir" />
+            Salir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

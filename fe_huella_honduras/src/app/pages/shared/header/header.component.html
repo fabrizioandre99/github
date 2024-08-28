@@ -1,0 +1,94 @@
+<div class="dash_header d-flex align-items-center">
+    <div class="d-flex flex-grow-1 bd-highlight">
+        <img class="margin_logo_hc" [ngClass]="{'margin_logo_hc_left': tieneRutasAuth()}"
+            src="assets/images/logo_hc_map.svg" height="58" />
+        <div class="dash_header__title ms-1">
+            <label class="dash_header__title--top">Huella de Carbono</label>
+            <label class="dash_header__title--bottom">HONDURAS</label>
+        </div>
+    </div>
+    <div class="bd-highlight">
+        <img src="assets/images/logo_gobienohd.png" height="70" style="margin-right: 12px;" />
+        <img src="assets/images/logo_serna.png" height="65" style="margin-right: 12px;" />
+    </div>
+</div>
+<div class="dash_menu" *ngIf="mostrarMenu">
+    <nav class="dash_menu_navbar navbar navbar-expand-custom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menú</h5>
+                    <button mat-icon-button class="button_close" type="button" data-bs-dismiss="offcanvas"
+                        aria-label="Close">
+                        <mat-icon svgIcon="ph-regular:x"></mat-icon>
+                    </button>
+                    <!--  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+                        <li *ngFor="let menu of lstMenu.liMenu" class="nav-item" style="white-space: nowrap;"
+                            [class.dropdown]="menu.liHijo && menu.liHijo.length">
+                            <a *ngIf="!menu.liHijo || !menu.liHijo.length" class="nav-link" [routerLink]="menu.sAccion"
+                                data-bs-dismiss="offcanvas">
+                                {{ menu.sNombre }}
+                            </a>
+                            <a *ngIf="menu.liHijo && menu.liHijo.length" class="nav-link" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ menu.sNombre }}
+                                <mat-icon svgIcon="ph-light:caret-down"></mat-icon>
+                            </a>
+                            <ul *ngIf="menu.liHijo && menu.liHijo.length" class="dropdown-menu">
+                                <li *ngFor="let child of menu.liHijo">
+                                    <a class="dropdown-item" [routerLink]="child.sAccion" data-bs-dismiss="offcanvas">{{
+                                        child.sNombre }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <div class="dash_menu_dropdown dropdown ms-3">
+
+        <button mat-flat-button color="primary" type="button" class="dropdown-toggle 
+                  dash_menu_dropdown--mobile ms-auto me-3 button_add" data-bs-toggle="dropdown" aria-expanded="false">
+
+            <mat-icon svgIcon="ph-fill:user-circle"></mat-icon>
+            <span class="me-2"> {{ lstMenu.sNombre }} {{ lstMenu.sApellidos }}</span>
+
+        </button>
+
+
+        <div class="d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+            <button class="button-defect dash_menu_dropdown__button  dash_menu_dropdown--desktop">
+                <mat-icon svgIcon="ph-fill:user-circle"></mat-icon>
+            </button>
+
+            <div class="dash_menu_dropdown__empresa">
+                <span> {{ lstMenu.oInstitucion.sRazonSocial }}</span>
+                <mat-icon svgIcon="ph-bold:caret-down" style="color: white; width: 15px; margin-left: 5px;"></mat-icon>
+            </div>
+        </div>
+
+
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item">{{ lstMenu.sNombre }} {{ lstMenu.sApellidos }}</a></li>
+            <!--   <li><a class="dropdown-item">{{ lstMenu.oInstitucion.sRazonSocial }}</a></li> -->
+            <li><a class="dropdown-item">{{ lstMenu.oRol.sNombre }}</a></li>
+            <li><a class="dropdown-item d-flex align-items-center" (click)="logout()">
+                    <mat-icon svgIcon="ph-light:sign-out"></mat-icon>
+                    <span class="ms-2">Salir </span> </a></li>
+        </ul>
+    </div>
+</div>

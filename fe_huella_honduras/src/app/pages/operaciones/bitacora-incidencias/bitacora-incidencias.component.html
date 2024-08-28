@@ -1,0 +1,89 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Bitácora de Incidencias</h3>
+    <div class="d-flex flex-column flex-md-row mt-3 form_sm">
+        <mat-form-field class="w_date" appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput [matDatepicker]="picker1" [(ngModel)]="fechaInicial"
+                (dateChange)="changeFechaInicial($event)" />
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="ms-md-2 w_date" appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput [matDatepicker]="picker2" [(ngModel)]="fechaFinal"
+                (dateChange)="changeFechaFinal($event)" />
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+    </div>
+    <div class="table_shadow">
+        <div class="table-responsive">
+            <table mat-table [dataSource]="tIncidencias" class="mat-elevation-z8">
+
+                <tr mat-header-row *matHeaderRowDef="hIncidencias"></tr>
+                <tr mat-row *matRowDef="let row; columns: hIncidencias;"></tr>
+
+                <!-- Columna Fecha de registro -->
+                <ng-container matColumnDef="dFechaRegistro">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Fecha incidencia</th>
+                    <td mat-cell *matCellDef="let item" class="text-center">{{ item.sFechaInicio }}</td>
+                </ng-container>
+
+                <!-- Columna Objeto de BD / URI -->
+                <ng-container matColumnDef="sErrorOrigen">
+                    <th mat-header-cell *matHeaderCellDef>Objeto de BD / URI</th>
+                    <td mat-cell *matCellDef="let item">{{ item.sErrorOrigen }}</td>
+                </ng-container>
+                <!-- Columna Mensaje -->
+                <ng-container matColumnDef="sErrorResumen">
+                    <th mat-header-cell *matHeaderCellDef class="column_incidencia">Mensaje de incidencia
+                    </th>
+                    <td mat-cell *matCellDef="let item" class="column_incidencia">{{ item.sErrorResumen
+                        }}</td>
+                </ng-container>
+
+                <!-- Columna Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                    <td mat-cell *matCellDef="let item" class="text-center">
+                        <button *ngIf="item.sErrorCompleto" matTooltip="Mensaje completo" mat-icon-button
+                            style="color: #E3A220" (click)="mostrarModalError(item)">
+                            <mat-icon svgIcon="ph-duotone:eye"></mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+            </table>
+            <mat-paginator #paginatorIncidencias [length]="tIncidencias.data.length" class="border-top w-100"
+                [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
+                [hidden]="tIncidencias.data.length === 0"></mat-paginator>
+            <p class="text-center py-5 fs-20 m-0" style="background-color: white;" *ngIf="lstLog.length === 0">
+                No existen resultados.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal observar/rechazar -->
+<ng-template #modalError>
+
+    <h2 mat-dialog-title class="fw-500 pluto_normal text-center">Incidencia completa
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+
+
+    <div mat-dialog-content>
+
+        <mat-form-field appearance="outline" class="mt-2 w-100">
+            <mat-label>Mensaje Completo</mat-label>
+            <textarea style="resize: none;" matInput rows="20" [(ngModel)]="sMensajeModal" disabled
+                maxlength="250"></textarea>
+        </mat-form-field>
+
+    </div>
+</ng-template>

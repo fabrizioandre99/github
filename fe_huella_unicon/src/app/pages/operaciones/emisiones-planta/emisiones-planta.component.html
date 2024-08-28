@@ -1,0 +1,503 @@
+<div class="container  margin-container">
+  <label class="crud__title">Emisiones</label>
+  <div class="row">
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Periodo</label>
+      <ng-select [(ngModel)]="model.nIdPeriodo" placeholder="Seleccionar" class="ng-select-admin" [items]="lstPeriodo"
+        [dropdownPosition]="'bottom'" [clearable]="false" bindValue="nIdPeriodo" bindLabel="nAnio" [searchable]="false"
+        [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Mes</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.sCodMes" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option *ngFor="let item of lstMes" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Empresa</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.sCodEmpresa" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option *ngFor="let item of lstEmpresa" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+      </ng-select>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Subunidad de negocio</label>
+      <ng-select (change)="cleanPlanta()" class="ng-select-admin" [(ngModel)]="model.nIdUnidadNegocio"
+        [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option *ngFor="let item of lstUnidadNegocio" [value]="item.nIdUnidadNegocio">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Categoría geográfica</label>
+      <ng-select (change)="cleanPlanta()" class=" ng-select-admin" [(ngModel)]="model.nIdCatGeo"
+        [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option *ngFor="let item of lstCatGeografica" [value]="item.nIdCategoria">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Locación</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.oPlanta.nIdLocacion" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false" (change)="changeLocacion()">
+        <ng-option *ngFor="let item of lstLocacion" [value]="item.nIdLocacion">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Planta</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.oPlanta.nIdPlanta" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option *ngFor="let item of lstPlantaByLocacion" [value]="item.nIdPlanta">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-md-5 col-lg-4 col-xl-2 mt-2 mt-xl-0 d-flex align-items-end">
+      <button [disabled]="!model.nIdPeriodo || loadingBuscar" (click)="fnResultadoGeiPlanta()"
+        class="crud__button button-blue  d-flex align-items-center">
+        <img class="icon_lupa_button" *ngIf="!loadingBuscar" src="assets/images/icon-lupa-button.svg" height="16" />
+        <span *ngIf="loadingBuscar" class="spinner-border spinner-border-sm"></span>
+        <span class="ms-2">
+          Buscar</span>
+      </button>
+    </div>
+  </div>
+  <!--   <button (click)="fShow=!fShow;" class="crud__button button-blue mt-4 d-flex " style="align-items: center;">
+    <img src=" assets/images/icon-filter.svg" />
+    <span class="ms-2">Filtros</span>
+    <img class="ms-2" src=" assets/images/icon-arrow.svg" height="10"
+      [ngClass]="fShow ? 'collapsed-active' : 'collapsed-inactive'" />
+  </button>
+  <div class="card fs-15 p-3 mt-3" *ngIf="fShow">
+    <div class="row">
+      <div class="d-flex align-items-center">
+        <div class="col-2">Periodo</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstPeriodo; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioPeriodo_{{i}}" [id]="'radioPeriodo_' + i"
+              [value]="item.nIdPeriodo" [(ngModel)]="model.nIdPeriodo">
+            <label class="form-check-label" [for]="'radioPeriodo_' + i">{{item.nAnio}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Mes</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstMes; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioMes_{{i}}" [value]="item.sCodigo"
+              [(ngModel)]="model.sCodMes" [id]="'radioMes_' + i">
+            <label class="form-check-label" [for]="'radioMes_' + i">{{item.sValor}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Empresa</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstEmpresa; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioEmpresa_{{i}}" [value]="item.sCodigo"
+              [(ngModel)]="model.sCodEmpresa" [id]="'radioEmpresa_' + i">
+            <label class="form-check-label" [for]="'radioEmpresa_' + i">{{item.sValor}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Subunidad de negocio</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2  overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstUnidadNegocio; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioSubUnidad_{{i}}"
+              [value]="item.nIdUnidadNegocio" [(ngModel)]="model.nIdUnidadNegocio" [id]="'radioSubUnidad_' + i"
+              (change)="cleanPlanta();">
+            <label class="form-check-label" [for]="'radioSubUnidad_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Cat. Geográfica</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstCatGeografica; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioCatGeografica_{{i}}"
+              [value]="item.nIdCategoria" [(ngModel)]="model.nIdCatGeo" [id]="'radioCatGeografica_' + i"
+              (change)="changeCatGeografica()">
+            <label class="form-check-label" [for]="'radioCatGeografica_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Subcat. Geográfica</div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstSubCatGeografica; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioSubCatGeografica_{{i}}"
+              [value]="item.nIdCategoria" [(ngModel)]="model.oPlanta.oSubcatGeo" [id]="'radioSubCatGeografica_' + i"
+              (change)="fnListarLocacion()">
+            <label class=" form-check-label" [for]="'radioSubCatGeografica_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Cat. ámbito </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstCatAmbito; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioCatAmbito_{{i}}"
+              [value]="item.nIdCategoria" [(ngModel)]="model.nIdCatAmb" [id]="'radioCatAmbito_' + i"
+              (change)="changeCatAmbito()">
+            <label class="form-check-label" [for]="'radioCatAmbito_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Subcat. ámbito </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstSubCatAmbito; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioSubCatAmbito_{{i}}"
+              [value]="item.nIdCategoria" [(ngModel)]="model.oPlanta.oSubcatAmb" [id]="'radioSubCatAmbito_' + i"
+              (change)="fnListarLocacion()">
+            <label class="form-check-label" [for]="'radioSubCatAmbito_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Locación </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstLocacion; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioLocacion_{{i}}"
+              [value]="item.nIdLocacion" [(ngModel)]="model.oPlanta.nIdLocacion" [id]="'radioLocacion_' + i"
+              (change)="changeLocacion()">
+            <label class="form-check-label" [for]="'radioLocacion_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="col-2 mt-2">Planta </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'left')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-left.svg" height="20" /></div>
+        <div class="mt-2 overflow-auto" (wheel)="onWheel($event)">
+          <div class="form-check form-check-inline" *ngFor="let item of lstPlantaByLocacion; let i = index">
+            <input class="form-check-input radioResul" type="radio" name="radioPlanta_{{i}}" [value]="item.nIdPlanta"
+              [(ngModel)]="model.oPlanta.nIdPlanta" [id]="'radioPlanta_' + i">
+            <label class="form-check-label" [for]="'radioPlanta_' + i">{{item.sNombre}}</label>
+          </div>
+        </div>
+        <div class="w-arrow" (mousedown)="startScroll($event, 'right')" (mouseup)="stopScroll()"> <img
+            src="assets/images/icon-arrow-right.svg" height="20" /></div>
+      </div>
+      <div class="col mt-3 d-flex justify-content-center">
+        <button [disabled]="loadingBuscar" class="crud__button button-white me-2" (click)="
+        limpiarFiltro()">
+          Limpiar</button>
+        <button [disabled]="loadingBuscar" class="crud__button button-blue" (click)="fnResultadoGeiPlanta()">
+          <span *ngIf="loadingBuscar" class="spinner-border spinner-border-sm"></span> Aplicar filtros</button>
+      </div>
+    </div>
+  </div>
+  <div class="card fs-15 p-3 mt-3" *ngIf="!fShow">
+    <div class="row ">
+      <div *ngIf="lstResultadoGEI.length > 0">
+        <label class="fw-600"> Año: </label><label class="ms-1">{{ modelfilter.nAnio}}</label>
+        <label class="ms-2 fw-600"> Mes:</label> <label class="ms-1">{{ modelfilter.mes}}</label>
+        <div class="mt-2">
+          <label class="fw-600"> Empresa: </label><label class="ms-1">{{ modelfilter.empresa}}</label>
+          <label class="ms-2  fw-600"> Subunidad de negocio:</label> <label class="ms-1">{{
+            modelfilter.unidadNegocio}}</label>
+        </div>
+        <div class="mt-2">
+          <label class="fw-600">Cat. Geográfica:</label> <label class="ms-1">{{modelfilter.catGeografica }}</label>
+          <label class="ms-2 fw-600">SubCat. Geográfica: </label><label class="ms-1">{{modelfilter.subcatGeo }}</label>
+          <label class="ms-2 fw-600">Cat. Ámbito: </label><label class="ms-1">{{modelfilter.catAmb }}</label>
+          <label class="ms-2 fw-600"> SubCat. Ámbito:</label> <label class="ms-1">{{modelfilter.subcatAmb }}</label>
+        </div>
+        <div class="mt-2">
+          <label class="fw-600"> Locación: </label><label class="ms-1">{{modelfilter.locacion }}</label>
+          <label class="ms-2 fw-600"> Planta:</label> <label class="ms-1">{{modelfilter.planta }}</label>
+        </div>
+      </div>
+      <div class="text-center mt-3 mb-3" *ngIf="lstResultadoGEI.length <= 0">
+        <h5 class="mb-0" style="font-size: 18px">No se ha aplicado filtros.</h5>
+      </div>
+    </div>
+  </div>-->
+  <div class="mt-4">
+    <div class="table-responsive crud__card">
+      <table class="table">
+        <thead class="table__header text-center">
+          <tr>
+            <th scope="col" class="ps-3 text-start">Fuente de emisión</th>
+            <th scope="col"><label class="fw-400">Dióxido de carbono</label><br>[tCO<sub>2</sub>]</th>
+            <th scope="col"><label class="fw-400">Metano</label> <br>[tCH<sub>4</sub>]</th>
+            <th scope="col"><label class="fw-400">Óxido nitroso</label><br>[tN<sub>2</sub>O]</th>
+            <th scope="col"><label class="fw-400">Hidrofluoro carbono</label><br>[tHFC]</th>
+            <th scope="col">Emisiones GEI<br>[tCO<sub>2</sub>e]</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <tbody *ngFor="let first of lstResultadoGEI">
+          <ng-container *ngFor="let second of first.liCategoria">
+            <tr class="table__body table__body--resultados text-center" [ngClass]="{
+                  'table__body--color-red': second.sNombre.includes('1'),
+                  'table__body--color-yellow': second.sNombre.includes('2'),
+                  'table__body--color-skyblue': second.sNombre.includes('3'),
+                  'table__body--color-blue': second.sNombre.includes('4')
+                }">
+
+              <td class="ps-3 text-start fw-600">{{second.sNombre}}</td>
+              <td>{{truncateValue(second.bdTotalgeiCO2, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiCH4, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiN2O, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiHFC, 2)}}</td>
+              <td class="p-0">
+
+                <!--  Si es menor o igual a 0% -->
+                <ngb-progressbar placement="top" ngbTooltip="0.00 %"
+                  *ngIf=" esNaN((second.bdTotalgeiCO2eq*100)/totalEmisiones)" type="dark"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones ">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}"
+                  *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <=0" type="dark"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}" *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <=30
+                && (second.bdTotalgeiCO2eq*100)/totalEmisiones >0" type="success"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}" *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <60 &&
+                (second.bdTotalgeiCO2eq*100)/totalEmisiones  >30 " type="warning"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es mayor al 60% - Tipo Danger -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}"
+                  *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones >=60" type="danger"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+              </td>
+            </tr>
+            <ng-container *ngFor="let third of second.liSubcategoria">
+              <tr class="table__body table__body--resultados text-center">
+                <td class="ps-3 text-start fw-600">{{third.sNombre}}</td>
+                <td>{{truncateValue(third.bdTotalgeiCO2, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiCH4, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiN2O, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiHFC, 2)}}</td>
+                <td class="p-0">
+                  <!--  Si es menor o igual a 0% -->
+                  <ngb-progressbar placement="top" ngbTooltip="0.00 %"
+                    *ngIf="esNaN((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq)"
+                    type="dark"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <=0"
+                    type="dark"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <=30
+                   && (third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq >0"
+                    type="success"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <60 &&
+                  (third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq  >30 "
+                    type="warning"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es mayor al 60% - Tipo Danger -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq >=60"
+                    type="danger"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                </td>
+              </tr>
+              <ng-container *ngFor="let fourth of third.liFuenteEmision">
+                <tr class="table__body table__body--resultados text-center">
+                  <td class="ps-4 text-start">{{fourth.sNombre}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiCO2, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiCH4, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiN2O, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiHFC, 2)}}</td>
+                  <td class="p-0">
+                    <!--  Si es menor o igual a 0% -->
+                    <ngb-progressbar placement="top" ngbTooltip="0.00 %" *ngIf="esNaN((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq)
+                 " type="dark"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq<=0"
+                      type="dark"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq <=30
+                 && (fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >0"
+                      type="success"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq <60 &&
+                      (fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >30 "
+                      type="warning"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es mayor al 60% - Tipo Danger -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >=60"
+                      type="danger"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+      <ng-container
+        *ngIf="!fShowSkeleton && lstResultadoGEI.length <= 0 ||(!fShowSkeleton && lstResultadoGEI[0].length == 0)">
+        <div class="text-center mt-5 mb-5">
+          <h5>No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="row mt-3" *ngIf="!fShowSkeleton && totalEmisiones>=0">
+    <div class="d-flex align-items-center justify-content-end">
+      <label class="fs-16" style="font-weight: 500;">Total de emisiones GEI:&nbsp;
+        {{truncateValue(totalEmisiones, 2)}}
+        tCO<sub>2</sub>e</label>
+    </div>
+  </div>
+</div>

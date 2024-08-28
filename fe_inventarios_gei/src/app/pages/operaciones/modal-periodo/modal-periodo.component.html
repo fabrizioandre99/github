@@ -1,0 +1,92 @@
+<form class="form-signin needs-validation" (ngSubmit)="guardarRegistro(solicitudForm)" #solicitudForm="ngForm"
+  novalidate>
+  <div class="modal-header">
+    <h5 *ngIf="!fShowAnio" class="modal-title" id="modal-basic-title">
+      Registrar periodo</h5>
+    <h5 *ngIf="fShowAnio && !fShow" class="modal-title" id="modal-basic-title">
+      Editar periodo</h5>
+    <h5 *ngIf="fShowAnio && fShow" class="modal-title" id="modal-basic-title">
+      Ver periodo</h5>
+    <img class="pointer close" aria-label="Close" (click)="closeModal()" src="assets/images/close.svg" height="16" />
+  </div>
+  <div class="modal-body">
+    <div class="row mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="asterisk bold col-form-label col-form-label-sm">Año del inventario</label>
+            <input style="width: 123px;" [disabled]='fShow' type="number" [(ngModel)]="periodo.nAnio"
+              name="oPeriodo.nAnio" #nAnio="ngModel" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if(!this.value.startsWith(2) && !this.value.startsWith(1) &&this.value>2999) { this.value  = this.value.slice(0,3);}else if(this.value.startsWith(2)) { this.value  = this.value.slice(0,4);}
+            else if(this.value.startsWith(1)) { this.value  = this.value.slice(0,4);}"
+              [ngClass]="{'is-invalid': solicitudForm.submitted && nAnio.errors?.['required']}" required />
+            <div *ngIf="solicitudForm.submitted && nAnio.errors?.['required']">
+              <small class="text-danger">
+                Agregue un año.
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8" [hidden]="!esProvincia">
+          <div class="form-group">
+            <label class="bold col-form-label col-form-label-sm">Alcance de información</label>
+            <div style="height: 36px;" class="form-check form-switch form-switch-md d-flex align-items-center">
+              <input class="form-check-input" [disabled]='fShow' [(ngModel)]="periodo.boIncluirData" name="alcance"
+                type="checkbox" role="switch" id="flexSwitchCheckDefault">
+              <label *ngIf="periodo.boIncluirData" class="form-check-label bold col-form-label col-form-label-sm"
+                for="flexSwitchCheckDefault" style="margin-top: 3px; margin-left: 5px;">Provincial</label>
+              <label *ngIf="!periodo.boIncluirData" class="form-check-label bold col-form-label col-form-label-sm"
+                for="flexSwitchCheckDefault" style="margin-top: 3px; margin-left: 5px;">Distrital</label>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="assets/images/info.svg" height="15" />
+              <label class="bold" style="font-size: 11.5px; margin-left: 5px;">El alcance de información indica si el
+                registro de los datos será a nivel provincial (incluidos los
+                distritos) o distrital (sólo distrito capital)</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="asterisk bold col-form-label col-form-label-sm">Población total </label>
+            <input style="width: 145px;" [disabled]='fShow' type="text" [(ngModel)]="periodo.nPoblacion"
+              name="oPeriodo.nPoblacion" #nPoblacion="ngModel" class="form-control" maxlength="8"
+              onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+              [ngClass]="{'is-invalid': solicitudForm.submitted && nPoblacion.errors?.['required']}" required />
+            <div *ngIf="solicitudForm.submitted && nPoblacion.errors?.['required']">
+              <small class="text-danger">
+                Agregue la población.
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 col-temp">
+          <div class="form-group">
+            <label class=" asterisk bold col-form-label col-form-label-sm">Temperatura promedio</label>
+            <div class="d-flex align-items-center">
+              <input style="width: 123px;" [disabled]='fShow' type="text" [(ngModel)]="periodo.nTemperatura"
+                name="oPeriodo.nTemperatura" #nTemperatura="ngModel" class="form-control"
+                pattern="^[0-9]*$|[+-][0-9]+%?|[0-9]|[+-]"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)} if(!this.value.startsWith('-') && !this.value.startsWith('+') && this.value>99) { this.value  = this.value.slice(0,2);}else{ this.value  = this.value.slice(0,3);} "
+                [ngClass]="{'is-invalid': solicitudForm.submitted && nTemperatura.errors?.['required']}" required />
+              <div class="ms-1"> <label> C°</label></div>
+            </div>
+            <div *ngIf="solicitudForm.submitted && nTemperatura.errors?.['required']">
+              <small class="text-danger">
+                Agregue la temperatura.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ms-1"><label class="asterisk"></label><label class="ms-1" style="font-size:14px">Datos
+      obligatorios</label></div>
+  <div class="modal-footer">
+    <button type="button" class="btn button-modal btn-success blanco" (click)="closeModal()">Cancelar</button>
+    <button type="submit" [hidden]="this.fShow == true" class="btn  button-modal btn-success verdemodal"
+      [disabled]="loading"><span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Guardar</button>
+  </div>
+</form>

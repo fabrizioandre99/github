@@ -1,0 +1,29 @@
+<div class="pt-3 float-lg-end text-center me-lg-1">
+  <img src="assets/images/celepsa.png" class="celepsa-image" />
+</div>
+<div class="body-inicio">
+  <div class="container content-inicio text-center ">
+    <div class="text-felicitaciones">
+      <img class="mt-5" src="assets/images/icon-like.svg" height="57" />
+      <h2 class="mt-5">¡Felicitaciones!<br>
+        Al decidir calcular tu huella has dado el primer paso<br>
+        en el camino de tu empresa hacia la sostenibilidad</h2>
+      <h2 *ngIf="Mayor == true" class="mt-5 mb-5">
+        A continuación te presentamos algunas de las opciones que podrías explorar
+      </h2>
+      <h2 *ngIf="Mayor == false" class="mt-5 mb-5">
+        Te invitamos a conocernos mejor.
+      </h2>
+    </div>
+    <div class="mt-lg-1" style="margin-top: auto;">
+      <div *ngIf="Mayor == true">
+        <button class="button-celepsa btn-certi button-blue" routerLink="/recomendaciones">Continuar</button>
+      </div>
+      <div *ngIf="Mayor == false">
+        <button class="button-celepsa btn-certi button-blue" (click)="redict()">Visita
+          Celepsa</button>
+      </div>
+    </div>
+  </div>
+  <label class="footer-recomendaciones">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+</div>

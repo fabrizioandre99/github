@@ -1,0 +1,33 @@
+.dash_background_image {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.dash_background_color {
+    /*   background-color: #F8FAFF; */
+    background-color: #F2F6FF;
+    min-height: 100vh;
+
+}
+
+.dash_background_image_login {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('../assets/images/background_login.jpg');
+    padding-top: 0;
+}
+
+/*-------------- Modo Tableta --------------*/
+@media (width >=1135px) {
+    .dash_background_color {
+        padding-top: 12px;
+    }
+
+    .dash_background_image {
+        padding-top: 12px;
+    }
+}

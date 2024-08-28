@@ -1,0 +1,12 @@
+:host ::ng-deep.ng-select .ng-arrow-wrapper {
+  background-image: none;
+}
+
+/* Modo escritorio */
+@media (min-width: 991.98px) {
+  .header {
+    margin-top: 100px;
+    margin-bottom: 10px;
+  }
+
+}

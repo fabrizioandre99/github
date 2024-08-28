@@ -1,0 +1,93 @@
+.firstCharts {
+  min-height: 498px;
+  display: block;
+}
+
+.donutChart {
+  /*  min-height: 570px; */
+  display: block;
+}
+
+.chart-container--subsector {
+  width: 58%;
+  height: 480px;
+  max-height: 500px;
+}
+
+.legend-container--subsector {
+  width: 42%;
+}
+
+.chart-container--sector {
+  height: 425px;
+  max-height: 425px;
+}
+
+.custom-legend li {
+  display: flex;
+  align-items: center;
+  min-height: 31px;
+  position: relative;
+  list-style-type: none;
+  font-size: 14px;
+}
+
+ul {
+  padding-left: 30px;
+}
+
+.custom-legend li span {
+  display: inline-block;
+  margin-right: 5px;
+  flex: 0 0 auto;
+  height: 20px;
+  width: 20px;
+  border-radius: 15px;
+}
+
+
+.custom-legend li.hidden::after {
+  transform: scaleY(0.8);
+}
+
+.hidden-label {
+  position: relative;
+}
+
+.hidden-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -26px;
+  right: 0;
+  height: 1.6px;
+  background-color: #000;
+  transform: translateY(-50%);
+}
+
+.hidden {
+  display: none
+}
+
+/* Modo pantallas pequeñas */
+@media (max-width: 992px) {
+
+  .chart-container--subsector,
+  .legend-container--subsector {
+    width: 100%;
+  }
+
+
+}
+
+@media (max-width: 560px) {
+  .chart-container--subsector {
+    height: 320px;
+    max-height: 320px;
+  }
+
+  .chart-container--sector {
+    height: 320px;
+    max-height: 320px;
+  }
+}

@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="row">
+    <div class="col-8"><label class="crud__title">Indicadores</label></div>
+    <div class="col-lg-4 ms-auto d-flex justify-content-end align-items-end">
+      <button class=" crud__button button-blue d-flex align-items-center" (click)="fnObtenerPorTipo()">
+        <img class="icon_bar" src="assets/images/icon-bar.svg" />
+        <span class="ms-2">Dashboard</span>
+      </button>
+    </div>
+    <div *ngIf="loading  && rutaCorrecta" class="d-flex align-items-center justify-content-center height_calculado">
+      <div class="loader"></div>
+    </div>
+    <div *ngIf="!rutaCorrecta"
+      class="d-flex flex-column align-items-center justify-content-center text-center height_calculado">
+      <img src="assets/images/icon-triangle.svg" height="50" />
+      <label *ngIf="searchUrl" class="mt-2">No se ha podido cargar la ruta: {{prevUrl}}.</label>
+      <label *ngIf="!searchUrl" class="mt-2">No hay una ruta asignada.</label>
+    </div>
+    <div class="iframe-container" [hidden]="!rutaPowerBi || loading || !rutaCorrecta">
+      <iframe title="Report Section" width="600" height="373.5" [src]="rutaPowerBi" frameborder="0"
+        allowFullScreen="true"></iframe>
+    </div>
+  </div>
+</div>

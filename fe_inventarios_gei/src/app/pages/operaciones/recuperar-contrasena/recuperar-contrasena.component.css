@@ -1,0 +1,46 @@
+.form-control {
+  width: 98.5%;
+}
+
+.card {
+  border: 2px solid #A2CE97;
+  border-radius: 8px;
+  width: 609px;
+}
+
+.card-body {
+  padding: 30.21px 27.04px 28.29px 29.26px;
+}
+
+.contenedor-padding {
+  padding-top: 26px;
+  padding-bottom: 80px;
+}
+
+.title-modal {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: #4E944F;
+}
+
+.modal-text {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+@media (max-width:1450px) {
+  .card {
+    width: 100%;
+  }
+
+  .contenedor-padding {
+    padding-top: 25px;
+  }
+}

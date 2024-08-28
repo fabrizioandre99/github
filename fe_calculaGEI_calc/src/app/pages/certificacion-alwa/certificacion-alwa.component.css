@@ -1,0 +1,51 @@
+* {
+  color: white;
+}
+
+.label-redict {
+  text-underline-offset: 4px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.label-redict:hover {
+  color: white;
+}
+
+.content-inicio {
+  flex-direction: column;
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.title-certificado {
+  font-size: 2.4rem;
+  font-weight: 400;
+  margin-top: 8.8rem;
+}
+
+.body-inicio {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modo escritorio */
+@media (min-width: 991.98px) {
+  .button-celepsa {
+    padding: 12px 100px !important;
+  }
+}
+
+
+/* Modo móvil */
+@media (max-width: 991.98px) {
+  .title-certificado {
+    font-size: 25px;
+    line-height: 111.9%;
+    margin-top: auto;
+  }
+
+}

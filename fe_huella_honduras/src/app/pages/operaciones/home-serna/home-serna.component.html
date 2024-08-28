@@ -1,0 +1,160 @@
+<div class="container pb-3 pb-md-5">
+    <h3 class="dash_title">Bienvenido</h3>
+    <div class="row mt-4 solicitudes_container">
+        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column pointer mt-card-sol" (click)="redirectSolicitud()">
+                <mat-card-header>
+                    <div mat-card-avatar>
+                        <mat-icon class="icon-display" style="color: #c11aba"
+                            svgIcon="ph-duotone:clock-countdown"></mat-icon>
+                    </div>
+                    <mat-card-title class="fw-400 fs-12 mt-2 pluto_normal">
+                        {{ oPendientes.nTotalPendientes }} {{ oPendientes.nTotalPendientes > 1 ? 'Solicitudes' :
+                        'Solicitud' }}
+                        de participación
+                    </mat-card-title>
+                    <mat-card-subtitle class="fs-13 fw-300 mt-2 ">
+                        {{ oPendientes.nTotalPendientes > 1 ? 'Pendientes de atención' : 'Pendiente de atención' }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column pointer mt-card-usu" (click)="redirectUsuario()">
+                <mat-card-header>
+                    <div mat-card-avatar>
+                        <mat-icon class="icon-display" style="color: #47D770"
+                            svgIcon="ph-duotone:identification-badge"></mat-icon>
+                    </div>
+                    <mat-card-title class="fw-400 fs-12 mt-2 pluto_normal">
+                        {{ oPendientes.nTotalNoVerficados }}
+                        {{ oPendientes.nTotalNoVerficados > 1 ? 'Cuentas no verificadas' : 'Cuenta no verificada' }}
+                    </mat-card-title>
+                    <mat-card-subtitle class="fs-13 fw-300 mt-2">
+                        {{ oPendientes.nTotalNoVerficados > 1 ? 'Pendientes de atención' : 'Pendiente de atención' }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column pointer mt-card-rec" (click)="redirectReconocimiento()">
+                <mat-card-header>
+                    <div mat-card-avatar>
+                        <mat-icon class="icon-display" style="color: #3A9AEE" svgIcon="ph-duotone:medal"></mat-icon>
+                    </div>
+                    <mat-card-title class="fw-400 fs-12 mt-2 pluto_normal">
+                        {{ oPendientes.nReconocimientosPendientes }} {{ oPendientes.nReconocimientosPendientes > 1 ?
+                        'Solicitudes de reconocimiento' : 'Solicitud de reconocimiento' }}
+                    </mat-card-title>
+                    <mat-card-subtitle class="fs-13 fw-300 mt-2">
+                        {{ oPendientes.nReconocimientosPendientes > 1
+                        ? 'Pendientes de atención' : 'Pendiente de atención' }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column pointer mt-card-reap" (click)="redirectHuellas()">
+                <mat-card-header>
+                    <div mat-card-avatar>
+                        <mat-icon class="icon-display" style="color: #E3A220" svgIcon="ph-duotone:warning"></mat-icon>
+                    </div>
+
+                    <mat-card-title class="fw-400 fs-12 mt-2 pluto_normal">
+                        {{ oPendientes.nReaperturasPendientes }} {{ oPendientes.nReaperturasPendientes > 1 ?
+                        'Solicitudes de reapertura' : 'Solicitud de reapertura' }}
+                    </mat-card-title>
+                    <mat-card-subtitle class="fs-13 fw-300 mt-2">
+                        {{ oPendientes.nReaperturasPendientes > 1 ? 'Pendientes de atención' : 'Pendiente de atención'
+                        }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <mat-card class="w-100 d-flex flex-column">
+                <mat-card-header>
+                    <mat-card-title class="fw-500 fs-24 mt-2 mt-md-0 mb-3 pluto_normal" style="color: #00903B;">
+                        Participación de empresas por sector
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="d-flex flex-column flex-lg-row justify-content-center">
+                    <div class="col-lg-6">
+                        <canvas class="chart_participacion" style="margin-right: 15px" baseChart [data]="barChartData"
+                            [options]="barChartOptions" [legend]="barChartLegend" [type]="'bar'"></canvas>
+                    </div>
+                    <div class="col-lg-6 d-md-flex align-items-center mt-4 mt-lg-0 border_green">
+                        <div class="donut_width">
+                            <canvas id="firstDoughnut" baseChart [data]="doughnutChartData"
+                                [options]="doughnutChartOptions" [type]="'doughnut'"></canvas>
+                        </div>
+                        <div class="legend_width  mt-4 mt-md-0">
+                            <ul class="legend-container ">
+                                <li *ngFor="let item of doughnutChartData.labels; let i = index" class="legend-item"
+                                    [ngClass]="{'hidden': isHidden[i]}" (click)="toggleLegends('firstDoughnut', i)">
+                                    <span class="legend-color"
+                                        [ngStyle]="{'background-color': obtenerColorFondo(doughnutChartData, i)}"></span>
+                                    {{item}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12 col-lg-6 mb-4">
+            <mat-card class="w-100 equal-height">
+                <mat-card-header>
+                    <mat-card-title class="fw-500 fs-24 mt-2 mt-md-0 mb-3 pluto_normal" style="color: #00903B;">
+                        Emisiones históricas de GEI
+                        <mat-icon mat-raised-button style="color:#065FD4; width: 21.5px;
+    margin-bottom: -2px;" matTooltip="Últimos 5 años" class="pointer" svgIcon="ph-duotone:info"></mat-icon>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="d-flex justify-content-center">
+                        <label style="color: #00903B;">[tCO<sub>2</sub>e / año]</label>
+                    </div>
+                    <br>
+                    <div>
+                        <canvas class="chart_historico w-100" baseChart [data]="barChartHistData"
+                            [options]="barChartHistOptions" [legend]="barChartHistLegend" [type]="'bar'"></canvas>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+            <mat-card class="w-100 equal-height">
+                <mat-card-header>
+                    <mat-card-title class="fw-500 fs-24 mt-2 mt-md-0 mb-3 pluto_normal" style="color: #00903B;">
+                        Reconocimientos<br>
+                        <label class="fs-14">Cantidad de empresas que han alcanzado un nivel de reconocimiento</label>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="d-md-flex align-items-center">
+                    <div class="donut_width">
+                        <canvas id="secondDoughnut" baseChart [data]="doughnutChartRecData"
+                            [options]="doughnutChartRecOptions" [type]="'doughnut'"></canvas>
+                    </div>
+                    <div class="legend_width  mt-4 mt-md-0">
+                        <ul class="legend-container">
+                            <li *ngFor="let item of doughnutChartRecData.labels; let i = index" class="legend-item"
+                                [ngClass]="{'hidden': isRecHidden[i]}"
+                                (click)="toggleLegends('secondDoughnut', i, true)">
+                                <span class="legend-color"
+                                    [ngStyle]="{'background-color': obtenerColorFondo(doughnutChartRecData, i)}"></span>
+                                {{item}}
+                            </li>
+                        </ul>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="text-center  mt-md-4">
+      <div class="card-body lista">
+        <div class="d-lg-flex ">
+          <h2 class="text-start">Bandeja de usuarios bloqueados</h2>
+          <app-alert class=" ms-auto alto"></app-alert>
+        </div>
+        <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 190px">
+          <div class=" spinner-border text-success" role="status">
+          </div>
+        </div>
+        <div *ngIf="!loadingTable">
+          <div class="row mt-3 justify-content-between align-items-center">
+            <div class="col">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <input [(ngModel)]="model.sNombre" type="text" name="sNombre" maxlength="50"
+                      class="form-control buscar" placeholder="Buscar por nombre de usuario" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div *ngIf="(lstUsuariosBloqueados | Busqueda: model)?.length > 0">
+            <div class="table-responsive align-middle">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Nombres y Apellidos</th>
+                    <th scope="col">Desbloquear</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of lstUsuariosBloqueados | Busqueda: model; index as i">
+                  <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{item.sUsuario}}</td>
+                    <td>{{item.sNombre}} {{item.sApellido}}</td>
+                    <td>
+                      <img class="pointer" (click)="fnDesbloquearUsuario(item)" src="assets/images/user-unlock.svg"
+                        height="22" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+              <ngb-pagination class="pagination-md" [collectionSize]="(lstUsuariosBloqueados | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+              <ngb-pagination class="pagination-sm" [collectionSize]="(lstUsuariosBloqueados | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+            </div>
+          </div>
+          <div class="mt-5 mb-5 text-center"
+            *ngIf="(lstUsuariosBloqueados| Busqueda: model)?.length <= 0 && model.sNombre?.length !== 0 && model.sNombre !== undefined">
+            <h5 class="mt-5">
+              No hay resultados para: "{{model.sNombre}}".
+            </h5>
+          </div>
+          <div class="mt-5 mb-5 text-center" *ngIf="((lstUsuariosBloqueados| Busqueda: model)?.length <= 0
+          && model.sNombre?.length == 0) || (lstUsuariosBloqueados| Busqueda: model)?.length <= 0
+          && model.sNombre == undefined">
+            <h5 class=" mt-5">
+              No existen resultados.
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

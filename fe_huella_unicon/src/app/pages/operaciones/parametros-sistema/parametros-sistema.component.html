@@ -1,0 +1,197 @@
+<div class="container  margin-container">
+  <label class="crud__title">Parámetros del sistema</label>
+  <div class="row">
+    <label class="crud__label--sm">Tipo de parámetro</label>
+    <div class="col-md-5 col-lg-3">
+      <ng-select [(ngModel)]="sTipoParam" (change)="fnListarParametros()" placeholder="Seleccionar"
+        class="ng-select-admin" [items]="lstTipoParametro" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="sTipo" bindLabel="sTipo" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-lg-7">
+          <label class="crud__title mt-4">Listado de parámetros</label>
+        </div>
+        <div class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-2">
+          <button [disabled]="!sTipoParam" class="crud__button button-blue"
+            (click)="openNuevoParametro(contentNuevoParametro)">
+            <img src="assets/images/icon-plus.svg" />
+            <span class="ms-2">Agregar parámetro</span>
+          </button>
+        </div>
+      </div>
+      <div class="crud__card mt-4">
+        <div class="table-responsive">
+          <table class="table">
+            <thead class="table__header">
+              <tr class="text-center">
+                <th scope="col">Código de<br>
+                  parámetro</th>
+                <th scope="col">Valor de parámetro</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Eliminar</th>
+              </tr>
+            </thead>
+            <ng-container *ngIf="fShowSkeleton">
+              <tbody *ngFor="let item of lstSkeleton">
+                <tr class="table__body table__body--skeleton">
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td class="text-center">
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td class="text-center">
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td class="text-center">
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="!fShowSkeleton">
+              <tbody *ngFor="let item of lstParametros| slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                <tr class="table__body">
+                  <td class="text-center">{{item.sCodigo}}</td>
+                  <td class="text-center" [ngClass]="{'fixed-width': item.sValor.length > 41}">{{item.sValor}}</td>
+                  <td class="text-center">
+                    <div *ngIf="item.boEstado">
+                      Activo
+                    </div>
+                    <div *ngIf="!item.boEstado">
+                      Inactivo
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                      (click)="openEditarParametro(contentNuevoParametro,item)" />
+                  </td>
+                  <td class="text-center">
+                    <div *ngIf="item.boEditable">
+                      <img class="icon_tacho pointer" src="assets/images/icon-tacho.svg"
+                        (click)="openConfirmacion(contentEliminar,item)" />
+                    </div>
+                    <div *ngIf="!item.boEditable">
+                      <img class="icon_tacho image-disabled" src="assets/images/icon-tacho.svg" />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+        </div>
+        <ng-container *ngIf="!fShowSkeleton && lstParametros.length <= 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados.</h5>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="!fShowSkeleton &&lstParametros.length > 0" class="d-flex justify-content-center mt-4">
+        <ngb-pagination class="pagination-md" [collectionSize]="lstParametros.length" [(page)]="page" [maxSize]="8"
+          [pageSize]="pageSize">
+          <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+        </ngb-pagination>
+        <ngb-pagination class="pagination-sm" [collectionSize]="lstParametros.length" [(page)]="page" [maxSize]="5"
+          [pageSize]="pageSize">
+          <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+        </ngb-pagination>
+      </div>
+    </div>
+    <div class="col-md-6"></div>
+  </div>
+</div>
+
+<!-- Modal Nuevo Parametro-->
+<ng-template #contentNuevoParametro let-modalNuevoParametro>
+  <form (ngSubmit)="fnNuevoParametro(NuevoParametroForm)" #NuevoParametroForm="ngForm" novalidate>
+    <div class="modal-header">
+      <label *ngIf="!isVerParametro && !isEditarParametro" class="modal__title">Nuevo parámetro</label>
+      <label *ngIf="!isVerParametro && isEditarParametro" class="modal__title">Editar parámetro</label>
+      <button type="button" [disabled]="loadingModal" class="modal_close button-defect" aria-label="Close"
+        (click)="modalNuevoParametro.dismiss()">
+        <img src="assets/images/icon-close.svg" />
+      </button>
+    </div>
+    <div class="modal-body modal-body--nuevParametro">
+      <label for="tparametro" class="crud__label--sm">Tipo de parámetro</label>
+      <input id="tparametro" type="text" [(ngModel)]="sTipoParam" name="sTipoParam" maxlength="50"
+        class="form-control crud__input" required disabled>
+      <label for="cparametro" class="crud__label--sm mt-2">Código de parámetro</label>
+      <input id="cparametro" [disabled]="isVerParametro||isEditarParametro" type="text" maxlength="20"
+        class="form-control crud__input" [(ngModel)]="model.sCodigo" name="sCodigo"
+        pattern="^(?! +$)([^\u00c0-\u017f])*$" required #sCodigo="ngModel" [ngClass]="{ 'is-invalid': NuevoParametroForm.submitted && sCodigo.errors?.['required']
+        ||NuevoParametroForm.submitted && sCodigo.errors?.['pattern']}">
+      <div
+        *ngIf="NuevoParametroForm.submitted && sCodigo.errors?.['required'] || NuevoParametroForm.submitted && model.sCodigo.trim().length==0  ">
+        <small class="text-danger">Ingrese el código parámetro.</small>
+      </div>
+      <div *ngIf="NuevoParametroForm.submitted && sCodigo.errors?.['pattern'] && model.sCodigo.trim().length!==0 ">
+        <small class="text-danger">No ingresar caracteres extraños.</small>
+      </div>
+      <label for="vparametro" class="crud__label--sm mt-2">Valor de parámetro</label>
+      <input id="vparametro" [disabled]="isVerParametro" type="text" maxlength="1000" class="form-control crud__input"
+        [(ngModel)]="model.sValor" name="sValor" name="sArea" pattern="^(?!\s+$).+" required #sValor="ngModel"
+        [ngClass]="{ 'is-invalid': NuevoParametroForm.submitted && sValor.errors?.['required']
+        ||NuevoParametroForm.submitted && sValor.errors?.['pattern']}">
+      <div *ngIf="NuevoParametroForm.submitted && sValor.errors?.['required']  ||sValor.errors?.['pattern']">
+        <small class="text-danger">Ingrese el valor de parámetro.</small>
+      </div>
+      <!--  <div *ngIf="NuevoParametroForm.submitted && sValor.errors?.['pattern']">
+        <small class="text-danger">No ingresar caracteres extraños.</small>
+      </div> -->
+      <div class="form-group mt-4">
+        <label class="switch">
+          <input [disabled]="isVerParametro" type="checkbox" name="boEstado" [(ngModel)]="model.boEstado">
+          <span class="slider round"></span>
+        </label>
+        <label *ngIf="model.boEstado" class="ms-2">Activo</label>
+        <label *ngIf="!model.boEstado" class="ms-2">Inactivo</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="crud__button button-white" type="button" (click)="modalNuevoParametro.dismiss()">
+        <span>Cancelar</span></button>
+      <button *ngIf="!isVerParametro" [disabled]="loadRegOEdit" class="crud__button button-blue" type="submit">
+        <span *ngIf="loadRegOEdit" class="spinner-border spinner-border-sm me-2"></span>
+        <span>Guardar</span></button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <label class="modal__title">Confirmación</label>
+      <label class="mt-3 text-center d-block fs-16">¿Está seguro de eliminar el parámetro?</label>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarParametro()" class="crud__button button-blue ms-2"
+          type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,140 @@
+<form class="form-signin needs-validation" (ngSubmit)="fnNuevaContrasena(nuevaContrasenaForm,contentNuevaContrasena)"
+  #nuevaContrasenaForm="ngForm" novalidate>
+  <div class="container contenedor-padding">
+    <div class="d-lg-flex align-items-center">
+      <app-alert class="ms-auto alto"></app-alert>
+    </div>
+    <div class="row card-margin">
+      <div class="col-md-6 margin-col-1">
+        <label class="title">Crear nueva contraseña</label>
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="col-md-8">
+              <div class="row">
+                <label class="col-form-label col-form-label-sm asterisk">Contraseña</label>
+                <div class="password">
+                  <input type="password" #firstPassword maxlength="20" class="form-control" style="z-index:-100"
+                    id="newContrasena" name="newContrasena" [disabled]="loading" [(ngModel)]="solicitud.sContrasenia"
+                    minlength="8" maxlength="20"
+                    pattern="(?=.*^[A-Za-z])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,20}$"
+                    oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')" required>
+                  <span class="eyeicon colors" (mousedown)="showFirstPassword(firstPassword)"
+                    (mouseup)="hideFirstPassword(firstPassword)" (mouseleave)="hideFirstPassword(firstPassword)"
+                    (touchstart)="showFirstPassword(firstPassword)" (touchend)="hideFirstPassword(firstPassword)"
+                    (touchcancel)="hideFirstPassword(firstPassword)"> <i class="fa-solid fa-eye"></i></span>
+                </div>
+                <small *ngIf="solicitud.sContrasenia==null && submitted" class="text-danger">
+                  Ingrese una contraseña.
+                </small>
+                <div class="mt-2">
+                  <div class="d-flex info">
+                    <div>
+                      <span *ngIf="submitted && !solicitud.sContrasenia?.match('^.{8,20}$')">
+                        <i class="fa-solid fa-xmark me-2 text-red"></i>
+                      </span>
+                      <span *ngIf="solicitud.sContrasenia?.match('^.{8,20}$')">
+                        <i class="fa-solid fa-check me-2 text-green"></i>
+                      </span>
+                      <label [ngClass]="{ 'text-green': solicitud.sContrasenia?.match('^.{8,20}$'),
+                      'text-red': submitted && !solicitud.sContrasenia?.match('^.{8,20}$') }">
+                        Como mínimo 8 y máximo 20 caracteres</label><br>
+                      <span *ngIf="submitted && !solicitud.sContrasenia?.match('(?=.*[a-z])(?=.*[A-Z])')">
+                        <i class="fa-solid fa-xmark me-2 text-red"></i>
+                      </span>
+                      <span *ngIf="solicitud.sContrasenia?.match('(?=.*[a-z])(?=.*[A-Z])')">
+                        <i class="fa-solid fa-check me-2 text-green"></i>
+                      </span>
+                      <label [ngClass]="{ 'text-green': solicitud.sContrasenia?.match('(?=.*[a-z])(?=.*[A-Z])'),
+                      'text-red': submitted && !solicitud.sContrasenia?.match('(?=.*[a-z])(?=.*[A-Z])')}"> Al
+                        menos una
+                        letra
+                        mayúscula y una letra minúscula</label><br>
+                      <span *ngIf="submitted && !solicitud.sContrasenia?.match('[0-9]')">
+                        <i class="fa-solid fa-xmark me-2 text-red"></i>
+                      </span>
+                      <span *ngIf="solicitud.sContrasenia?.match('[0-9]')">
+                        <i class="fa-solid fa-check me-2 text-green"></i>
+                      </span>
+                      <label [ngClass]="{ 'text-green': solicitud.sContrasenia?.match('[0-9]'),
+                      'text-red': submitted && !solicitud.sContrasenia?.match('[0-9]')}">
+                        Al menos un número
+                        del 0 al 9</label><br>
+                      <span *ngIf="submitted && !solicitud.sContrasenia?.match('[!@#$%^&*_=+-]')">
+                        <i class="fa-solid fa-xmark me-2 text-red"></i>
+                      </span>
+                      <span *ngIf="solicitud.sContrasenia?.match('[!@#$%^&*_=+-]')">
+                        <i class="fa-solid fa-check me-2 text-green"></i>
+                      </span>
+                      <label [ngClass]="{ 'text-green': solicitud.sContrasenia?.match('[!@#$%^&*_=+-]'),
+                      'text-red': submitted && !solicitud.sContrasenia?.match('[!@#$%^&*_=+-]')}">
+                        Al menos un caracter
+                        extraño </label><br>
+                      <span *ngIf="submitted && !solicitud.sContrasenia?.match('^[A-Za-z]')">
+                        <i class="fa-solid fa-xmark me-2 text-red"></i>
+                      </span>
+                      <span *ngIf="solicitud.sContrasenia?.match('^[A-Za-z]')">
+                        <i class="fa-solid fa-check me-2 text-green"></i>
+                      </span>
+                      <label [ngClass]="{ 'text-green': solicitud.sContrasenia?.match('^[A-Za-z]'),
+                        'text-red': submitted && !solicitud.sContrasenia?.match('^[A-Za-z]')}">
+                        No debe iniciar con
+                        caracter extraño o número</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <label class="col-form-label col-form-label-sm asterisk">Confirmar contraseña</label>
+                <div class="password">
+                  <input type="password" #secondPassword maxlength="20" class="form-control" id="verifContrasena"
+                    name="verifContrasena" [disabled]="loading" [(ngModel)]="verificaContrasena"
+                    pattern="^(?=.*^[A-Za-z])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,20}$"
+                    oninput="if (/\s/.test(this.value)) this.value = this.value.replace(/\s/g, '')" required>
+                  <span class="eyeicon colors" (mousedown)="showSecondPassword(secondPassword)"
+                    (mouseup)="hideSecondPassword(secondPassword)" (mouseleave)="hideSecondPassword(secondPassword)"
+                    (touchstart)="showSecondPassword(secondPassword)" (touchend)="hideSecondPassword(secondPassword)"
+                    (touchcancel)="hideSecondPassword(secondPassword)"> <i class="fa-solid fa-eye"></i></span>
+                </div>
+                <small
+                  *ngIf="verificaContrasena!==undefined && solicitud.sContrasenia!==undefined&&   solicitud.sContrasenia != verificaContrasena"
+                  class="text-danger">
+                  Las contraseñas no coinciden.
+                </small>
+                <small *ngIf="verificaContrasena==null && submitted" class="text-danger">
+                  Repita la contraseña.
+                </small>
+              </div>
+            </div>
+            <div class="float-right mt-5">
+              <div class="col  d-flex justify-content-end align-items-end">
+                <button class="btn btn-success blanco align-items-center button-contrasena" [disabled]="loading"
+                  routerLink="/codigo-confirmacion" type="button">
+                  <img src="assets/images/arrow-left.svg" height="20" class="pointer" />
+                  <span class="ms-2"> Volver</span>
+                </button>
+                <button class="btn btn-success ms-3 verde button-contrasena" type="submit" [disabled]="loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lapiz col-md-6 margin-col-2 d-flex justify-content-center imagen-lapiz-margin">
+        <img src="assets/images/img-contrasena.png" class="imagen-lapiz" />
+      </div>
+    </div>
+  </div>
+</form>
+<ng-template #contentNuevaContrasena let-modalConfirmacion>
+  <div class="modal-body text-center mb-3">
+    <i class="fa-solid fa-circle-check mb-3 mt-4" style="color:#009E0F;height: clamp(5rem, 23vw, 93px);"></i>
+    <h5 class="title-modal">¡Su contraseña ha sido cambiada!</h5>
+    <label class="modal-text">Haga click en continuar para retonar al inicio de sesión.</label>
+    <br>
+    <button class="btn mt-4 btn-success verde modal-button" routerLink=""
+      (click)="modalConfirmacion.dismiss()">Continuar</button>
+  </div>
+</ng-template>

@@ -1,0 +1,7 @@
+<div [ngClass]="{ 'crud__background': router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'
+&& router.url.indexOf('/loading') !== 0 && router.url !=='/mantenimiento'}">
+  <app-header *ngIf=" !router.url.includes('/loading') && router.url !=='/loading-logout'"></app-header>
+  <app-menu
+    *ngIf="!router.url.includes('/#') && !hasQueryParams() && router.url !== '/' && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'&& !router.url.includes('/loading')"></app-menu>
+  <router-outlet></router-outlet>
+</div>

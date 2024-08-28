@@ -1,0 +1,23 @@
+.header {
+  margin-top: 120px;
+}
+
+/* Modo escritorio */
+@media (min-width: 991.98px) {
+  .card-form {
+    margin-bottom: 35px !important;
+  }
+}
+
+/* Version móvil */
+@media (max-width: 991.98px) {
+  :host ::ng-deep .ng-dropdown-panel {
+    border: 0 solid transparent;
+  }
+
+  :host ::ng-deep .ng-dropdown-panel {
+    position: relative !important;
+    bottom: 2px;
+    z-index: 100 !important;
+  }
+}

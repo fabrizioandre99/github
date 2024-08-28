@@ -1,0 +1,267 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex align-items-center">
+        <h2>Factores de emisión</h2>
+        <app-alert class="ms-auto alto"></app-alert>
+      </div>
+      <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 240px">
+        <div class=" spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loadingTable">
+        <div class="mt-2 d-lg-flex justify-content-between align-items-center">
+          <div class="row col-width">
+            <div class="col-md-3 col-lg-2 col-xl-2 col mb-2 mb-xl-0">
+              <select (change)="changeListarFactorEmision()" [(ngModel)]="Anio" name="Anio" class="form-select">
+                <option [ngValue]="item" *ngFor="let item of lstAnio">{{item}}</option>
+              </select>
+            </div>
+            <div class="col-md-4 col-lg-4 col-xl-4 mb-2 mb-xl-0">
+              <input type="text" class="form-control buscar" placeholder="Buscar sector" [(ngModel)]="model.busqueda"
+                name="sNombre">
+            </div>
+          </div>
+          <div *ngIf="fShowGenerarFE" class="ms-auto div-button-generator mb-2 mb-lg-0">
+            <button [disabled]="loading" (click)="openGenerarFactor(contentGenerarFactor)" type="button"
+              class="me-3 btn btn-success button-generar-factor verde p-1 text-center">
+              <span> Generar factores de<br>emisión
+                {{Anio+1}}</span>
+            </button>
+          </div>
+          <button (click)="fnDescargarFactorEmision()" type="button" class="mt-lg-0 btn btn-success blanco text-negro">
+            <img src="assets/images/paper.svg" height="25" /><span class="ms-2">Descargar
+            </span></button>
+        </div>
+        <br>
+        <div class="row">
+          <div *ngIf="(lstFactorEmision | Busqueda: model).length> 0">
+            <div class="table-responsive text-center">
+              <table class="table" cellspacing="0" cellpadding="0">
+                <thead>
+                  <tr>
+                    <!-- <th scope="col">Item</th> -->
+                    <th scope="col" style="width:20%" class="text-start text-wrap">Sector</th>
+                    <th scope="col" style="width:10%" class="text-start">Descripción</th>
+                    <th scope="col" class="text-end">FE CO<sub>2</sub></th>
+                    <th scope="col" class="text-end">FE CH<sub>4</sub></th>
+                    <th scope="col" class="text-end">FE N<sub>2</sub>O</th>
+                    <th scope="col">FE <br>(Unidad)</th>
+                    <th scope="col" class="text-end">Valor de<br> conversión</th>
+                    <th scope="col">VCN<br>(Unidad)</th>
+                    <!-- <th scope="col">Pérdidas<br>de TyD</th> -->
+                    <th scope="col">Fecha ult.<br> actualización </th>
+                    <th scope="col">Editar</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of lstFactorEmision | Busqueda: model; index as i">
+                  <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                   <!--  <th scope="row">{{ i + 1 }}</th> -->
+                    <td class="text-start text-wrap">{{item.oFuenteEmision.sNombre}}</td>
+                    <td class="text-start">{{item.sDescripcion}}</td>
+                    <td class="text-end">{{item.bdFeCO2}}</td>
+                    <td class="text-end">{{item.bdFeCH4}}</td>
+                    <td class="text-end">{{item.bdFeN2O}}</td>
+                    <td style="width:10%" class="text-wrap">{{item.sUnidadFe}}</td>
+                    <td class="text-end">{{item.bdValorConversion}}</td>
+                    <td>{{item.sUnidadVcn}}</td>
+                   <!--  <td>{{item.bdPerdidasTYD}}</td> -->
+                    <td class="text-wrap" style="width:10%">{{item.sFechaMod}}</td>
+                    <td><img src="assets/images/lapiz.svg" (click)="openModalGuardar(contentGuardar,item)" height="20"
+                        class="pointer" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+              <ngb-pagination class="pagination-md" [collectionSize]="(lstFactorEmision | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+              <ngb-pagination class="pagination-sm" [collectionSize]="(lstFactorEmision | Busqueda: model)?.length"
+                [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+            </div>
+          </div>
+          <div class="text-center mt-4 mb-5" *ngIf="(lstFactorEmision| Busqueda: model)?.length <= 0  && !loadingTable">
+            <h5 class="mt-5">No existen resultados. </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #contentGenerarFactor let-modalGenerarFactor>
+  <div class="modal-body">
+    <h5>Confirmación</h5>
+    <label>Se generará el factor de emisión para el año de <label class="bold">
+        {{Anio+1}}
+      </label>.<br>
+      ¿Está seguro de generarlo?</label>
+  </div>
+  <div class="modal-footer border-0 pt-0">
+    <button type="button" class="btn button-modal btn-success blanco"
+      (click)="modalGenerarFactor.dismiss()">Cancelar</button>
+    <button type="button" class="btn button-modal btn-success verdemodal" [disabled]="loading"
+      (click)="fnInsertarFactorEmision()"><span *ngIf="loading"
+        class="spinner-border spinner-border-sm me-2"></span>Aceptar</button>
+  </div>
+</ng-template>
+<ng-template #contentGuardar let-modalGuardar>
+  <form name="form" (ngSubmit)="fnActualizarFactorEmision(factorEmisionForm,modalGuardar);" #factorEmisionForm="ngForm">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modal-basic-title">
+        Editar factor de emisión</h5>
+      <img class="pointer close" aria-label="Close" (click)="closeModal()" src="assets/images/close.svg" height="16"
+        class="pointer" />
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">Año</label>
+            <input type="text" [(ngModel)]="Anio" name="Año" class="form-control" disabled />
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">Sector</label>
+            <input type="text" name="Sector" class="form-control" [(ngModel)]="modal.oFuenteEmision.sNombre" disabled />
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col col-md-3">
+          <div class="form-group">
+            <label class="bold  col-form-label-sm">Tipo factor
+            </label>
+            <input type="text" name="Tipo factor" class="form-control" [(ngModel)]="modal.sTipoFactor" disabled />
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">Descripción</label>
+            <input type="text" name="Descripcion" class="form-control" [(ngModel)]="modal.sDescripcion"
+              #Descripcion="ngModel" required
+              [ngClass]="{ 'is-invalid': factorEmisionForm.submitted && Descripcion.errors?.['required']||factorEmisionForm.submitted &&  modal.sDescripcion!.trim().length == 0}" />
+            <div
+              *ngIf="factorEmisionForm.submitted && Descripcion.errors?.['required'] || factorEmisionForm.submitted && modal.sDescripcion!.trim().length == 0">
+              <small class="text-danger">Escriba una descripción.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">FE CO<sub>2</sub> [{{modal.sUnidadFe}}]</label>
+            <input type="number" maxlength="19"
+              oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+              onkeydown="javascript: return event.keyCode == 69 ||event.key === '+' || event.key === '-'  ? false : true"
+              name="bdFeCO2" class="form-control" [(ngModel)]="modal.bdFeCO2" #bdFeCO2="ngModel" required
+              pattern="^(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+              [ngClass]="{ 'is-invalid': factorEmisionForm.submitted && bdFeCO2.errors?.['required'] || factorEmisionForm.submitted && bdFeCO2.errors?.['pattern']}" />
+            <div *ngIf="factorEmisionForm.submitted && bdFeCO2.errors?.['required']">
+              <small class="text-danger">Escriba una cantidad.</small>
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && bdFeCO2.errors?.['pattern']">
+              <small class="text-danger">Valor incorrecto.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">FE CH<sub>4</sub> [{{modal.sUnidadFe}}]</label>
+            <input type="number" maxlength="19"
+              oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+              onkeydown="javascript: return event.keyCode == 69 ||event.key === '+' || event.key === '-' ? false : true"
+              name="bdFeCH4" class="form-control" [(ngModel)]="modal.bdFeCH4" #bdFeCH4="ngModel" required
+              pattern="^(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+              [ngClass]="{ 'is-invalid': factorEmisionForm.submitted && bdFeCH4.errors?.['required'] ||factorEmisionForm.submitted &&  bdFeCH4.errors?.['pattern'] }" />
+            <div *ngIf="factorEmisionForm.submitted && bdFeCH4.errors?.['required']">
+              <small class="text-danger">Escriba una cantidad.</small>
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && bdFeCH4.errors?.['pattern']">
+              <small class="text-danger">Valor incorrecto.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">FE N<sub>2</sub>O [{{modal.sUnidadFe}}]</label>
+            <input type="number" maxlength="19"
+              oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+              onkeydown="javascript: return event.keyCode == 69 ||event.key === '+' || event.key === '-'  ? false : true"
+              name="bdFeN2O" class="form-control" [(ngModel)]="modal.bdFeN2O" #bdFeN2O="ngModel" required
+              pattern="^(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+              [ngClass]="{ 'is-invalid': factorEmisionForm.submitted && bdFeN2O.errors?.['required']|| factorEmisionForm.submitted && bdFeN2O.errors?.['pattern'] }" />
+            <div *ngIf="factorEmisionForm.submitted && bdFeN2O.errors?.['required']">
+              <small class="text-danger">Escriba una cantidad.</small>
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && bdFeN2O.errors?.['pattern']">
+              <small class="text-danger">Valor incorrecto.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2 mb-3">
+        <div class="col-md-4" [ngClass]="{ 'w-vconversion':modal.sUnidadVcn!=='-'}">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">Valor de conversión</label>
+            <div class="d-flex align-items-center">
+              <input type="number" maxlength="13"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                onkeydown="javascript: return event.keyCode == 69 ||event.key === '+' || event.key === '-' ? false : true"
+                name="bdValorConversion" class="form-control " [(ngModel)]="modal.bdValorConversion"
+                #bdValorConversion="ngModel" pattern="^(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                [ngClass]="{ 'is-invalid':factorEmisionForm.submitted && bdValorConversion.errors?.['pattern']}" />
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && bdValorConversion.errors?.['pattern']">
+              <small class="text-danger">Valor incorrecto.</small>
+            </div>
+          </div>
+        </div>
+        <div class="w-unidadVcn" [hidden]="modal.sUnidadVcn=='-'">
+          <label class="col-form-label-sm">[{{modal.sUnidadVcn}}]</label>
+        </div>
+        <div class="col-md-4 ">
+          <div class="form-group">
+            <label class="bold col-form-label-sm">Pérdidas de TyD</label>
+            <div class="d-flex align-items-center">
+              <input type="number" maxlength="6" [disabled]="modal.sTipoFactor!=='EC'"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                onkeydown="javascript: return event.keyCode == 69||event.key === '+' || event.key === '-' ? false : true"
+                name="bdPerdidasTYD" class="form-control" [(ngModel)]="modal.bdPerdidasTYD" #bdPerdidasTYD="ngModel"
+                pattern="^(100(?:\.0+)?|\d{1,2}(?:\.\d+)?)$"
+                [ngClass]="{ 'is-invalid': (factorEmisionForm.submitted && bdPerdidasTYD.errors?.['pattern'])||(factorEmisionForm.submitted && modal.sUnidadVcn=='-' && !modal.bdPerdidasTYD),'w-perdidasTyD':modal.sUnidadVcn=='-'}" />
+              <div class="ms-1" style="width: 51px;">
+                <label class="col-form-label-sm">%</label>
+              </div>
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && bdPerdidasTYD.errors?.['pattern']">
+              <small class="text-danger">Porcentaje incorrecto.</small>
+            </div>
+            <div *ngIf="factorEmisionForm.submitted && modal.sUnidadVcn=='-' && !modal.bdPerdidasTYD">
+              <small class="text-danger">Escriba una valor válido.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn button-modal btn-success blanco bmodal" (click)="closeModal()">Cancelar</button>
+      <button type="submit" [disabled]="loadModal" class="btn button-modal btn-success verdemodal bmodal">
+        <span *ngIf="loadModal" class="spinner-border spinner-border-sm me-1"></span>
+        Guardar</button>
+    </div>
+  </form>
+</ng-template>

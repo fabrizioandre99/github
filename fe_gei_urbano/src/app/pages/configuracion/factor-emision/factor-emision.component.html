@@ -1,0 +1,205 @@
+<div *ngIf="fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+<div class="container px-4 margin-container">
+  <label class="dashboard_title  mt-3">Factores de emisión</label>
+  <div class="mt-4">
+    <div class="table-responsive dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th rowspan="2" scope="col" class="text-center">Tipo de<br> factor</th>
+            <th rowspan="2" scope="col">Descripción</th>
+            <th rowspan="2" scope="col" class="text-end">Factor emisión<br> [ kgCO<sub>2</sub>/TJ ]</th>
+            <th rowspan="2" scope="col" class="text-end">Factor emisión<br> [ kgCH<sub>4</sub>/TJ ]</th>
+            <th rowspan="2" scope="col" class="text-end">Factor emisión<br> [ kgN<sub>2</sub>O/TJ ]</th>
+
+            
+            <th colspan="2" scope="col" class="text-center">Valor calorífico neto</th>
+            <th rowspan="2" scope="col" class="text-center">Acciones</th>
+          </tr>
+          <tr>
+            <th class="text-end">TJ/gal</th>
+            <th class="text-end">TJ/Kg</th>
+
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstFactorEmision; index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null
+            }">
+              <td class="text-center">{{item.sCodFactor}}</td>
+              <td>{{item.sTipoCombustible}}</td>
+              <td>
+                <div *ngIf="item.bdFeCO2!==-1" class="text-end">
+                  <div *ngIf="!item.edit">
+                    {{ truncateValue(item.bdFeCO2, 5) }}
+                  </div>
+                  <div *ngIf="item.edit">
+                    <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                      oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                      class="crud__input form-control form-control-sm text-end"
+                      [ngClass]="{ 'is-invalid':!item.bdFeCO2_mod.toString().trim()||!esRegexFactores.test(item.bdFeCO2_mod)}"
+                      [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdFeCO2_mod" #bdFeCO2_mod="ngModel"
+                      name="item.bdFeCO2_mod" required>
+                  </div>
+                </div>
+                <div *ngIf="item.bdFeCO2==-1" class="text-end">
+                  <label>-</label>
+                </div>
+              </td>
+              <td>
+                <div *ngIf="item.bdFeCH4!==-1" class="text-end">
+                  <div *ngIf="!item.edit">
+                    {{ truncateValue(item.bdFeCH4, 5) }}
+                  </div>
+                  <div *ngIf="item.edit">
+                    <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                      oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                      class="crud__input form-control form-control-sm text-end"
+                      [ngClass]="{ 'is-invalid':!item.bdFeCH4_mod.toString().trim()||!esRegexFactores.test(item.bdFeCH4_mod)}"
+                      [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdFeCH4_mod" #bdFeCH4_mod="ngModel"
+                      name="item.bdFeCH4_mod" required>
+                  </div>
+                </div>
+                <div *ngIf="item.bdFeCH4==-1" class="text-end">
+                  <label>-</label>
+                </div>
+              </td>
+              <td>
+                <div *ngIf="item.bdFeN2O!==-1" class="text-end">
+                  <div *ngIf="!item.edit">
+                    {{ truncateValue(item.bdFeN2O, 5) }}
+                  </div>
+                  <div *ngIf="item.edit">
+                    <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                      oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                      class="crud__input form-control form-control-sm text-end"
+                      [ngClass]="{ 'is-invalid':!item.bdFeN2O_mod.toString().trim()||!esRegexFactores.test(item.bdFeN2O_mod)}"
+                      [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdFeN2O_mod" #bdFeN2O_mod="ngModel"
+                      name="item.bdFeN2O_mod" required>
+                  </div>
+                </div>
+                <div *ngIf="item.bdFeN2O==-1" class="text-end">
+                  <label>-</label>
+                </div>
+              </td>
+              
+              <td class="text-end">
+                <div *ngIf="item.bdVCNCombustible!==-1" class="text-end">
+                  <div *ngIf="!item.edit">
+                    {{ truncateValue(item.bdVCNCombustible, 5) }}
+                  </div>
+                  <div *ngIf="item.edit">
+                    <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                      oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                      class="crud__input form-control form-control-sm text-end"
+                      [ngClass]="{ 'is-invalid':!item.bdVCNCombustible_mod.toString().trim()||!regexUnidadVC.test(item.bdVCNCombustible_mod)}"
+                      [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdVCNCombustible_mod"
+                      #bdVCNCombustible_mod="ngModel" name="item.bdVCNCombustible_mod" required> 
+                  </div>
+                </div>
+                <div *ngIf="item.bdVCNCombustible==-1" class="text-end">
+                  <label>-</label>
+                </div>
+              </td>
+
+              <td class="text-end">
+                <div *ngIf="item.bdVCNMasa!=undefined" class="text-end">
+                  <div *ngIf="!item.edit">
+                    {{ truncateValue(item.bdVCNMasa, 5) }}
+                  </div>
+                  <div *ngIf="item.edit">
+                    <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                      oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                      class="crud__input form-control form-control-sm text-end"
+                      [ngClass]="{ 'is-invalid':!item.bdVCNMasa_mod.toString().trim()||!regexUnidadVC.test(item.bdVCNMasa_mod)}"
+                      [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdVCNMasa_mod"
+                      #bdVCNMasa_mod="ngModel" name="item.bdVCNMasa_mod" required> 
+                  </div>
+                </div>
+                <div *ngIf="item.bdVCNMasa==undefined" class="text-end">
+                  <label>-</label>
+                </div>
+              </td>
+
+              <td class="text-center">
+                <div *ngIf="!item.edit">
+                  <img src="assets/images/icon_edit.svg" height="30" class="icon_editar pointer" (click)="editarFactor(item)" />
+                </div>
+                <div *ngIf="item.edit" class="table__buttons">
+                  <img class="icon_circle pointer ms-5px"
+                    (click)="actualizarFactorEmision(item)"
+                    src="assets/images/icon_check_circle.svg" placement="top" ngbTooltip="Guardar" />
+                  <img class="icon_circle pointer" (click)="item.edit=false" src="assets/images/icon_close_circle.svg"
+                    placement="top" ngbTooltip="Cancelar" />
+                </div>
+              </td>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton && lstFactorEmision.length <= 0">
+        <div class="text-center mt-5 mb-5">
+          <h5>No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="!fShowSkeleton && lstFactorEmision.length > 0" class="d-flex justify-content-center mt-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="lstFactorEmision.length" [(page)]="page" [maxSize]="8"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="lstFactorEmision.length" [(page)]="page" [maxSize]="5"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+  </div>
+</div>

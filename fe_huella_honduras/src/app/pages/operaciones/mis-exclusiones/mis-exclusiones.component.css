@@ -1,0 +1,7 @@
+table mat-form-field {
+    width: 100%;
+}
+
+.mat-mdc-select-value {
+    font-size: 13px;
+}

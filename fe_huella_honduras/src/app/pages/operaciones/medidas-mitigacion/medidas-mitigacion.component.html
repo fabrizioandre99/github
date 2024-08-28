@@ -1,0 +1,209 @@
+<div class="container pb-5">
+
+    <h3 class="dash_title">Medidas de mitigación</h3>
+    <label class="dash_subtitle">Plan de mitigación y reducción de las organizaciones participantes</label>
+
+    <div class="table-responsive mt-4">
+        <table mat-table [dataSource]="tReduccion" multiTemplateDataRows
+            class="mat-elevation-z8 shadow-sm border rounded table_general">
+
+            <!-- Primera Jerarquía - Organización -->
+            <ng-container matColumnDef="sRazonSocial">
+                <th mat-header-cell *matHeaderCellDef class="ps-4">Organización</th>
+                <td mat-cell *matCellDef="let item" class="ps-4" [ngClass]="{'selected-row': item === expandedElement}">
+                    {{ item.sRazonSocial }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sPlanMitigacion">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Plan de mitigación</th>
+                <td mat-cell *matCellDef="let item" class="text-center"
+                    [ngClass]="{'selected-row': item === expandedElement}">
+                    @if(item.sPlanMitigacion){
+                    <a class="text-primary text-decoration-underline pointer" (click)="fnDescargaArchivo(item)">
+                        {{ item.sPlanMitigacion }}
+                    </a>
+                    } @else {
+                    Sin documento
+                    }
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="bdReduccionTotal">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Reducción total [tCO2e]</th>
+                <td mat-cell *matCellDef="let item" class="text-center"
+                    [ngClass]="{'selected-row': item === expandedElement}">
+                    {{ formatearComaMiles(item.bdReduccionTotal) }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+                <td mat-cell *matCellDef="let item" class="text-center"
+                    [ngClass]="{'selected-row': item === expandedElement}">
+                    @if (!isExpanded(item)) {
+                    <button mat-icon-button type="button" matTooltip="Ver medidas mitigación" style="color: #0d6efd"
+                        (click)="toggleRow(item)">
+                        <mat-icon svgIcon="ph-duotone:list-checks"></mat-icon>
+                    </button>
+                    } @else {
+                    <button mat-icon-button matTooltip="Ocultar medidas mitigación" color="primary"
+                        style="color: #0d6efd" type="button" (click)="toggleRow(item)">
+                        <mat-icon svgIcon="ph-duotone:list-checks"></mat-icon>
+                    </button>
+                    }
+                </td>
+            </ng-container>
+            <!-- Segunda Jerarquía - Años -->
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="4" class="border-0"
+                    [ngClass]="{'expanded-row': isExpanded(element)}">
+                    <div class="example-element-detail"
+                        [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
+                        <div class="table-responsive">
+
+                            @if (isLoadingDetail) {
+
+                            <div class="d-flex justify-content-center">
+                                <div class="loader"></div>
+                            </div>
+                            <!--   <div class="d-flex justify-content-center">
+                                <span class="spinner-border text-success spinner-border-sm " role="status"
+                                    aria-hidden="true"></span>
+                            </div> -->
+                            } @else {
+
+                            @if (element.anios?.length > 0) {
+
+                            <table mat-table [dataSource]="element.anios" multiTemplateDataRows
+                                class="mat-elevation-z8 shadow-sm border rounded">
+
+                                <ng-container matColumnDef="nAnio">
+                                    <th mat-header-cell *matHeaderCellDef class="text-center">Año</th>
+                                    <td mat-cell *matCellDef="let ano" class="text-center">{{ ano.nAnio }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="bdReduccion">
+                                    <th mat-header-cell *matHeaderCellDef class="text-center">Reducción [tCO2e/año]</th>
+                                    <td mat-cell *matCellDef="let ano" class="text-center">{{
+                                        formatearComaMiles(ano.bdReduccion) }}</td>
+                                </ng-container>
+
+                                <!-- Botón para expandir/colapsar la tercera jerarquía -->
+                                <ng-container matColumnDef="acciones">
+                                    <th mat-header-cell *matHeaderCellDef class="text-center">Medidas mitigación</th>
+                                    <td mat-cell *matCellDef="let ano" class="text-center">
+                                        <button mat-icon-button (click)="toggleAnoExpand(ano)">
+                                            @if (!isAnoExpanded(ano)) {
+                                            <mat-icon>expand_more</mat-icon>
+                                            } @else {
+                                            <mat-icon>expand_less</mat-icon>
+                                            }
+                                        </button>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Tercera Jerarquía - Medidas de Mitigación -->
+                                <ng-container matColumnDef="medidasMitigacion">
+                                    <td mat-cell *matCellDef="let ano" [attr.colspan]="3" class="border-0 no-space">
+                                        <div class="example-element-detail"
+                                            [@detailExpand]="isAnoExpanded(ano) ? 'expanded' : 'collapsed'"
+                                            style="padding: 0; margin: 0; height: 0; min-height: 0;"
+                                            [ngClass]="{'border-0': !isAnoExpanded(ano)}">
+                                            <div class="table-responsive" style="padding: 23px;">
+
+                                                @if (ano.medidasMitigacion?.length > 0) {
+                                                <table mat-table [dataSource]="ano.medidasMitigacion"
+                                                    class="mat-elevation-z8 shadow-sm border rounded">
+
+                                                    <ng-container matColumnDef="sSector">
+                                                        <th mat-header-cell *matHeaderCellDef class="text-center">Sector
+                                                        </th>
+                                                        <td mat-cell *matCellDef="let medida" class="text-center">{{
+                                                            medida.sSector }}</td>
+                                                    </ng-container>
+
+                                                    <ng-container matColumnDef="sDescripcion">
+                                                        <th mat-header-cell *matHeaderCellDef class="text-center">
+                                                            Descripción de la medida</th>
+                                                        <td mat-cell *matCellDef="let medida" class="text-center">{{
+                                                            medida.sDescripcion }}</td>
+                                                    </ng-container>
+
+                                                    <ng-container matColumnDef="bdReduccion">
+                                                        <th mat-header-cell *matHeaderCellDef class="text-center">
+                                                            Reducción [tCO2e] </th>
+                                                        <td mat-cell *matCellDef="let medida" class="text-center">{{
+                                                            formatearComaMiles(medida.bdReduccion) }}</td>
+                                                    </ng-container>
+
+                                                    <tr mat-header-row
+                                                        *matHeaderRowDef="['sSector', 'sDescripcion', 'bdReduccion']"
+                                                        style="border-width: 1px;">
+                                                    </tr>
+                                                    <tr mat-row
+                                                        *matRowDef="let medida; columns: ['sSector', 'sDescripcion', 'bdReduccion'];"
+                                                        style="border-width: 1px;">
+                                                    </tr>
+                                                </table>
+                                                } @else {
+                                                <div class="dash_noData text-center py-4 fs-18">
+                                                    <label>No hay resultados</label>
+                                                </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="['nAnio', 'bdReduccion', 'acciones']"></tr>
+                                <tr mat-row *matRowDef="let ano; columns: ['nAnio', 'bdReduccion', 'acciones'];"
+                                    [ngClass]="{'selected-row': isAnoExpanded(ano)}"></tr>
+
+                                <!-- Fila para la tercera jerarquía -->
+                                <tr mat-row *matRowDef="let ano; columns: ['medidasMitigacion'];"
+                                    [ngClass]="{'expanded-row': isAnoExpanded(ano)}" class="no-space"></tr>
+
+                            </table>
+                            }
+                            @else
+                            {
+                            <div class="dash_noData text-center py-4 fs-18">
+                                <label>No hay resultados</label>
+                            </div>
+                            }
+                            }
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['sRazonSocial', 'sPlanMitigacion', 'bdReduccionTotal', 'acciones']">
+            </tr>
+
+            <!-- Check if there is data -->
+
+            @if (tReduccion.filteredData.length > 0) {
+            <tr mat-row
+                *matRowDef="let row; columns: ['sRazonSocial', 'sPlanMitigacion', 'bdReduccionTotal', 'acciones'];"
+                class="example-element-row" [class.example-expanded-row]="isExpanded(row)"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"
+                [ngClass]="{'expanded-row': isExpanded(row)}"></tr>
+            }
+
+        </table>
+
+        @if (tReduccion.filteredData.length == 0) {
+
+        <div class="dash_noData text-center border border-top-0 py-4 fs-18" style=" background-color: white;">
+            <p>No hay resultados.</p>
+        </div>
+        }
+        <!-- Paginador -->
+
+        <mat-paginator #paginator [length]="tReduccion.filteredData.length" [pageSize]="10" class="border border-top-0"
+            [pageSizeOptions]="[5, 10, 25, 100]" [hidden]="tReduccion.filteredData.length == 0"></mat-paginator>
+
+    </div>
+</div>

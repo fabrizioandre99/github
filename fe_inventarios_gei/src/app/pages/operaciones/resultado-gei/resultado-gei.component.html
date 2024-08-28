@@ -1,0 +1,335 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body">
+      <div class="d-lg-flex text-start">
+        <h2>Resultados GEI</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div *ngIf="loading_resulGei" class="d-flex justify-content-center align-items-center" style="height: 240px">
+        <div class="spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loading_resulGei">
+        <br>
+        <div *ngIf="lstResultadoGei?.length > 0">
+          <div class="row">
+            <div class="table-responsive">
+              <div class="table">
+                <div class="table-header">
+                  <div class="rows extra-bold">
+                    <div class="cols first">Código</div>
+                    <div class="cols second ps-0">Fuente emisión</div>
+                    <div class="cols third">Alcance</div>
+                    <div class="cols third">tCO<sub>2</sub></div>
+                    <div class="cols third">tCH<sub>4</sub></div>
+                    <div class="cols third">tN<sub>2</sub>O</div>
+                    <div class="cols fourth">tCO<sub>2</sub>eq</div>
+                  </div>
+                </div>
+                <ng-container *ngFor="let first of lstResultadoGei; index as i">
+                  <ng-container *ngIf="this.comboSelect == first.sNombre || this.comboSelect == undefined">
+                    <div class="rows extra-bold" style="background:#efefef;">
+                      <div class="cols first">
+
+                        <!-- <div class="here">HERE</div> -->
+                        <div class="pointer arrow-down" (click)="isCollapsed[i] = !isCollapsed[i]"
+                          [ngClass]="isCollapsed[i] ? 'collapsed-active' : 'collapsed-inactive'"><i
+                            class="fa-solid fa-chevron-up"></i></div>
+                        <div class="number-center">{{first.sCodigoGPC}} </div>
+                      </div>
+                      <div class="cols second">
+                        {{first.sNombre}}
+                      </div>
+                      <div class="cols third">{{first.nAlcance}}</div>
+                      <div class="cols third" [ngClass]="{ gray: first.bdTotalCo2 == -1 }">
+                        {{truncateValue(first.bdTotalCo2, 2)}}</div>
+                      <div class="cols third" [ngClass]="{ gray: first.bdTotalCh4 == -1 }">
+                        {{truncateValue(first.bdTotalCh4, 2)}}</div>
+                      <div class="cols third" [ngClass]="{ gray: first.bdTotalN2o == -1 }">
+                        {{truncateValue(first.bdTotalN2o, 2)}}</div>
+                      <div class="cols fourth p-0" [ngClass]="{ gray: first.bdTotalCo2eq == -1 }">
+                        {{truncateValue(first.bdTotalCo2eq, 2)}}
+                      </div>
+                    </div>
+                    <!-- Subsectores -->
+                    <ng-container *ngFor="let second of first.subsectores;  index as b">
+                      <div [ngbCollapse]="isCollapsed[i]" style="background: #F7F7F7">
+                        <div class="rows">
+                          <div class="cols first extra-bold">
+                            <div [hidden]="second.fuentes?.length<1 && second.categorias?.length<1"
+                              class="pointer arrow-down" (click)="secondCollapsed(second)"
+                              [ngClass]="second.collapse  ? 'collapsed-inactive' : 'collapsed-active'">
+                              <i class="fa-solid fa-chevron-up"></i>
+                            </div>
+                            <div class="number-center">{{second.sCodigoGPC}}</div>
+                          </div>
+                          <div class="cols second extra-bold" style="padding-left: 20px;">
+                            {{second.sNombre}}
+                          </div>
+                          <div class="cols third">{{second.nAlcance}}</div>
+                          <div class="cols third" [ngClass]="{ gray:second.bdTotalCo2 == -1 }">
+                            {{truncateValue(second.bdTotalCo2, 2)}}</div>
+                          <div class="cols third" [ngClass]="{ gray: second.bdTotalCh4 == -1 }">
+                            {{truncateValue(second.bdTotalCh4, 2)}}</div>
+                          <div class="cols third" [ngClass]="{ gray:second.bdTotalN2o == -1 }">
+                            {{truncateValue(second.bdTotalN2o, 2)}}</div>
+                          <div class="cols fourth p-0" [ngClass]="{ gray:second.bdTotalCo2eq == -1 }">
+                            {{truncateValue(second.bdTotalCo2eq, 2)}}
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Fuentes -->
+                      <ng-container *ngFor="let third of second.fuentes; index as c">
+                        <div [ngbCollapse]="isCollapsed[i] || !second.collapse">
+                          <div class="rows ">
+                            <div class="cols first extra-bold">
+                              <div [hidden]="third.tipoFuente?.length<1" class="pointer arrow-down"
+                                (click)="secondCollapsed(third)"
+                                [ngClass]="!third.collapse  ? 'collapsed-active' : 'collapsed-inactive'">
+                                <i class="fa-solid fa-chevron-up"></i>
+                              </div>
+                              <div class="number-center">{{third.sCodigoGPC}}</div>
+                            </div>
+                            <div class="cols second" style="padding-left: 25px;">
+                              <ng-container *ngIf="!third.edit">
+                                {{third.sNombre}}
+                              </ng-container>
+                              <ng-container *ngIf="third.edit">
+                                <input class="form-control form-control-sm w-fuente" name="third.sNombre"
+                                  [ngModelOptions]=" {standalone: true}" [(ngModel)]="third.sNombre_mod">
+                              </ng-container>
+                            </div>
+                            <div class="cols third">{{third.nAlcance}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalCo2 == -1 }">
+                              {{truncateValue(third.bdTotalCo2, 2)}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalCh4 == -1 }">
+                              {{truncateValue(third.bdTotalCh4, 2)}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalN2o == -1 }">
+                              {{truncateValue(third.bdTotalN2o, 2)}}</div>
+                            <div class="cols fourth p-0" [ngClass]="{ gray:third.bdTotalCo2eq == -1 }">
+                              {{truncateValue(third.bdTotalCo2eq, 2)}}
+                            </div>
+                          </div>
+                          <!-- Tipo de Fuente -->
+                          <ng-container *ngFor="let tipo of third.tipoFuente; index as d">
+
+                            <div [ngbCollapse]="isCollapsed[i] || !third.collapse">
+                              <div class="rows p-0">
+                                <div class="cols first extra-bold"></div>
+                                <div class="cols second" style="padding-left: 32px;">
+                                  {{tipo.sTipoFuente}}
+                                </div>
+                                <div class="cols third"></div>
+                                <div class="cols third" [ngClass]="{ gray:tipo.bdTotalCo2 == -1 }">
+                                  {{truncateValue(tipo.bdTotalCo2, 2)}}</div>
+                                <div class="cols third" [ngClass]="{ gray:tipo.bdTotalCh4 == -1 }">
+                                  {{truncateValue(tipo.bdTotalCh4, 2)}}</div>
+                                <div class="cols third" [ngClass]="{ gray:tipo.bdTotalN2o == -1 }">
+                                  {{truncateValue(tipo.bdTotalN2o, 2)}}</div>
+                                <div class="cols fourth p-0" [ngClass]="{ gray:tipo.bdTotalCo2eq == -1 }">
+                                  {{truncateValue(tipo.bdTotalCo2eq, 2)}}
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                      <!-------------------------------------------->
+                      <!-- Categorías -->
+                      <ng-container *ngFor="let third of second.categorias; index as c">
+                        <div [ngbCollapse]="isCollapsed[i] || !second.collapse" style="background:#FCFCFC">
+                          <div class="rows">
+                            <div class="cols first extra-bold">
+                              <div [hidden]="third.fuentes?.length<1" class="pointer arrow-down"
+                                (click)="thirdCollapsed(third)"
+                                [ngClass]="third.collapse  ? 'collapsed-inactive' : 'collapsed-active'">
+                                <i class="fa-solid fa-chevron-up"></i>
+                              </div>
+                              <div class="number-center">{{third.sCodigoGPC}}</div>
+                            </div>
+                            <div class="cols second" style="padding-left: 25px;">
+                              {{third.sNombre}}
+                            </div>
+                            <div class="cols third">{{third.nAlcance}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalCo2 == -1 }">
+                              {{truncateValue(third.bdTotalCo2, 2)}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalCh4 == -1 }">
+                              {{truncateValue(third.bdTotalCh4, 2)}}</div>
+                            <div class="cols third" [ngClass]="{ gray:third.bdTotalN2o == -1 }">
+                              {{truncateValue(third.bdTotalN2o, 2)}}</div>
+                            <div class="cols fourth p-0" [ngClass]="{ gray:third.bdTotalCo2eq == -1 }">
+                              {{truncateValue(third.bdTotalCo2eq, 2)}}
+                            </div>
+                          </div>
+                          <!-- Fuentes -->
+                          <ng-container *ngFor="let fourth of third.fuentes; index as c">
+                            <div [ngbCollapse]="isCollapsed[i] || !third.collapse">
+                              <div class="rows p-0">
+
+                                <div class="cols first extra-bold" style="padding: 8px;">
+                                  <div [hidden]="fourth.tipoFuente?.length<1" class="pointer arrow-down"
+                                    (click)="thirdCollapsed(fourth)"
+                                    [ngClass]="fourth.collapse ? 'collapsed-inactive' : 'collapsed-active'">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                  </div>
+                                  <div class="number-center">{{fourth.sCodigoGPC}}</div>
+                                </div>
+                                <div class="cols second" style="padding-left: 28px;">
+                                  {{fourth.sNombre}}
+                                </div>
+                                <div class="cols third">{{fourth.nAlcance}}</div>
+                                <div class="cols third" [ngClass]="{ gray:fourth.bdTotalCo2 == -1 }">
+                                  {{truncateValue(fourth.bdTotalCo2, 2)}}</div>
+                                <div class="cols third" [ngClass]="{ gray:fourth.bdTotalCh4 == -1 }">
+                                  {{truncateValue(fourth.bdTotalCh4, 2)}}</div>
+                                <div class="cols third" [ngClass]="{ gray:fourth.bdTotalN2o == -1 }">
+                                  {{truncateValue(fourth.bdTotalN2o, 2)}}</div>
+                                <div class="cols fourth p-0" [ngClass]="{ gray:fourth.bdTotalCo2eq == -1 }">
+                                  {{truncateValue(fourth.bdTotalCo2eq, 2)}}
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Tipo de Fuente -->
+                            <ng-container *ngFor="let tipo of fourth.tipoFuente; index as d">
+                              <div [ngbCollapse]="isCollapsed[i] || !fourth.collapse">
+                                <div class="rows p-0">
+                                  <div class="cols first extra-bold"></div>
+                                  <div class="cols second" style="padding-left: 32px;">
+                                    {{tipo.sTipoFuente}}
+                                  </div>
+                                  <div class="cols third"></div>
+                                  <div class="cols third" [ngClass]="{ gray:tipo.bdTotalCo2 == -1 }">
+                                    {{truncateValue(tipo.bdTotalCo2, 2)}}</div>
+                                  <div class="cols third" [ngClass]="{ gray:tipo.bdTotalCh4 == -1 }">
+                                    {{truncateValue(tipo.bdTotalCh4, 2)}}</div>
+                                  <div class="cols third" [ngClass]="{ gray:tipo.bdTotalN2o == -1 }">
+                                    {{truncateValue(tipo.bdTotalN2o, 2)}}</div>
+                                  <div class="cols fourth p-0" [ngClass]="{ gray:tipo.bdTotalCo2eq == -1 }">
+                                    {{truncateValue(tipo.bdTotalCo2eq, 2)}}
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="float-right">
+            <div class="col  d-flex justify-content-end align-items-center">
+              <label class="me-2">Total: </label>
+              <span class="extra-bold"> {{truncateValue(suma_resulGei, 2)}}</span><label
+                class="ms-2">tCO<sub>2</sub>eq</label>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-5 mb-5" *ngIf="lstResultadoGei?.length <=0">
+          <h5>No existen resultados.</h5>
+        </div>
+      </div>
+      <div class="d-lg-flex text-start">
+        <h2>Emisiones de biomasa</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div *ngIf="loading_biomasa" class="d-flex justify-content-center align-items-center" style="height: 240px">
+        <div class="spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loading_biomasa">
+        <br>
+        <div *ngIf="lstBiomasa?.length > 0">
+          <div class="row">
+            <div class="table-responsive">
+              <div class="table">
+                <div class="table-header">
+                  <div class="rows extra-bold">
+                    <div class="cols first">Código</div>
+                    <div class="cols second ps-0">Fuente emisión</div>
+                    <div class="cols third"></div>
+                    <div class="cols third"></div>
+                    <div class="cols third"></div>
+                    <div class="cols third"></div>
+                    <div class="cols fourth">tCO<sub>2</sub></div>
+                  </div>
+                </div>
+                <ng-container *ngFor="let first of lstBiomasa; index as i">
+                  <ng-container *ngIf="this.comboSelect == first.sNombre || this.comboSelect == undefined">
+                    <div class="rows extra-bold" style="background:#efefef;">
+                      <div class="cols first">
+                        <div class="pointer arrow-down" (click)="isCollapsedBiomasa[i] = !isCollapsedBiomasa[i]"
+                          [ngClass]="isCollapsedBiomasa[i] ? 'collapsed-active' : 'collapsed-inactive'"><i
+                            class="fa-solid fa-chevron-up"></i></div>
+                        <div class="number-center">{{first.sCodigoGPC}} </div>
+                      </div>
+                      <div class="cols second">
+                        {{first.sNombre}}
+                      </div>
+                      <div class="cols third"></div>
+                      <div class="cols third"></div>
+                      <div class="cols third"></div>
+                      <div class="cols third"></div>
+                      <div class="cols fourth p-0">
+                        {{truncateValue(first.bdTotalCo2, 2)}}
+                      </div>
+                    </div>
+                    <ng-container *ngFor="let second of first.subsectores;  index as b">
+                      <div [ngbCollapse]="isCollapsedBiomasa[i]">
+                        <div class="rows">
+                          <div class="cols first extra-bold">
+                            <div [hidden]="second.fuentes?.length<1 && second.categorias?.length<1"
+                              class="pointer arrow-down" (click)="secondCollapsed(second)"
+                              [ngClass]="second.collapse  ? 'collapsed-inactive' : 'collapsed-active'">
+                              <i class="fa-solid fa-chevron-up"></i>
+                            </div>
+                            <div class="number-center">{{second.sCodigoGPC}}</div>
+                          </div>
+                          <div class="cols second" style="padding-left: 20px;">
+                            {{second.sNombre}}
+                          </div>
+                          <div class="cols third"></div>
+                          <div class="cols third"></div>
+                          <div class="cols third"></div>
+                          <div class="cols third"></div>
+                          <div class="cols fourth p-0">
+                            {{truncateValue(second.bdTotalCo2, 2)}}
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="float-right">
+            <div class="col  d-flex justify-content-end align-items-center">
+              <label class="me-2">Total: </label>
+              <span class="extra-bold"> {{truncateValue(suma_biomasa, 2)}}</span><label
+                class="ms-2">tCO<sub>2</sub></label>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-5 mb-5" *ngIf="lstBiomasa?.length <=0">
+          <h5>No existen resultados.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="float-end me-3">
+    <button class="btn btn-success blanco align-items-center" type="button" (click)="redictVolver()">
+      <img src="assets/images/arrow-left.svg" height="20" class="pointer ms-2" />
+      <span class="ms-2 me-2">Volver</span>
+    </button>
+  </div><br>
+</div>

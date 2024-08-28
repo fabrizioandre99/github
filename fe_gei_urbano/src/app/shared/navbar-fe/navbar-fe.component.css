@@ -1,0 +1,76 @@
+.navbar {
+    padding-top: 1.2rem !important;
+    padding-bottom: 1.2rem !important;
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+    align-items: center;
+    font-size: 15px;
+}
+
+.navbar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+}
+
+.nav-item {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+.changeColor {
+    border-radius: 0.2rem;
+    background-color: #121343;
+    color: #ffffff !important;
+    font-family: "Poppins", sans-serif;
+  }
+
+/* Estilos para el menú cuando está en modo responsive */
+  @media (max-width: 1000px) {
+    .navbar-nav {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  
+    .nav-item {
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+  
+    .nav-link {
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+  }
+
+  @media (max-width: 648px) {
+    .navbar-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 8rem;
+    }
+
+    .navbar {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+        align-items: center;
+        font-size: 15px !important;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        justify-content: space-around;
+      }
+  }

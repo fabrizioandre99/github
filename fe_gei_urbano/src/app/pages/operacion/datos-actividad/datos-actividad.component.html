@@ -1,0 +1,439 @@
+<div class="loadspinner_overlay" *ngIf="boMostrarLoading">
+  <div class="loadspinner_center">
+    <div class="loadspinner_ring"></div>
+    <span class="loadspinner_text">Procesando...</span>
+  </div>
+</div>
+
+<div *ngIf="loadingGuardar || fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Datos de actividad</label>
+  
+  <div class="row crud__card crud__card--file col-md-8" *ngIf="boCargaMasiva">
+    <form (ngSubmit)="fnCargaMasiva(contentNaObservados)" #RegOEditForm="ngForm" novalidate>
+      <div class="crud__panel mt-4 mb-1">
+        <div class="row">
+          <label class="col-form-label col-form-label-sm">Cargar archivo</label>
+          <div class="col-md-5">
+            <!-- <div class="spinner-border crud__spinner--file" *ngIf="xlsxCargaMasiva.loading"></div> -->
+            <div>
+              <!-- Input de subida de documentos-->
+              <input [disabled]="xlsxCargaMasiva.loading" type="file" accept=".xlsx,.xls" #fileCargaDa
+                style="display: none;" (change)="insertarCargaMasiva($event, xlsxCargaMasiva)" [name]="'fileCargaDa'">
+              <label (click)="triggerHiddenFileInput()" (dragover)="handleDragOverCargaMasiva($event)"
+                (drop)="handleDropCargaMasiva($event, xlsxCargaMasiva)" [attr.for]="'fileCargaDa'"
+                class="crud__file text-start background-file"
+                [ngClass]="{ 'is_invalid': xlsxCargaMasiva.noFormat, 'crud__file--loading': xlsxCargaMasiva.loading}">
+                <span class="crud__file--text">{{ xlsxCargaMasiva.Filename }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="d-flex align-items-start justify-content-start col-md-5 mt-md-0">
+            <button type="button" [disabled]="xlsxCargaMasiva.loading" class="btn btn-light fs-14"
+              (click)="closeModal()">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="xlsxCargaMasiva.loading || xlsxCargaMasiva.Filename == selectedFileName" 
+              class="btn btn-primary  fs-14 ms-2"> Guardar </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <div class="row mt-3">
+    <div class="col-md-2 col-lg-2">
+      <label class="dashboard_label--sm">Periodo</label>
+      <ng-select [(ngModel)]="nIdPeriodo" placeholder="Seleccionar" (change)="fnListarNivelActividad()"
+        class="dashboard_select fs-14" [items]="lstPeriodo" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="nIdPeriodo" bindLabel="nAnio" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+    <div class="col-md-2 col-lg-2">
+      <label class="dashboard_label--sm">Mes</label>
+      <ng-select [(ngModel)]="sCodMes" placeholder="Seleccionar" (change)="fnListarNivelActividad()"
+        class="dashboard_select fs-14" [items]="lstMes" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+    <div class="col-md-2 col-lg-2">
+      <label class="dashboard_label--sm">Ruta</label>
+      <ng-select [(ngModel)]="nIdRuta" placeholder="Seleccionar" (change)="fnListarNivelActividad()"
+        class="dashboard_select fs-14" [items]="lstRuta" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="nIdRuta" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+  </div>
+
+  <div class="d-flex ms-auto container-options" *ngIf="lstPeriodo.length != 0 && lstMes.length != 0 && lstRuta.length != 0 && !isEdit && !boCargaMasiva && !boEsDefecto">  
+    <div class="d-flex me-2 align-items-center justify-content-center">
+      <label class="d-flex align-items-center justify-content-center dashboard_label--sm show-text"> Calcular por defecto</label>
+      <div class="form-check form-switch form-switch-md d-flex align-items-center">
+        <input (change)="boEsDefecto ? openDefecto(contentDefecto, contentSelectVehiculo, contentNaObservados) : null" class="form-check-input" 
+        type="checkbox" [(ngModel)]="boEsDefecto" [disabled]="isClosed || loadingGuardar"> 
+      </div>
+    </div>
+    <div class="d-flex align-items-center me-2">
+      <button class="btn btn-light fs-14" (click)="openCargaMasiva()" [disabled]="isClosed || loadingGuardar">Carga masiva </button>
+    </div>
+    <div class="d-flex align-items-center">
+      <button class="btn btn-primary fs-14" (click)="fnIsEditable()" [disabled]="isClosed || loadingGuardar">
+        <div class="d-flex align-items-center">
+          <img src="assets/images/icon_edit_white.svg" height="20" />
+          <span class="ms-2">Editar</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="d-flex ms-auto justify-content-end mt-2" *ngIf="lstPeriodo.length != 0 && lstMes.length != 0 && lstRuta.length != 0 && !isEdit && !boCargaMasiva && boEsDefecto">  
+    <div class="d-flex me-2 align-items-center justify-content-center">
+      <label class="d-flex align-items-center justify-content-center dashboard_label--sm">Calcular por defecto</label>
+    </div>
+    <div class="form-check form-switch form-switch-md d-flex align-items-center">
+      <input (change)="boEsDefecto ? openDefecto(contentDefecto, contentSelectVehiculo, contentNaObservados) : null" class="form-check-input" 
+        type="checkbox" [(ngModel)]="boEsDefecto" [disabled]="isClosed || loadingGuardar">
+    </div>
+  </div>
+
+  <div class="d-flex ms-auto container-options" *ngIf="lstPeriodo.length != 0 && lstMes.length != 0 && lstRuta.length != 0 && isEdit && !boCargaMasiva && !boEsDefecto">
+    <button type="button" class="btn btn-link fs-12" (click)="fnListarVehiculosNoINS(contentSelectVehiculo, contentNaObservados)">
+      Agregar vehículos
+    </button>
+    
+    <button *ngIf="!isEdit && (nIdPeriodo != undefined && nIdRuta != undefined && sCodMes != undefined)" 
+      class="btn btn-primary fs-14 ms-2" (click)="fnIsEditable()" [disabled]="isClosed || loadingGuardar">
+      <div class="d-flex align-items-center">
+        <img src="assets/images/icon_edit_white.svg" height="20" />
+        <span class="ms-2">Editar</span>
+      </div>
+    </button>
+
+    <button class="btn btn-primary fs-14 ms-2" *ngIf="isEdit" (click)="fnRegistrarNivelActividad(false, contentNaObservados)">Guardar</button>
+    <button class="btn btn-light fs-14 ms-2" *ngIf="isEdit" (click)="closeModal()">Cancelar</button>
+  </div>
+
+  <div class="d-flex ms-auto container-options" *ngIf="lstPeriodo.length != 0 && lstMes.length != 0 && lstRuta.length != 0 && !isEdit && boCargaMasiva && !boEsDefecto">
+    <div class="text-end end align-items-center d-flex justify-content-end">
+      <div class="pointer">
+        <img src="assets/images/icon-doc.svg" (click)="fnDescargarFormato()" class="icon_doc me-1" height="20">
+        <span (click)="fnDescargarFormato()" class="crud__label--formato me-2">Formato DA</span>    
+      </div>
+      
+      <button [disabled]="boCargaMasiva || isClosed || loadingGuardar" class="btn btn-light fs-14" 
+        (click)="openCargaMasiva()"> Carga masiva </button>
+    </div>
+  </div>
+  <div class="mt-2">
+    <div class="dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th scope="col" class="text-start">Placa</th>
+            <th scope="col" class="text-start">Tipo combustible</th>
+            <th scope="col" class="text-center" *ngIf="!boEsDefecto">Consumo mensual</th>
+            <th scope="col" class="text-center" *ngIf="boEsDefecto">Consumo mensual<br> calculado</th>
+            <th scope="col" class="text-center" *ngIf="!boEsDefecto">Rendimiento</th>
+            <th scope="col" class="text-center">Total <br>viajes/mes</th>
+            <th scope="col" class="text-center" *ngIf="isEdit">Acciones</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body">
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td *ngIf="!boEsDefecto"><p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td *ngIf="boEsDefecto"><p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td *ngIf="!boEsDefecto"><p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td *ngIf="isEdit"><p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span></p></td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstNivelActividad;  index as i">
+            <tr class="table__body" [ngStyle]="{'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                  'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null}">
+              
+              <td class="text-start f-black" [ngClass]="{'f-red': item.bdRendimiento == null && item.bdConsumoMensual == null
+                && item.bdConsumoCalculado == null}"> {{item.oVehiculo.sPlaca}} </td>
+              <td class="text-start">{{item.oFactorEmision.sTipoCombustible}}</td>
+
+              <td class="text-center">
+                <div *ngIf="!isEdit && item.bdConsumoMensual != null">{{item.bdConsumoMensual}}
+                  <span class="fs-11 text-secondary" *ngIf="item.bdConsumoMensual > 0">
+                    {{item.oFactorEmision.sUnidad}}</span>
+                </div>
+                <div *ngIf="!isEdit && item.bdConsumoMensual == null && !boEsDefecto">{{item.bdConsumoCalculado}}
+                  <span class="fs-11 text-secondary" *ngIf="item.bdConsumoCalculado > 0">
+                    {{item.oFactorEmision.sUnidad}}</span>
+                </div>
+                <div *ngIf="boEsDefecto">{{item.bdConsumoCalculado}}
+                  <span class="fs-11 text-secondary" *ngIf="item.bdConsumoCalculado>0">
+                    {{item.sUnidadConsumoCalculado}}</span>
+                </div>
+                <div *ngIf="isEdit && item.bdConsumoMensual != null" class="input-group">
+                  <input type="text" pattern="^(?!\.)(\d{1,5}|\d{1,5}[.]|\d{0,5}\.\d{0,2}?)$"
+                    oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                    class="crud__input form-control form-control-sm text-end" [ngModelOptions]=" {standalone: true}"
+                    [(ngModel)]="item.bdConsumoMensual" #bdConsumoMensual="ngModel"
+                    name="bdConsumoMensual">
+                    <span class="input-group-text fs-13"> {{item.oFactorEmision.sUnidad}}</span>
+                </div>
+                <div *ngIf="isEdit && item.bdConsumoMensual === null" class="input-group">
+                  <input type="text" pattern="^(?!\.)(\d{1,5}|\d{1,5}[.]|\d{0,5}\.\d{0,2}?)$"
+                    oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                    class="crud__input form-control form-control-sm text-end" [ngModelOptions]=" {standalone: true}"
+                    [(ngModel)]="item.bdConsumoCalculado" #bdConsumoMensual="ngModel"
+                    name="bdConsumoMensual">
+                    <span class="input-group-text fs-13"> {{item.oFactorEmision.sUnidad}}</span>
+                </div>
+              </td>
+              <td class="text-center" *ngIf="!boEsDefecto">
+                <div *ngIf="!isEdit">{{item.bdRendimiento}} <span class="fs-11 text-secondary"
+                    *ngIf="item.bdRendimiento>0">{{item.oFactorEmision.sUnidad}}/km</span>
+                </div>
+                <div *ngIf="isEdit" class="input-group">
+                  <input type="text" pattern="^(?!\.)(\d{1,3}|\d{1,3}[.]|\d{0,3}\.\d{0,2}?)$"
+                    oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                    class="crud__input form-control form-control-sm text-end" [ngModelOptions]=" {standalone: true}"
+                    [(ngModel)]="item.bdRendimiento" #bdRendimiento="ngModel" name="bdRendimiento">
+                  <span class="input-group-text fs-13"> {{item.oFactorEmision.sUnidad}}/km</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <div *ngIf="!isEdit">{{item.bdNumViajes}}</div>
+                <div *ngIf="isEdit">
+                  <input type="text" pattern="^(?!\.)(\d{1,3}|\d{1,3}[.]|\d{0,3}\.(0|5){0,1}?)$"
+                    oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                    class="crud__input form-control form-control-sm text-end" [ngModelOptions]=" {standalone: true}"
+                    [(ngModel)]="item.bdNumViajes" #bdNumViajes="ngModel" name="child.bdNumViajes">
+                </div>
+              </td>
+              <td class="text-center" *ngIf="isEdit">
+                <button type="button" class="dashboard_button_icon" *ngIf="isEdit"
+                  (click)="addEliminarNivelActividad(item)">
+                  <img height="30" src="assets/images/icon_delete.svg" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton">
+        <ng-container *ngIf="lstNivelActividad.length <= 0">
+          <div class="text-center mt-5 mb-5 dashboard_noresultados">
+            <label class="fw-500">No existen resultados.</label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div class="d-flex justify-content-start mt-1 ms-2 fs-14" *ngIf="lstNivelActividad != undefined && lstNivelActividad != null 
+    && lstNivelActividad.length === 0 && isClosed">
+  <span class="dashboard_label--sm">
+    Para registrar datos de actividad es necesario reiniciar el periodo.
+  </span>
+</div>
+  <div class="d-flex justify-content-start mt-1 ms-2 fs-14" *ngIf="lstNivelActividad != undefined && lstNivelActividad != null 
+    && lstNivelActividad.length != 0 && nNAFaltantes != 0 && !isEdit">
+    <span class="dashboard_label--sm"  *ngIf="nNAFaltantes === 1">
+      Existe <span class="ms-1 f-red me-1"> {{nNAFaltantes}} vehículo</span> que no presenta información 
+      suficiente para generar emisiones de GEI.
+    </span>
+    <span class="dashboard_label--sm"  *ngIf="nNAFaltantes > 1">
+      Existen <span class="ms-1 f-red me-1"> {{nNAFaltantes}} vehículos</span> que no presentan información 
+      suficiente para generar emisiones de GEI.
+    </span>
+  </div>
+  <div *ngIf="!fShowSkeleton && lstNivelActividad.length > 0" class="d-flex justify-content-center mt-3">
+    <ngb-pagination class="pagination-md" [collectionSize]="lstNivelActividad.length" [(page)]="page" [maxSize]="8"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="lstNivelActividad.length" [(page)]="page" [maxSize]="3"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Modal Confirmar Listar vehículos no activos-->
+<ng-template #contentSelectVehiculo let-modalSeleccionarVehiculos>
+  <form (ngSubmit)="openVehiculosNoInscritos(contentNaObservados)" #registrarVehiculoForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label class="modal__title fw-600">Seleccionar vehículos</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadingGuardar"
+          (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body_veh pt-0">
+        <!-- <div class="row"> -->
+        <div class="table-responsive dashboard_table_card">
+          <table class="table">
+            <thead class="table__header">
+              <tr>
+                <th scope="col" class="text-center">Seleccionar</th>
+                <th scope="col" class="text-center">Placa</th>
+                <th scope="col" class="text-center">Tipo de combustible</th>
+                <th scope="col" class="text-center">Año</th>
+              </tr>
+            </thead>
+            <ng-container *ngIf="fShowSkeleton">
+              <tbody *ngFor="let item of lstSkeleton">
+                <tr class="table__body">
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="!fShowSkeleton">
+              <tbody *ngFor="let item of lstVehiculoNoINS;  index as i">
+                <tr class="table__body" [ngStyle]="{
+                    'display': i / pageSizeB >= pageB || i / pageSizeB < pageB - 1 ? 'none' : 'table-row',
+                    'border-bottom': (i + 1) === (pageB * pageSizeB) ? '0 solid transparent' : null
+                  }">
+                  <td class="text-center"> <input id="item-{{i}}" type="checkbox" [ngModelOptions]="{standalone: true}"
+                      name="item" [(ngModel)]="item.checked" /></td>
+                  <td class="text-center">{{item.oVehiculo.sPlaca}}</td>
+                  <td class="text-center">{{item.oFactorEmision.sTipoCombustible}}</td>
+                  <td class="text-center"> {{item.oVehiculo.nAnio}} </td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+          <ng-container *ngIf="!fShowSkeleton">
+            <ng-container *ngIf="lstVehiculoNoINS.length <= 0">
+              <div class="text-center mt-5 mb-5 dashboard_noresultados">
+                <label class="fw-500">No existen resultados.</label>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div *ngIf="!fShowSkeleton && lstVehiculoNoINS.length > 0" class="d-flex justify-content-center mt-3">
+          <ngb-pagination class="pagination-md" [collectionSize]="lstVehiculoNoINS.length" [(page)]="pageB" [maxSize]="8"
+            [pageSize]="pageSizeB">
+          </ngb-pagination>
+          <ngb-pagination class="pagination-sm" [collectionSize]="lstVehiculoNoINS.length" [(page)]="pageB" [maxSize]="3"
+            [pageSize]="pageSizeB">
+          </ngb-pagination>
+        </div>
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadingGuardar" class="btn btn-light fs-14"
+          (click)="closeModal()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadingGuardar || lstVehiculoNoINS.length <= 0"
+          class="btn btn-primary  fs-14 ms-2"> Agregar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal verificación calculo defecto -->
+<ng-template #contentDefecto let-modalDefecto>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <div class="d-flex align-items-center">
+        <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+          style="background-color: #FEE9E9 !important;">
+          <img src=" assets/images/icon_alert.svg" height="25" />
+        </div>
+        <div class="ms-3">
+          <label class="modal__title  fw-600">Confirmación</label>
+          <label class="mt-2 d-block fs-14">Existen datos de actividad generando emisiones individuales ¿Está seguro de recalcularlos con valores por defecto?</label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button [disabled]="loadingGuardar" (click)="closeModal()" class="btn btn-light fc-black fs-14"
+          type="button">
+          Cancelar</button>
+        <button [disabled]="loadingGuardar" (click)="fnListarVehiculosNoINS(contentSelectVehiculo, contentNaObservados)" class="btn btn-danger fs-14 ms-2" type="submit">
+          <span *ngIf="loadingGuardar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Listar datos de actividad observados calculables por defecto-->
+<ng-template #contentNaObservados let-modalNaObservados>
+  <form (ngSubmit)="fnRegistrarDefecto()" #NaObservadosForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label class="modal__title fw-600">Datos de actividad observados</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadingGuardar"
+          (click)="closeModalObsv()"></button>
+      </div>
+      
+      <div class="modal-body_veh pt-0 fs-15">
+        <p>Los vehículos con <span class="f-red">placa roja</span> presentan observaciones en el cálculo de emisiones de GEI.</p>
+        <p>Los vehículos con <span class="f-blue">placa azul</span> no presentan la información necesaria para el cálculo de emisiones de GEI.</p>
+        <p class="dashboard_label--sm">¿Desea calcular las emisiones de GEI con los valores por defecto de la ruta para los vehículos con 
+          <span class="f-blue">placa azul</span></p>
+      </div>
+      <div class="modal-body_text pt-0">
+        <!-- <div class="row"> -->
+        <div class="table-responsive dashboard_table_card">
+          <table class="table">
+            <thead class="table__header">
+              <tr>
+                <th scope="col" class="text-start">Placa de vehículo</th>
+                <th scope="col" class="text-start">Observación</th>
+              </tr>
+            </thead>
+            <ng-container *ngIf="fShowSkeleton">
+              <tbody *ngFor="let item of lstSkeleton">
+                <tr class="table__body">
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                  <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="!fShowSkeleton">
+              <tbody *ngFor="let item of lstNaObservados;  index as i">
+                <tr class="table__body" [ngStyle]="{
+                    'display': i / pageSizeObs >= pageObs || i / pageSizeObs < pageObs - 1 ? 'none' : 'table-row',
+                    'border-bottom': (i + 1) === (pageObs * pageSizeObs) ? '0 solid transparent' : null
+                  }">
+                  <td class="text-start f-blue" [class.f-red]="!item.boCalculableDefecto">{{item.oVehiculo.sPlaca}}</td>
+                  <td class="text-start"> {{item.sMensajeError}} </td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+        </div>
+        <div *ngIf="!fShowSkeleton && lstNaObservados.length > 0" class="d-flex justify-content-center mt-3">
+          <ngb-pagination class="pagination-md" [collectionSize]="lstNaObservados.length" [(page)]="pageObs" [maxSize]="8"
+            [pageSize]="pageSizeObs">
+          </ngb-pagination>
+          <ngb-pagination class="pagination-sm" [collectionSize]="lstNaObservados.length" [(page)]="pageObs" [maxSize]="3"
+            [pageSize]="pageSizeObs">
+          </ngb-pagination>
+        </div>
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadingGuardar" class="btn btn-light fs-14"
+          (click)="modalNaObservados.dismiss()">
+          Salir
+        </button>
+        <button type="submit" [disabled]="loadingGuardar || lstNaObservados.length <= 0 || !boConObsCalculables"
+          class="btn btn-primary  fs-14 ms-2"> Sí, acepto
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>

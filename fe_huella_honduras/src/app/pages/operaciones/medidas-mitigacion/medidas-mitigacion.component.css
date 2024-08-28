@@ -1,0 +1,91 @@
+.no-space {
+    padding: 0;
+    margin: 0;
+    height: 0;
+    min-height: 0;
+}
+
+.selected-row {
+    background-color: #d7ffd8;
+    font-weight: 400;
+}
+
+.mat-mdc-card-header {
+    display: block;
+}
+
+.dash_noData {
+    background-color: white;
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+}
+
+.table_plan thead {
+    height: 45px;
+}
+
+.table_plan tr {
+    height: 40px;
+}
+
+.table_reduccionXAnio .mdc-data-table__row:last-child .mat-mdc-cell {
+    border-bottom: 1px solid var(--mat-table-row-item-outline-color, rgba(0, 0, 0, 0.12)) !important;
+}
+
+.mat-mdc-footer-cell {
+    border-top: 1.5px solid #c4c6d0;
+    font-size: 14px;
+}
+
+.example-element-detail {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.example-element-detail .table-responsive {
+    overflow: hidden;
+}
+
+.expanded-row .example-element-detail {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px;
+}
+
+.example-detail-row {
+    height: 0;
+}
+
+.expanded-row {
+    padding: 0;
+    border: 0;
+}
+
+.table_general {
+    border-bottom: 0 !important;
+}
+
+.loader {
+    width: 60px;
+    aspect-ratio: 4;
+    --_g: no-repeat radial-gradient(circle closest-side, #00903B 90%, #0000);
+    background:
+        var(--_g) 0% 50%,
+        var(--_g) 50% 50%,
+        var(--_g) 100% 50%;
+    background-size: calc(100%/3) 100%;
+    animation: l7 1s infinite linear;
+}
+
+@keyframes l7 {
+    33% {
+        background-size: calc(100%/3) 0%, calc(100%/3) 100%, calc(100%/3) 100%
+    }
+
+    50% {
+        background-size: calc(100%/3) 100%, calc(100%/3) 0%, calc(100%/3) 100%
+    }
+
+    66% {
+        background-size: calc(100%/3) 100%, calc(100%/3) 100%, calc(100%/3) 0%
+    }
+}

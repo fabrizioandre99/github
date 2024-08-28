@@ -1,0 +1,131 @@
+<div *ngIf="fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Bitácora de errores</label>
+  <div class="row d-flex align-items-end">
+    <div class="col-md-3 col-lg-2">
+      <label for="firstCalendar_errores" class="dashboard_label--sm">Desde</label>
+      <div class="d-flex align-items-center">
+
+        <div class="input-group mb-3">
+          <input id="firstCalendar_errores" [(ngModel)]="firstCalendar"
+            class="form-control dashboard_input fs-14 text-md-center" placeholder="dd/mm/aaaa" name="fstCalendar"
+            ngbDatepicker #fCalendar="ngbDatepicker" (click)="fCalendar.toggle()"
+            (ngModelChange)="changeFirstCalendar($event)" [ngClass]="{ 'is-invalid': invalid_firstDate}"
+            [minDate]="{year: getDate.year-1, month: 1, day: 1}"
+            [maxDate]="{year: getDate.year+1, month: 12, day: 31}" />
+
+          <div class="input-group-append pointer" (click)="fCalendar.toggle()">
+            <span class="input-group-text h-100" id="basic-addon2"><img src="assets/images/icon_calendar.svg"
+                height="15" /></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-md-3 col-lg-2">
+      <label for="secondCalendar_errores" class="dashboard_label--sm">Hasta</label>
+      <div class="d-flex align-items-center">
+
+        <div class="input-group mb-3">
+          <input id="secondCalendar_errores" [(ngModel)]="secondCalendar"
+            class="form-control dashboard_input fs-14 text-md-center" placeholder="dd/mm/aaaa" name="scndCalendar"
+            ngbDatepicker #sCalendar="ngbDatepicker" (click)="sCalendar.toggle()"
+            (ngModelChange)="changeSecondCalendar($event)" [ngClass]="{ 'is-invalid': invalid_secondDate}"
+            [minDate]="{year:  getDate.year-1, month: 1, day: 1}"
+            [maxDate]="{year: getDate.year+1, month: 12, day: 31}" />
+
+          <div class="input-group-append pointer" (click)="sCalendar.toggle()">
+            <span class="input-group-text h-100" id="basic-addon2"><img src="assets/images/icon_calendar.svg"
+                height="15" /></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-lg-3 ms-auto d-flex justify-content-end align-items-end mt-2">
+      <button [disabled]="rotateArrow" class="btn btn-primary fs-14" (click)="fnRefrescar()">
+        <img [ngClass]="{'rotate': rotateArrow}" src="assets/images/icon_refresh.svg" height="15" />
+        <span class="ms-2">Refrescar</span>
+      </button>
+    </div>
+  </div>
+  <div class="mt-4">
+    <div class="table-responsive dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <!-- <th scope="col" class="text-center">Item</th> -->
+            <th scope="col" class="text-center">Fecha y hora de registro</th>
+            <th scope="col" class="text-center">Usuario</th>
+            <th scope="col">Objeto de BD / URI </th>
+            <th scope="col">Mensaje</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+             <!--  <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td> -->
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody>
+            <tr *ngFor="let item of lstLog;  index as i" class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null
+            }">
+
+             <!--  <td class=" text-center">{{i+1}}</td> -->
+              <td class="text-center">{{item.dFechaRegistro}}</td>
+              <td class="text-center">{{item.sLoginUsuario}}</td>
+              <td>{{item.sErrorOrigen}}</td>
+              <td>{{item.sErrorResumen}}</td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton">
+        <ng-container *ngIf="lstLog.length <= 0">
+          <div class="text-center mt-5 mb-5 dashboard_noresultados">
+            <label class="fw-500">No existen resultados.</label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="lstLog.length > 0 && !fShowSkeleton" class="d-flex justify-content-center mt-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="lstLog.length" [(page)]="page" [maxSize]="8"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="lstLog.length" [(page)]="page" [maxSize]="5"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+  </div>
+</div>

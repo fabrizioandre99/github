@@ -1,0 +1,15 @@
+.chip-list {
+    justify-content: space-evenly;
+}
+
+.disabled-input {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@media (width >=768px) {
+    .modal_reduccion {
+        width: 740px;
+        min-width: 740px !important;
+    }
+}

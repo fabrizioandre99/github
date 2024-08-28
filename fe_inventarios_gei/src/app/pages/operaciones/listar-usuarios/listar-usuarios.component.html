@@ -1,0 +1,233 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="text-center  mt-md-4">
+      <div class="float-end">
+        <app-alert></app-alert>
+      </div>
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" id="tabs">
+          <li class="nav-item">
+            <a class="active nav-link active" href="#usuariosExternos" data-bs-toggle="tab">Usuarios externos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#usuariosMinam" data-bs-toggle="tab">Usuarios MINAM </a>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body lista">
+        <div class="tab-content">
+          <div class="tab-pane active" id="usuariosExternos">
+            <div class="mt-2 d-lg-flex align-items-center text-start">
+              <h2>Bandeja de usuarios externos</h2>
+            </div>
+            <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 200px">
+              <div class=" spinner-border text-success" role="status">
+              </div>
+            </div>
+            <div *ngIf="!loadingTable">
+              <br>
+              <div class="row justify-content-between align-items-center">
+                <div class="row">
+                  <div class="col-lg-5 col-xl-4">
+                    <div class="form-group">
+                      <input [(ngModel)]="model.sNombreInstitucion" type="text" name="sNombreInstitucion" maxlength="50"
+                        class="form-control buscar" placeholder="Buscar por nombre de municipalidad" />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 ms-auto justify-content-end d-flex mt-3 mt-lg-0"><img
+                      src="assets/images/paper.svg" alt="..." height="30" />
+                    <a class="descarga ms-2 pointer" (click)="fnDescargarUsuarios()">Descargar
+                      usuarios</a>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div *ngIf="(lstUsuarioExterno | Busqueda: model)?.length > 0">
+                <div class="table-responsive align-middle">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Municipalidad</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Correo electrónico</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let item of lstUsuarioExterno | Busqueda: model; index as i">
+                      <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{item.sNombreInstitucion}}</td>
+                        <td>{{item.sUsuario}}</td>
+                        <td>
+                          <div *ngIf="!item.edit">
+                            {{item.sCorreo}}
+                          </div>
+                          <div *ngIf="item.edit">
+                            <input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                              class="form-control form-control-sm w-correo" name="item.sCorreo"
+                              [ngModelOptions]="{standalone: true}" [(ngModel)]="item.sCorreo_mod"
+                              [ngClass]="{ 'is-invalid': !item.sCorreo_mod || !regexCorreo.test(item.sCorreo_mod)}">
+                          </div>
+                        </td>
+                        <td>
+                          <div *ngIf="!item.edit">
+                            {{item.sTelefono1}}
+                          </div>
+                          <div *ngIf="item.edit">
+                            <input type="text" pattern="[0-9]*" maxlength="9"
+                              class="form-control form-control-sm w-telefono"
+                              oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                              [ngModelOptions]="{standalone: true}" [(ngModel)]="item.sTelefono1_mod"
+                              name="item.sTelefono1"
+                              [ngClass]="{ 'is-invalid': !item.sTelefono1_mod || !regexPhone.test(item.sTelefono1_mod)}">
+                          </div>
+                        </td>
+                        <td>
+                          <div *ngIf="item.edit">
+                            <select class="form-select form-select-sm w-estado" [ngModelOptions]="
+                              {standalone: true}" [(ngModel)]="item.sEstadoRegistro_mod" name="item.sEstado">
+                              <option value="A">Activo</option>
+                              <option value="D">Inactivo</option>
+                            </select>
+                          </div>
+                          <div *ngIf="!item.edit">
+                            <div *ngIf="item.sEstadoRegistro=='A'">Activo</div>
+                            <div *ngIf="item.sEstadoRegistro=='D'">Inactivo</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div *ngIf="!item.edit">
+                            <img class="pointer" (click)="editarUsuario(item)" src="assets/images/lapiz.svg"
+                              height="20" />
+                          </div>
+                          <div *ngIf="item.edit">
+                            <img class="pointer me-2" (click)="actualizarUsuario(item)"
+                              src="assets/images/save-black.svg" height="20" />
+                            <img class="pointer" (click)="item.edit=false" src="assets/images/save-white.svg"
+                              height="20" />
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>
+                <div class="d-flex justify-content-center">
+                  <ngb-pagination class="pagination-md" [collectionSize]="(lstUsuarioExterno | Busqueda: model)?.length"
+                    [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+                    <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                    <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                  </ngb-pagination>
+                  <ngb-pagination class="pagination-sm" [collectionSize]="(lstUsuarioExterno | Busqueda: model)?.length"
+                    [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+                    <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                    <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                  </ngb-pagination>
+                </div>
+              </div>
+
+              <div class="mt-5 mb-5 text-center"
+                *ngIf="(lstUsuarioExterno| Busqueda: model)?.length <= 0 && model.sNombreInstitucion?.length !== 0 && model.sNombreInstitucion !== undefined">
+                <h5 class="mt-5">
+                  No hay resultados para: "{{model.sNombreInstitucion}}".
+                </h5>
+              </div>
+
+              <div class="mt-5 mb-5 text-center" *ngIf="((lstUsuarioExterno| Busqueda: model)?.length <= 0
+            && model.sNombreInstitucion?.length == 0) || (lstUsuarioExterno| Busqueda: model)?.length <= 0
+            && model.sNombreInstitucion == undefined">
+                <h5 class=" mt-5">
+                  No existen resultados.
+                </h5>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="usuariosMinam">
+            <div class="mt-2 d-lg-flex align-items-center text-start">
+              <h2>Bandeja de usuarios MINAM</h2>
+            </div>
+            <br>
+            <div class="row text-start align-items-start">
+              <div class="col-lg-3">
+                <div class="d-flex align-items-center">
+                  <input placeholder="Ingresar nombre de usuario" class="form-control nombre mb-2 mb-xl-0"
+                    [(ngModel)]="model.sUsuario" #sUsuario="ngModel" name="sUsuario" [ngClass]="{'is-invalid':  submit && sUsuario.errors?.['required']
+                      }" autocomplete="off" required />
+                </div>
+                <div *ngIf="submit && sUsuario.errors?.['required']">
+                  <small class=" text-danger">Escriba un nombre.</small>
+                </div>
+              </div>
+              <div class="col-lg-3">
+                <div class="selection">
+                  <select class="form-select mb-2 mb-xl-0" [(ngModel)]="model.nIdRol" #IdRol="ngModel" name="nIdRol"
+                    [ngClass]="{
+                      'is-invalid': submit && model.nIdRol=='seleccionar'
+                    }">
+                    <option value='seleccionar'>Seleccionar rol de usuario</option>
+                    <option [ngValue]="item.nIdRol" *ngFor="let item of lstRol">
+                      {{ item.sNombre }}
+                    </option>
+                  </select>
+                </div>
+                <div *ngIf="submit && model.nIdRol=='seleccionar'">
+                  <small class="text-danger">Seleccione un rol.</small>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <button type="button" class="btn btn-success verde" (click)="fnAgregarUsuario()">
+                  <span class="fa-solid fa-plus"></span> <span class="ms-2"> Agregar usuario MINAM</span></button>
+              </div>
+            </div>
+            <br>
+            <div class="table-responsive align-middle">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Nombres y Apellidos</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Rol</th>
+                    <th scope="col">Correo electrónico</th>
+                    <th scope="col">Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of lstUsuarioMinam; index as i">
+                  <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{item.sNombreYApellido}}</td>
+                    <td>{{item.sUsuario}}</td>
+                    <td>{{item.sRol}}</td>
+                    <td>{{item.sCorreo}}</td>
+                    <td><img class="pointer" (click)="fnEliminarUsuario(item)" src="assets/images/tacho.svg"
+                        height="20" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br> <br>
+            <div class="text-center mt-5 mb-5" *ngIf="lstUsuarioMinam.length <= 0">
+              <h5>No hay resultados. </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cargando -->
+<ng-template #contentCargando let-modalCargando>
+  <div class="modal-body mb-4">
+    <h3 class="mt-2">Procesando...</h3>
+    <div class="progress mt-4">
+      <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar"
+        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+    </div>
+  </div>
+</ng-template>

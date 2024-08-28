@@ -1,0 +1,369 @@
+<div class="loadspinner_overlay" *ngIf="boMostrarLoading">
+  <div class="loadspinner_center">
+    <div class="loadspinner_ring"></div>
+    <span class="loadspinner_text">Enviando...</span>
+  </div>
+</div>
+
+<div *ngIf="loadRegOEdit || loadEliminar || fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Bandeja de usuarios</label>
+  <div class="row mt-3">
+    <div class="dashboard_input_search w_buscar">
+      <img class="" src="assets/images/icon_search.svg" />
+      <input class="form-control dashboard_input fs-14" [(ngModel)]="model.sNombreyApellidos"
+        placeholder="Buscar por nombres y apellidos">
+    </div>
+    <div class="ms-auto col-lg-5 text-end mt-2 mt-md-0">
+      <button class="btn btn-primary fs-14" (click)="openRegistrarUsuario(contentRegistrarUsuario)">
+        <div class="d-flex align-items-center">
+          <img src=" assets/images/icon_plus.svg" height="20" />
+          <span class="ms-2">Nuevo usuario</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="table-responsive dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th scope="col" class="text-center">Item</th>
+            <th scope="col" class="text-center">Nombre de<br>usuario</th>
+            <th scope="col" class="text-start">Gerencia<br>
+              Área
+            </th>
+            <th scope="col">Datos de la persona</th>
+            <th scope="col">Datos de contacto</th>
+            <th scope="col" class="text-center">Estado</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstUsuario| Busqueda: model;  index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null
+            }">
+              <td class=" text-center">{{i+1}}</td>
+              <td class="text-center">{{item.sUsuario}}</td>
+              <td>{{item.sGerencia}}<br>
+                {{item.sArea}}</td>
+              <td>
+                {{item.sNombres}} {{item.sApellidoPat}} {{item.sApellidoMat}}
+                <br>
+                <label class="fw-600">Perfil:</label> {{item.sRol}}
+              </td>
+              <td>
+                <label class="fw-600">Email:</label> {{item.sCorreo}}
+                <br>
+                <div *ngIf="item.sTelefono">
+                  <label class="fw-600">Teléfono:</label> {{item.sTelefono}}
+                </div>
+              </td>
+              <td class="text-center ">
+
+                <div class="form-check form-switch form-switch-md d-flex justify-content-center">
+                  <input (click)="actualizarUsuario(item)" class="form-check-input" type="checkbox"
+                    id="flexSwitchCheckDefault" [(ngModel)]="item.boEstado">
+                </div>
+
+
+              </td>
+              <td class="text-center">
+                <button type="button" *ngIf="item.boContrasenaDefecto" (click)="fnReenviarCodigo(item)" 
+                  class="dashboard_button_icon">
+                  <img height="25" src="assets/images/icon_mail.svg" />
+                </button>
+                <button type="button" (click)="openEditarUsuario(contentRegistrarUsuario,item)"
+                  class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_edit.svg" />
+                </button>
+                <button type="button" (click)="openEliminar(contentEliminar,item)" class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_delete.svg" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton">
+        <ng-container *ngIf="(lstUsuario | Busqueda: model)?.length <= 0">
+          <div class="text-center mt-5 mb-5 dashboard_noresultados">
+            <label class="fw-500">No existen resultados{{lstUsuario.length > 0 ? ' para "' +
+              model.sNombreyApellidos + '"' : ''}}.</label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="!fShowSkeleton && (lstUsuario| Busqueda: model)?.length > 0" class="d-flex justify-content-center mt-3">
+    <ngb-pagination class="pagination-md" [collectionSize]="(lstUsuario| Busqueda: model)?.length" [(page)]="page"
+      [maxSize]="8" [pageSize]="pageSize">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="(lstUsuario| Busqueda: model)?.length" [(page)]="page"
+      [maxSize]="5" [pageSize]="pageSize">
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Modal Confirmar Registrar Usuario-->
+<ng-template #contentRegistrarUsuario let-modalRegistrarNivel>
+  <form (ngSubmit)="fnRegistrarUsuario(registrarUsuarioForm)" #registrarUsuarioForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label *ngIf="!isEditarUsuario" class="modal__title fw-600">Registrar usuario</label>
+        <label *ngIf="isEditarUsuario" class="modal__title fw-600">Editar usuario</label>
+
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+          (click)="modalRegistrarNivel.dismiss();"></button>
+
+      </div>
+      <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarUsuario }">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm">Tipo de documento</label>
+            <ng-select [disabled]="isEditarUsuario" placeholder="Seleccionar"
+              class="dashboard_select dashboard_select_sm" [(ngModel)]="model.sCodTipoDocumento"
+              name="sCodTipoDocumento" [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false"
+              [clearable]="false" required #sCodTipoDocumento="ngModel"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sCodTipoDocumento.errors?.['required']}">
+              <ng-option *ngFor="let item of lstTipoDocumento" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+            </ng-select>
+            <div *ngIf="registrarUsuarioForm.submitted && sCodTipoDocumento.errors?.['required']">
+              <small class="text-danger">Seleccione el tipo de documento.</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="documento">Número de documento</label>
+            <input id="documento" [disabled]="isEditarUsuario" type="text"
+              class="form-control form-control-sm dashboard_input" [(ngModel)]="model.sNumDocumento"
+              name="sNumDocumento" [maxlength]="model?.sCodTipoDocumento=='DNI' ? 8 : 20"
+              [minlength]="model?.sCodTipoDocumento=='DNI' ? 8 : 5" required #sNumDocumento="ngModel" 
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sNumDocumento.errors?.['required']
+                ||registrarUsuarioForm.submitted && !sNumDocumento.errors?.['required'] && model.sCodTipoDocumento=='DNI' 
+                && sNumDocumento.errors?.['minlength'] || registrarUsuarioForm.submitted && !sNumDocumento.errors?.['required'] 
+                && model.sCodTipoDocumento=='DNI' && sNumDocumento.errors?.['maxlength'] || registrarUsuarioForm.submitted 
+                && model.sCodTipoDocumento=='CE' && sNumDocumento.errors?.['minlength'] || registrarUsuarioForm.submitted 
+                && sNumDocumento.errors?.['pattern']}"
+              onkeypress="return (event.charCode !=8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))"
+              pattern="[0-9]+">
+            <div *ngIf="registrarUsuarioForm.submitted && sNumDocumento.errors?.['required']">
+              <small class="text-danger">Ingrese el número de documento.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && !sNumDocumento.errors?.['required'] && model.sCodTipoDocumento=='DNI' 
+              && sNumDocumento.errors?.['minlength'] || registrarUsuarioForm.submitted && !sNumDocumento.errors?.['required'] 
+              && model.sCodTipoDocumento=='DNI' && sNumDocumento.errors?.['maxlength']">
+              <small class="text-danger"> El DNI debe tener 8 caracteres.
+              </small>
+            </div>
+            <div
+              *ngIf="registrarUsuarioForm.submitted  && model.sCodTipoDocumento=='CE' && sNumDocumento.errors?.['minlength']">
+              <small class="text-danger"> Ingrese un mínimo de 4 caracteres.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && sNumDocumento.errors?.['pattern']">
+              <small class="text-danger"> Ingrese sólo números.
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="nombres">Nombres</label>
+            <input id="nombres" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sNombres" name="sNombres" required #sNombres="ngModel"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sNombres.errors?.['required'] 
+                || registrarUsuarioForm.submitted && sNombres.errors?.['pattern']}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="50"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$">
+            <div *ngIf="registrarUsuarioForm.submitted && sNombres.errors?.['required'] ">
+              <small class="text-danger">Ingrese los nombres.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && sNombres.errors?.['pattern']">
+              <small class="text-danger">Solo se permiten letras.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="appaterno">Apellido paterno</label>
+            <input id="appaterno" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sApellidoPat" name="sApellidoPat" required #sApellidoPat="ngModel" 
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sApellidoPat.errors?.['required']
+                || registrarUsuarioForm.submitted && sApellidoPat.errors?.['pattern']}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="50"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$">
+            <div *ngIf="registrarUsuarioForm.submitted && sApellidoPat.errors?.['required']">
+              <small class="text-danger">Ingrese el apellido paterno.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && sApellidoPat.errors?.['pattern']">
+              <small class="text-danger">Solo se permiten letras.</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="apmaterno">Apellido materno</label>
+            <input id="apmaterno" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sApellidoMat" name="sApellidoMat" required #sApellidoMat="ngModel" 
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sApellidoMat.errors?.['required'] 
+                || registrarUsuarioForm.submitted && sApellidoMat.errors?.['pattern']}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="50"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$">
+            <div *ngIf="registrarUsuarioForm.submitted && sApellidoMat.errors?.['required']">
+              <small class="text-danger">Ingrese el apellido materno.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && sApellidoMat.errors?.['pattern']">
+              <small class="text-danger">Solo se permiten letras.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm">Perfil de usuario</label>
+            <ng-select placeholder="Seleccionar" class="dashboard_select dashboard_select_sm"
+              [(ngModel)]="model.sCodRol" name="sCodRol" [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'"
+              [searchable]="false" [clearable]="false" required #sCodRol="ngModel"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sCodRol.errors?.['required']}">
+              <ng-option *ngFor="let item of lstPerfilUsuario" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+            </ng-select>
+            <div *ngIf="registrarUsuarioForm.submitted && sCodRol.errors?.['required']">
+              <small class="text-danger">Seleccione el perfil de usuario.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="gerencia" class="dashboard_label--sm">Gerencia</label>
+            <input id="gerencia" type="text" maxlength="50" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sGerencia" name="sGerencia" required #sGerencia="ngModel"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sGerencia.errors?.['required']
+                || registrarUsuarioForm.submitted && sGerencia.errors?.['pattern']}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="50"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$">
+            <div *ngIf="registrarUsuarioForm.submitted && sGerencia.errors?.['required']">
+              <small class="text-danger">Ingrese la gerencia.</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="area" class="dashboard_label--sm">Área</label>
+            <input id="area" type="text" maxlength="50" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sArea" name="sArea" required #sArea="ngModel"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sArea.errors?.['required']
+                || registrarUsuarioForm.submitted && sArea.errors?.['pattern']}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="50"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$">
+            <div *ngIf="registrarUsuarioForm.submitted && sArea.errors?.['required']">
+              <small class="text-danger">Ingrese el área.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="correo" class="dashboard_label--sm">Correo electrónico</label>
+            <input id="correo" class="form-control form-control-sm dashboard_input" type="email" maxlength="50"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" [(ngModel)]="model.sCorreo" name="sCorreo" required
+              #sCorreo="ngModel" [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sCorreo.errors?.['required']
+            ||registrarUsuarioForm.submitted && sCorreo.errors?.['pattern']}">
+            <div *ngIf="registrarUsuarioForm.submitted && sCorreo.errors?.['required']">
+              <small class="text-danger">Ingrese el correo electrónico.</small>
+            </div>
+            <div *ngIf="registrarUsuarioForm.submitted && sCorreo.errors?.['pattern']">
+              <small class="text-danger">Ingrese un correo electrónico válido.</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="telefono" class="dashboard_label--sm">Teléfono (opcional)</label>
+            <input id="telefono" class="form-control form-control-sm dashboard_input" pattern="^\d{6,9}$" maxlength="9"
+              [(ngModel)]="model.sTelefono" name="sTelefono" #sTelefono="ngModel"
+              onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sTelefono.errors?.['pattern']}">
+            <div *ngIf="registrarUsuarioForm.submitted && sTelefono.errors?.['pattern']">
+              <small class="text-danger">Ingrese un número correcto.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+          (click)="modalRegistrarNivel.dismiss()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <div class="d-flex align-items-center">
+        <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+          style="background-color: #FEE9E9 !important;">
+          <img src=" assets/images/icon_alert.svg" height="25" />
+        </div>
+        <div class="ms-3">
+          <label class="modal__title  fw-600">Confirmación</label>
+          <label class="mt-2 d-block fs-14">¿Está seguro de eliminar el usuario?</label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button [disabled]="loadEliminar" (click)="modalEliminar.dismiss()" class="btn btn-light fc-black fs-14"
+          type="button">
+          Cancelar</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarUsuario()" class="btn btn-danger fs-14 ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

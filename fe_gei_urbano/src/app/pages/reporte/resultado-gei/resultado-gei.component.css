@@ -1,0 +1,75 @@
+.variacion_verde {
+    padding: 5px;
+    background-color: #B2E2A2;
+    color: #020202;
+}
+
+.variacion_naranja {
+    padding: 5px;
+    background-color: #FFCC99;
+    color: #020202;
+}
+
+.variacion_rojo {
+    padding: 5px;
+    background-color: #F4A4A4;
+    color: #020202;
+}
+
+.tamanio_mes {
+    width: 8.5em;
+}
+
+@media (min-width: 991.98px) {
+    .header {
+      margin-top: 105px;
+      margin-bottom: 10px;
+    }
+  }
+
+
+/*****************************************/
+/* ---------------Modals--------------- */
+.modal,
+.modal-title {
+  color: #0D3154 !important;
+}
+
+.modal-header {
+  padding: 16px 24px 24px;
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.modal-content {
+  box-shadow: 0 37px 17px rgba(51, 51, 51, 0.25);
+  border-radius: 13px;
+}
+
+.modal-body {
+  padding: 0 24px 48px 24px;
+  font-weight: 400;
+  min-height: 150px;
+}
+
+.modal-backdrop.show {
+  opacity: 0.6 !important;
+}
+
+@media (max-width: 991.98px) {
+  .close-modal {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    height: 19px;
+  }
+}
+
+.icon-aspa-white {
+    display: none !important;
+  }
+
+small,
+.pointer {
+    cursor: pointer !important;
+}

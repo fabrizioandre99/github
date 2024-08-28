@@ -1,0 +1,148 @@
+<div *ngIf="fShowSkeleton" class="progress-bar-container">
+    <div class="progress-bar-load"></div>
+</div>
+<div class="container px-4 margin-container">
+
+    <form (ngSubmit)="fnRegistrarPeriodo(registrarPeriodoForm)" #registrarPeriodoForm="ngForm" novalidate>
+        <div class="row mt-3" *ngIf="sfNuevoPeriodo">
+            <div class="col-md-2 col-lg-2">
+                <label class="dashboard_label--sm" for="anio">Año</label>
+                <input id="anio" maxlength="4" class="form-control form-control-sm dashboard_input" pattern="^(2)(0)[2-9][0-9]$"
+                    #sAnio="ngModel" 
+                    onkeypress="return (event.charCode !=8 && event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))"
+                    [(ngModel)]="model.nAnio" name="nAnio" required
+                    [ngClass]="{'is-invalid': registrarPeriodoForm.submitted && sAnio.errors?.['required']
+                        || registrarPeriodoForm.submitted && sAnio.errors?.['pattern']}">
+                <div *ngIf="registrarPeriodoForm.submitted && sAnio.errors?.['required']">
+                  <small class="text-danger">Ingrese el periodo.</small>
+                </div>
+                <div *ngIf="registrarPeriodoForm.submitted && sAnio.errors?.['pattern']">
+                  <small class="text-danger">Ingrese un periodo válido (2020-2099).</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-lg-5 mt-4 mt-md-4">
+                <button type="button" (click)="closePanel()" class="btn btn-light fs-14">Cancelar</button>
+                <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary fs-14 ms-2"> 
+                    <span *ngIf="loadRegOEdit" class="spinner-border spinner-border-sm me-2"></span>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <label class="dashboard_title  mt-3">Bandeja de periodos</label>
+    <div class="row mt-3">
+        <div class="ms-auto col-lg-5 text-end mt-2 mt-md-0">
+            <button class="btn btn-primary fs-14" (click)="openPanel()">
+                <div class="d-flex align-items-center">
+                    <img src=" assets/images/icon_plus.svg" height="20" />
+                    <span class="ms-2">Nuevo periodo</span>
+                </div>
+            </button>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="table-responsive dashboard_table_card">
+            <table class="table">
+                <thead class="table__header">
+                    <tr>
+                        <th scope="col" class="text-center">Año</th>
+                        <th scope="col" class="text-center">Estado actual</th>
+                        <th scope="col" class="text-center">Progreso de avance</th>
+                        <th scope="col" class="text-center">Reporte GEI</th>
+                        <th scope="col" class="text-center">Actualizar<br> estado</th>
+                        <th scope="col" class="text-center" *ngIf="boMostrarAcciones">Acciones</th>
+                    </tr>
+                </thead>
+                <ng-container *ngIf="fShowSkeleton">
+                    <tbody>
+                        <tr class="table__body table__body--skeleton" *ngFor="let item of lstSkeleton">
+                            <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                            <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                            <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                            <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                            <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                            <td><p class="placeholder-glow rounded m-0" *ngIf="boMostrarAcciones">
+                                <span class="placeholder col-12 placeholder-sm"></span></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <ng-container *ngIf="!fShowSkeleton">
+                    <tbody>
+                        <tr *ngFor="let item of lstPeriodos; index as i" class="table__body" 
+                            [ngStyle]="{'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                                'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null}">
+                            <td class="text-center">{{item.nAnio}}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-proceso fs-12" 
+                                    [ngClass]="{'btn-finalizado': item.nEstadoPeriodo === 1}" disabled>
+                                    {{item.sEstadoPeriodo}}
+                                </button>
+                            </td>
+                            <td class="text-center">
+                                <ngb-progressbar [value]="item.bdProgreso" placement="top"
+                                    [type]="item.bdProgreso <= 30 ? 'danger' : (item.bdProgreso < 60 ? 'warning' : 'success')">
+                                    <small>{{ item.bdProgreso }} %</small>
+                                </ngb-progressbar>
+                            </td>
+                            <td class="text-center"> 
+                                <button type="button" class="dashboard_button_icon" (click)="redictResultadoGEI(item)">
+                                    <img height="30" src="assets/images/icon_result_gei.svg" />
+                                </button> 
+                            </td>
+                            <td class="text-center">
+                                <button type="button" *ngIf="item.bdProgreso === 100 && item.nEstadoPeriodo===0" 
+                                    (click)="fnCambiarEstado(item)" class="btn-periodo btn-finalizar fs-13">Finalizar</button>
+                                <button type="button" *ngIf="item.nEstadoPeriodo === 1" 
+                                    (click)="fnCambiarEstado(item)" class="btn-periodo btn-reiniciar fs-13">Reiniciar</button>
+                            </td>
+                            <td class="text-center" *ngIf="boMostrarAcciones">
+                                <button type="button" class="dashboard_button_icon" *ngIf="item.nEstadoPeriodo === 0 && 
+                                    item.bdProgreso === 0" (click)="openEliminar(contentEliminar,item)">
+                                    <img height="30" src="assets/images/icon_delete.svg" />
+                                </button>
+                            </td>
+                    </tbody>
+                </ng-container>
+            </table>
+            <ng-container *ngIf="!fShowSkeleton && lstPeriodos.length <= 0">
+                <div class="text-center mt-5 mb-5"><h5>No existen resultados.</h5></div>
+            </ng-container>
+        </div>
+    </div>
+    <div *ngIf="!fShowSkeleton && lstPeriodos.length > 0" class="d-flex justify-content-center mt-4">
+        <ngb-pagination class="pagination-md" [collectionSize]="lstPeriodos.length" [(page)]="page" [maxSize]="8"
+            [pageSize]="pageSize">
+        </ngb-pagination>
+        <ngb-pagination class="pagination-sm" [collectionSize]="lstPeriodos.length" [(page)]="page" [maxSize]="5"
+            [pageSize]="pageSize">
+        </ngb-pagination>
+    </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+    <div class="modal_confirmacion">
+        <div class="modal-body">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light background-alert">
+                    <img src=" assets/images/icon_alert.svg" height="25" />
+                </div>
+                <div class="ms-3">
+                    <label class="modal__title  fw-600">Confirmación</label>
+                    <label class="mt-2 d-block fs-14">¿Está seguro de eliminar el periodo?</label>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+                <button [disabled]="loadEliminar" (click)="modalEliminar.dismiss()" class="btn btn-light fc-black fs-14"
+                    type="button">
+                    Cancelar</button>
+                <button [disabled]="loadEliminar" (click)="fnEliminarPeriodo()" class="btn btn-danger fs-14 ms-2"
+                    type="submit">
+                    <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+                    Sí, estoy seguro</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

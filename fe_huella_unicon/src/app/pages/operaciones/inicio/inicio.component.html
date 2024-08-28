@@ -1,0 +1,15 @@
+<div class="container">
+  <div *ngIf="loading && rutaCorrecta" class="d-flex align-items-center justify-content-center height_calculado">
+    <div class="loader"></div>
+  </div>
+  <div *ngIf="!rutaCorrecta"
+    class="d-flex flex-column align-items-center justify-content-center text-center height_calculado">
+    <img src="assets/images/icon-triangle.svg" height="50" />
+    <label *ngIf="searchUrl" class="mt-2">No se ha podido cargar la ruta: {{prevUrl}}.</label>
+    <label *ngIf="!searchUrl" class="mt-2">No se encuentra la ruta.</label>
+  </div>
+  <div class="iframe-container" [hidden]="!rutaPowerBi || loading || !rutaCorrecta">
+    <iframe title="Report Section" width="600" height="373.5" [src]="rutaPowerBi" frameborder="0"
+      allowFullScreen="true"></iframe>
+  </div>
+</div>

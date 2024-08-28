@@ -1,0 +1,66 @@
+.table__header th:first-child {
+  width: 35%;
+}
+
+.table__header th:nth-child(2) {
+  width: 10.8%;
+}
+
+.table__header th:nth-child(3) {
+  width: 10.8%;
+}
+
+.table__header th:nth-child(4) {
+  width: 10.8%;
+}
+
+.table__header th:nth-child(5) {
+  width: 10.8%;
+}
+
+.table__header th:nth-child(6) {
+  width: 10.8%;
+}
+
+.table__header th:nth-child(7) {
+  width: 10.8%;
+}
+
+.table .table__body--resultados {
+  border: 0 solid black;
+}
+
+.table__body {
+  height: 30px;
+}
+
+.table__body--resultados:last-child {
+  border: 0 solid transparent !important;
+}
+
+/* --------- Modo Escritorio--------- */
+@media (min-width: 768px) {
+
+  .w-periodo,
+  .w-mes {
+    width: 165px;
+  }
+}
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+
+  .table__body {
+    height: 1.757vw;
+  }
+
+  @media (min-width: 768px) {
+
+    .w-periodo,
+    .w-mes {
+      width: 9.666vw;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<div class="scrollable-content" [ngClass]="{ 'dashboard_background': router.url !== '/' 
+  && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena'
+  && router.url !=='/loading-logout'&& router.url !=='/mantenimiento'}">
+  
+  <div class="d-flex">
+    <app-menu *ngIf="!hasQueryParams() && router.url !== '/' && router.url !== '/codigo-confirmacion' 
+      && router.url !=='/nueva-contrasena'"></app-menu>
+
+    <div class="w-100" [ngClass]="{ 'dashboard_fondo_color': router.url !== '/' 
+      && router.url !== '/codigo-confirmacion' && router.url !=='/nueva-contrasena' && router.url !=='/loading-logout' 
+      && router.url !=='/mantenimiento'}">
+      
+      <app-header *ngIf="!hasQueryParams() && router.url !== '/' && router.url !== '/codigo-confirmacion' 
+          && router.url !=='/nueva-contrasena'"/>
+      
+      <app-navbar *ngIf="!hasQueryParams() && (router.url == '/dashboard-historico' || router.url == '/dashboard-resumenAnual' 
+        || router.url == '/dashboard-ruta')"/>
+
+      <app-navbar-fe *ngIf="!hasQueryParams() && (router.url == '/factor-emision-nivel2' || router.url == '/factor-emision')"/>
+
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

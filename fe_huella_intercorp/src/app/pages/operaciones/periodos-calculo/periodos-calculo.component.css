@@ -1,0 +1,92 @@
+@font-face {
+  font-family: 'Value Sans Pro';
+  src: url('src/assets/fonts/ValueSansPro-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+.table__periodos {
+  table-layout: auto !important;
+}
+
+.table__periodos .table__body td:nth-child(2),
+.table__periodos .table__header th:nth-child(2) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: none !important;
+}
+
+.table__periodos th:nth-child(1) {
+  width: 9%
+}
+
+.table__periodos th:nth-child(2) {
+  width: 10px
+}
+
+.table__periodos th:nth-child(3) {
+  width: 12%
+}
+
+.button-editar img {
+  filter: grayscale(100%) invert(100%);
+}
+
+.button-editar {
+  padding: 2px;
+  width: 35px;
+  height: 35px;
+}
+
+.crud__panel {
+  border-radius: 16px;
+  background: #FFF;
+  padding: 15px 24px 26px 24px;
+  box-shadow: 0px 0px 32px 4px rgba(120, 146, 191, 0.60);
+}
+
+.modal-footer {
+  padding-top: 0;
+  border: 0;
+}
+
+.table__header--modal {
+  height: 50px;
+  line-height: 20px;
+}
+
+.form-control-sm {
+  width: 88%;
+}
+
+table:not(.admin) .table__header.table__header--modal th:not(:first-child):not(:last-child) {
+  width: 22%;
+}
+
+table:not(.admin) .table__header.table__header--modal th:last-child {
+  width: 13%;
+}
+
+.select_DetXLoc {
+  width: 401px;
+}
+
+.spinner_cambiarEstado {
+  top: 1px;
+  position: relative;
+  left: -4.5px;
+}
+
+/* Modo escritorio */
+@media (max-width: 767.98px) {
+  .group_RegDetXLoc {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .select_DetXLoc {
+    flex-grow: 1;
+    width: 100%;
+  }
+}

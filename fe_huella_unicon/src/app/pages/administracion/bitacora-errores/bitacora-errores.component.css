@@ -1,0 +1,15 @@
+.table__header th:first-child {
+  width: 20%;
+}
+
+.table__header th:nth-child(2) {
+  width: 14%;
+}
+
+.table__header th:nth-child(3) {
+  width: 28%;
+}
+
+.table__header th:nth-child(4) {
+  width: 38%;
+}

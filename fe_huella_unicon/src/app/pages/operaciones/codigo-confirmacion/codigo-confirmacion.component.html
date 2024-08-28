@@ -1,0 +1,49 @@
+<div *ngIf="fShow" class="text-center p-3 login__alert">
+  <div class="alert-button pointer" (click)="fShow=false">
+    <img class="icon_close" src="assets/images/icon-close.svg" />
+  </div>
+  <label class="login__title">Código de confirmación</label><br>
+  <label class="login__subtitle--alert">Ingrese el código enviado a su bandeja de correo.<br> Si no cuenta con el código
+    comuníquese con
+    el
+    administrador
+    del sistema.</label>
+</div>
+<form (ngSubmit)="fnCodigoConfirmacion(codigoConfirmacionForm)" #codigoConfirmacionForm="ngForm" novalidate>
+  <div class="container-fluid">
+    <div class="row no-gutter">
+      <div class="col-md-3 d-none d-md-flex bg-image"></div>
+      <div class="col-lg-5">
+        <div class="login d-flex align-items-center">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-10 col-lg-7 mx-auto login__card login_card--cambioContrasena  my-5 text-center">
+                <div class="form-group d-flex align-items-center justify-content-center  mb-4">
+                  <label class="login__title text-center">Ingrese código de confirmación</label>
+                  <img (click)="fShow=true" class="ms-1 pointer icon_info" src="assets/images/icon-info.svg" />
+                </div>
+                <ng-otp-input
+                  [ngClass]="{'is-invalid': (codigoConfirmacionForm.submitted && isRequired) || (codigoConfirmacionForm.submitted && isMinimun)}"
+                  (onInputChange)="onOtpChange($event)" [config]="{allowNumbersOnly: true, length:5}"
+                  onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                  required></ng-otp-input>
+                <div class="text-md-start required-confirmacion" *ngIf="(codigoConfirmacionForm.submitted && isMinimun)||
+                codigoConfirmacionForm.submitted && isRequired">
+                  <small class="text-danger">Complete todo el campo.</small>
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                  <button class="crud__button button-white" [disabled]="loading" routerLink="">
+                    Volver
+                  </button>
+                  <button [disabled]="loading" class="crud__button button-blue ms-3" type="submit">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span> Siguiente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

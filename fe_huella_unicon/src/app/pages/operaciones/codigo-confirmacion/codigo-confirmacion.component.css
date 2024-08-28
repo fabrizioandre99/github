@@ -1,0 +1,191 @@
+::ng-deep .otp-input:focus {
+  outline: 0;
+  background-color: #FFFAE6 !important;
+  border: 2px solid #00358A !important;
+  transition: background-color 0.15s ease-in-out !important;
+  outline-color: transparent;
+  outline-style: none;
+}
+
+:host ::ng-deep .ng-otp-input-wrapper .otp-input {
+  border-radius: 16px !important;
+  background: #E6EBF3;
+}
+
+:host ::ng-deep .is-invalid .ng-otp-input-wrapper .otp-input {
+  border: 1.6px solid #DC3545 !important;
+}
+
+:host ::ng-deep .is-invalid:focus .ng-otp-input-wrapper .otp-input {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, .25) !important;
+}
+
+:host ::ng-deep .ng-otp-input-wrapper .otp-input:not(:last-child) {
+  margin-right: 13px !important
+}
+
+:host ::ng-deep .otp-input {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 32px;
+}
+
+.login__alert {
+  background: #E6EBF3;
+  border: 1px solid #00358A;
+  border-radius: 16px;
+  width: 350px;
+  position: absolute;
+  right: 166px;
+  top: 244px;
+}
+
+.login__subtitle--alert {
+  font-size: 12px;
+  line-height: 14px;
+  color: #00358A;
+}
+
+.alert-button {
+  position: absolute;
+  top: 0;
+  left: 322px;
+}
+
+.row {
+  margin-right: calc(-.5 * 1.5rem);
+  margin-left: calc(-.5 * 1.5rem);
+}
+
+.icon_info,
+.icon_close {
+  height: 20px;
+}
+
+
+/**********************************************/
+/* ------------ Modo Escritorio-------------- */
+@media (min-width: 768px) {
+  .required-confirmacion {
+    margin-left: 28px;
+  }
+
+}
+
+/**********************************************/
+/* ------------ Modo móvil-------------- */
+@media (max-width: 490px) {
+  .login__card {
+    padding: 27px 19px 38px 19px;
+  }
+
+  .required-confirmacion {
+    margin-left: 0;
+  }
+
+}
+
+@media (max-width: 546px) {
+  .login__alert {
+    z-index: 20;
+    position: fixed;
+    bottom: 18px;
+    left: 2%;
+    right: 2%;
+    width: 93%;
+    top: auto;
+    padding-top: 6px !important;
+  }
+
+  .alert-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    left: auto;
+    left: 9px;
+  }
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+
+  ::ng-deep .otp-input:focus {
+    border: 0.117vw solid #00358A !important;
+  }
+
+  :host ::ng-deep .ng-otp-input-wrapper .otp-input {
+    border-radius: 0.937vw !important;
+    font-size: 1.875vw;
+  }
+
+  :host ::ng-deep .is-invalid .ng-otp-input-wrapper .otp-input {
+    border: 0.094vw solid #DC3545 !important;
+  }
+
+  :host ::ng-deep .ng-otp-input-wrapper .otp-input:not(:last-child) {
+    margin-right: 0.762vw !important
+  }
+
+  :host ::ng-deep .otp-input {
+    width: 3.281vw !important;
+    height: 3.281vw !important;
+    font-size: 1.875vw;
+  }
+
+  .login__alert {
+    border: 1px solid #00358A;
+    border-radius: 0.937vw;
+    width: 20.504vw;
+    right: 9.725vw;
+    top: 14.294vw;
+  }
+
+  .login__subtitle--alert {
+    font-size: 0.703vw;
+    line-height: 0.82vw;
+  }
+
+  .alert-button {
+    left: 18.864vw;
+  }
+
+  .icon_info,
+  .icon_close {
+    height: 1.172vw;
+  }
+
+  /**********************************************/
+  /* ------------ Modo Escritorio-------------- */
+  @media (min-width: 768px) {
+    .required-confirmacion {
+      margin-left: 1.64vw;
+    }
+
+  }
+
+  /**********************************************/
+  /* ------------ Modo móvil-------------- */
+  @media (max-width: 490px) {
+    .login__card {
+      padding: 1.582vw 1.113vw 2.226vw 1.113vw;
+    }
+
+  }
+
+  @media (max-width: 546px) {
+    .login__alert {
+      bottom: 1.054vw;
+      padding-top: 0.351vw !important;
+    }
+
+    .alert-button {
+      left: 0.527vw;
+    }
+  }
+
+
+}

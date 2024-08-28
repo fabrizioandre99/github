@@ -1,0 +1,135 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Parámetros del sistema</h3>
+
+    <div class="d-flex flex-column flex-md-row mt-3 mb-3 form_sm">
+
+        <div class="d-flex flex-column">
+            <mat-form-field class="w_parametro" appearance="outline">
+                <mat-label>Grupo de parámetros</mat-label>
+                <mat-select [(value)]="selectedTipo" (selectionChange)="fnListarDetalle()">
+                    <mat-option *ngFor="let tipo of lstTipos" [value]="tipo">{{ tipo.sTipo }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <label class="italic fs-14 mt-2">{{ selectedTipo.sDescripcion }}</label>
+        </div>
+
+        <button *ngIf="selectedTipo.sOpciones?.includes('C')" mat-flat-button color="primary" type="button"
+            (click)="agregarParametro()" class="button_add ms-auto mt-2 mt-md-0">
+            <mat-icon svgIcon="ph-regular:plus"></mat-icon>
+            Nuevo parámetro
+        </button>
+
+    </div>
+
+    <div class="table_shadow">
+        <div class="table-responsive">
+            <table mat-table [dataSource]="tParametros" class="mat-elevation-z8">
+                <tr mat-header-row *matHeaderRowDef="hParametros"></tr>
+                <tr mat-row *matRowDef="let row; columns: hParametros;"></tr>
+                <ng-container matColumnDef="sCodigo">
+                    <th mat-header-cell *matHeaderCellDef class="ps-5">Código</th>
+                    <td mat-cell *matCellDef="let item" class="ps-5">{{ item.sCodigo }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sValor">
+                    <th mat-header-cell *matHeaderCellDef>Valor</th>
+                    <td mat-cell *matCellDef="let item">{{ item.sValor }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sDescripcion">
+                    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                    <td mat-cell *matCellDef="let item">{{ item.sDescripcion || 'Sin descripción' }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="boEstado">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+                    <td mat-cell *matCellDef="let item" class="text-center">
+                        <mat-slide-toggle [checked]="item.boEstado" (change)="actualizarEstado(item, $event)"
+                            [disabled]="!item.sOpciones.includes('S')"></mat-slide-toggle>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                    <td mat-cell *matCellDef="let item" class="text-center">
+                        <button *ngIf="item.sOpciones.includes('U')" [disabled]="item.loading" mat-icon-button
+                            type="button" matTooltip="Editar" style="color: #60929e" (click)="editarParametro(item)">
+                            <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                        </button>
+                        <button *ngIf="item.sOpciones.includes('D')" mat-icon-button (click)="openDepurar(item)"
+                            type="button" matTooltip="Eliminar" [disabled]="item.loading" style="color: #822195">
+                            <mat-icon svgIcon="ph-duotone:trash"></mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+            </table>
+        </div>
+        <mat-paginator #paginatorParametros [length]="tParametros.data.length" class="border-top w-100" [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]" [hidden]="tParametros.data.length === 0"></mat-paginator>
+    </div>
+</div>
+
+
+<!-- Modal parámetro -->
+<ng-template #modalParametro>
+    <form [formGroup]="parametroForm" (ngSubmit)="fnRegistrarParam()">
+        <h2 mat-dialog-title class="fw-500 pluto_normal text-center">
+            <label *ngIf="!esEdit"> Registrar parámetro</label>
+            <label *ngIf="esEdit"> Editar parámetro</label>
+            <button mat-icon-button mat-dialog-close class="close-button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </h2>
+        <div mat-dialog-content>
+            <mat-form-field appearance="outline" class="w-100 mt-2">
+                <mat-label>Código</mat-label>
+                <input matInput type="text" inputmode="decimal"
+                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');"
+                    formControlName="codigo" maxlength="50">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Valor</mat-label>
+                <input matInput type="text" formControlName="valor" maxlength="250"
+                    oninput="this.value = this.value.replace(/['`]/g, '');">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Descripción</mat-label>
+                <textarea oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');" matInput
+                    formControlName="descripcion" maxlength="250" cdkTextareaAutosize></textarea>
+            </mat-form-field>
+
+            <!-- <mat-slide-toggle class="toggle_modal" formControlName="estado">{{ estado ? 'Activo' : 'Inactivo'
+                }}</mat-slide-toggle> -->
+            <mat-checkbox formControlName="estado">{{ estado ? 'Activo' : 'Inactivo'
+                }}</mat-checkbox>
+
+
+        </div>
+        <mat-dialog-actions class="pt-0">
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="!parametroForm.valid || loadingModal">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>
+                <span *ngIf="!esEdit">Agregar</span>
+                <span *ngIf="esEdit">Actualizar</span>
+            </button>
+        </mat-dialog-actions>
+    </form>
+</ng-template>
+
+
+<!-- Modal eliminar -->
+<ng-template #modalDepurar>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>¿Está seguro de eliminar el parámetro?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit" color="warn"
+                (click)="fnEliminarParametro()">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary"
+                        diameter="16"></mat-spinner></mat-icon>Eliminar
+            </button>
+        </div>
+    </div>
+</ng-template>

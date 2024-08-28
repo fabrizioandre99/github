@@ -1,0 +1,68 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex text-start">
+        <h2>Potenciales de Calentamiento Atmosférico</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <br />
+      <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 190px">
+        <div class=" spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loadingTable">
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table" cellspacing="0" cellpadding="0">
+              <thead>
+                <tr>
+                  <th scope="col">Item</th>
+                  <th scope="col">Tipo de gas</th>
+                  <th scope="col">Coeficiente GWP</th>
+                  <th scope="col">Editar</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let item of lstPotencial; let i = index">
+                <tr>
+                  <th>{{ i + 1 }}</th>
+                  <th>
+                    <div>
+                      {{item.sTipoGas}}
+                    </div>
+                  </th>
+                  <td>
+                    <div *ngIf="!item.edit">
+                      {{item.bdGWP}}
+                    </div>
+                    <div *ngIf="item.edit">
+                      <input type="text" class="form-control form-control-sm w-gwp text-center"
+                        [ngModelOptions]="{standalone: true}" [(ngModel)]="item.bdGWP_mod" name="item.bdGWP_mod"
+                        pattern="^(\d{1,3}|\d{1,3}[.]|\d{0,3}\.\d{0,6}?)$"
+                        oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                        [ngClass]="{ 'is-invalid': !item.bdGWP_mod || !regexAllowDecimals.test(item.bdGWP_mod)}">
+                    </div>
+                  </td>
+                  <td>
+                    <div *ngIf="!item.edit">
+                      <img class="pointer" (click)="editarGWP(item)" src="assets/images/lapiz.svg" height="20" />
+                    </div>
+                    <div *ngIf="item.edit">
+                      <img class="pointer me-2" (click)="actualizarGWP(item)" src="assets/images/save-black.svg"
+                        height="20" />
+                      <img class="pointer" (click)="item.edit=false" src="assets/images/save-white.svg" height="20" />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>

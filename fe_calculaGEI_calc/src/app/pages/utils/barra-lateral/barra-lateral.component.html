@@ -1,0 +1,52 @@
+<div class="bar">
+  <div class="bar-body">
+    <div class="float-end">
+      <div [ngClass]="{'capa': url1 }" class=" d-flex align-items-center">
+        <div [ngClass]="url1 ? 'circulo-select' : 'circulo-check'" class="text-center">1
+        </div>
+        <label class="ms-3">Datos de tu empresa</label>
+      </div>
+      <div class="borde"></div>
+      <div [ngClass]="{ 'capa':url2 || prov1 || prov2 || prov3 }" class="d-flex align-items-center">
+        <div
+          [ngClass]="url2 || prov1 || prov2 || prov3 ? 'circulo-select' : 'circulo-check' && url1 ? 'circulo' : 'circulo-check'"
+          class="text-center">2
+        </div>
+        <label class="ms-3">Datos de tu consumo<span [ngClass]="url3 || url1 ? 'text-2-display' : 'text-2'">
+            energético</span>
+        </label>
+      </div>
+      <div class="borde"></div>
+      <div [ngClass]="{ 'capa':url3 }" class="d-flex align-items-center">
+        <div [ngClass]="url3 ? 'circulo-select' : 'circulo'" class="text-center">3</div>
+        <label class="ms-3">Datos personales</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex align-items-center justify-content-center bar-sm">
+  <div [ngClass]="url1 ? 'circulo-sm' : 'circulo-sm'">
+  </div>
+  <div class="borde-sm">
+  </div>
+  <div [ngClass]="url1 ? 'circulo-sm-select' : 'circulo-sm' ">
+  </div>
+  <div class="borde-sm">
+  </div>
+  <div [ngClass]="url1 || url2 || prov1 || prov2 || prov3? 'circulo-sm-select' : 'circulo-sm'">
+  </div>
+</div>
+
+<!-- <style>
+  .bar::after {
+    content: "*Con el respaldo de Alwa Ingeniería Sostenible S.A.C.";
+    position: absolute;
+    color: white;
+    font-style: italic;
+    font-size: 14px;
+    top: 51em;
+    right: -355px;
+  }
+</style>
+ -->

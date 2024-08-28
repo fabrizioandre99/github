@@ -1,0 +1,333 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="d-lg-flex align-items-center pt-3">
+      <h2>Bandeja de solicitud de usuario</h2>
+      <app-alert class="ms-auto alto"></app-alert>
+    </div>
+
+    <div class="text-center mt-4">
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" id="tabs">
+          <li class="nav-item">
+            <a class="active nav-link active" href="#pendientes" data-bs-toggle="tab">Pendientes de atención</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#historial" data-bs-toggle="tab">Historial</a>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body lista">
+        <div class="tab-content">
+          <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 205px">
+            <div class=" spinner-border text-success" role="status">
+            </div>
+          </div>
+          <div *ngIf="!loadingTable" class="tab-pane active" id="pendientes">
+            <!--  <br> -->
+            <div class="row align-items-end d-flex">
+   
+              <div class="col-md-4 col-lg-3 col-xl-2 text-start">
+                <label class="col-form-label bold col-form-label-sm">Fecha de inicio</label>
+                <div class="d-flex align-items-center">
+                  <input [(ngModel)]="firstCalendar" class="form-control crud__calendar" placeholder="dd/mm/aaaa"
+                    name="fstCalendar" ngbDatepicker #fCalendar="ngbDatepicker" (click)="fCalendar.toggle()"
+                    (ngModelChange)="changeFirstCalendar($event)" [ngClass]="{ 'is-invalid': invalid_firstDate}"
+                    [minDate]="{year: getDate.year-1, month: 1, day: 1}"
+                    [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+                  <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="fCalendar.toggle()"
+                    height="28" />
+                </div>
+              </div>
+              <div class="col-md-4 col-lg-3 col-xl-2 text-start">
+                <label class="col-form-label bold col-form-label-sm">Fecha de fin</label>
+                <div class="d-flex align-items-center">
+                  <input [disabled]="!firstCalendar" [(ngModel)]="secondCalendar" class="form-control crud__calendar"
+                    placeholder="dd/mm/aaaa" name="scndCalendar" ngbDatepicker #sCalendar="ngbDatepicker"
+                    (click)="sCalendar.toggle()" (ngModelChange)="changeSecondCalendar($event)"
+                    [ngClass]="{ 'is-invalid': invalid_secondDate}" [minDate]="{year:  getDate.year-1, month: 1, day: 1}"
+                    [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+                  <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="sCalendar.toggle()"
+                    height="28" />
+                </div>
+              </div>
+              <div class="col-md-12 col-lg-5 col-xl-4 mt-2 mt-lg-0">
+                <div class="form-group">
+                  <input type="text" [(ngModel)]="modelA.oMunicipalidad!.sNombre" name="modelA.sRazonSocial"
+                    class="form-control buscar" placeholder="Buscar por nombre de municipalidad" maxlength="50">
+                </div>
+              </div>
+            </div>
+            <br>
+            <div *ngIf="(listarPendiente | Busqueda: modelA).length > 0">
+              <div class="table-responsive align-middle">
+                <table class="table">
+                  <thead>
+                    <tr class="align-middle">
+                      <th scope="col">RUC</th>
+                      <th scope="col">Municipalidad</th>
+                      <th scope="col">Ubigeo</th>
+                      <th scope="col">Datos responsable</th>
+                      <th scope="col">Declaración jurada</th>
+                      <th scope="col">Acción a tomar</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="let item of listarPendiente | Busqueda: modelA; index as i">
+                    <tr [style.display]="i / pageSizeA >= pageA || i / pageSizeA < pageA - 1 ? 'none' : null">
+                      <td> {{ item.oMunicipalidad.nRuc }} </td>
+                      <td style="white-space: normal"> {{ item.oMunicipalidad.sNombre }} </td>
+                      <td> {{ item.oMunicipalidad.sDepartamento }} <br>{{ item.oMunicipalidad.sProvincia }} <br>{{
+                        item.oMunicipalidad.sDistrito }}</td>
+                      <td class="text-start"> {{ item.sNombre }} {{ item.sApellidoPaterno }} {{
+                        item.sApellidoMaterno }}
+                        <br>
+                        E: {{item.sCorreo}}
+                        <br>
+                        T: {{item.sTelefono}}
+                      </td>
+                      <td style="white-space: normal"> <a class="descarga pointer" (click)="fnDescargarDocumento(item)">
+                          {{item.sNombreDocumento }}</a>
+                      </td>
+                      <td>
+                        <div>
+                          <!-- Botón Aprobar -->
+                          <button type="button" class="boton btn btn-success btn-exito me-2" placement="bottom"
+                            ngbTooltip="Aprobar solicitud" (click)="fnAprobar(item)">
+                            <i class="fa-solid fa-check"></i>
+                          </button>
+
+                          <!-- Botón Observar -->
+                          <button type="button" class="boton btn btn-warning me-2" placement="bottom"
+                            ngbTooltip="Observar solicitud" (click)="openModalObservar(contentObservar,item)">
+                            <i class="fa-solid fa-exclamation"></i>
+                          </button>
+
+                          <!-- Botón Rechazar -->
+                          <button type="button" class="boton btn btn-danger me-2" placement="bottom"
+                            ngbTooltip="Rechazar solicitud" title="Rechazar solicitud"
+                            (click)="openModalRechazar(contentRechazar,item)">
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-flex justify-content-center">
+                <ngb-pagination class="pagination-md" [collectionSize]="(listarPendiente | Busqueda: modelA).length"
+                  [(page)]="pageA" [pageSize]="pageSizeA">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="(listarPendiente | Busqueda: modelA).length"
+                  [(page)]="pageA" [pageSize]="pageSizeA">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                </ngb-pagination>
+              </div>
+            </div>
+            <div class="mt-5 mb-5 text-center"
+              *ngIf="(listarPendiente| Busqueda: modelA)?.length <= 0 && modelA.oMunicipalidad!.sNombre?.length !== 0 && modelA.oMunicipalidad!.sNombre !== undefined">
+              <h5 class="mt-5">
+                No hay resultados para: "{{modelA.oMunicipalidad!.sNombre}}".
+              </h5>
+            </div>
+            <div class="mt-5 mb-5 text-center" *ngIf="((listarPendiente| Busqueda: modelA)?.length <= 0
+            && modelA.oMunicipalidad!.sNombre?.length == 0) || (listarPendiente| Busqueda: modelA)?.length <= 0
+            && modelA.oMunicipalidad!.sNombre  == undefined">
+              <h5 class=" mt-5">
+                No existen resultados.
+              </h5>
+            </div>
+          </div>
+          <div class="tab-pane" id="historial">
+            <br>
+            <div class="row">
+              <div class="col-md-4 col-lg-3 col-xl-2">
+                <div class="d-flex align-items-center">
+                  <input class="form-control crud__calendar"  placeholder="dd/mm/aaaa"
+                    [(ngModel)]="calendarHistorialIni" name="calHistorialIni" ngbDatepicker #dHistorialIni="ngbDatepicker"
+                    (ngModelChange)="changeHistorialInicio($event)" (click)="dHistorialIni.toggle()" [ngClass]="{ 'is-invalid': invalid_firstDateHistorial}"
+                    [minDate]="{year: 2022, month: 1, day: 1}" [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+                  <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="dHistorialIni.toggle()"
+                    height="32" />
+                </div>
+              </div>
+              <div class="col-md-4 col-lg-3 col-xl-2">
+                <div class="d-flex align-items-center">
+                  <input class="form-control crud__calendar"  placeholder="dd/mm/aaaa" [disabled]="!calendarHistorialIni"
+                    [(ngModel)]="calendarHistorialFin" name="calHistorialFin" ngbDatepicker #dHistorialFin="ngbDatepicker"
+                    (ngModelChange)="changeHistorialFin($event)" (click)="dHistorialFin.toggle()" [ngClass]="{ 'is-invalid': invalid_secondDateHistorial}"
+                    [minDate]="{year: 2022, month: 1, day: 1}" [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+                  <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="dHistorialFin.toggle()"
+                    height="32" />
+                </div>
+              </div>
+              <div class="col-md-4 col-lg-3 col-xl-2 mt-2 mt-md-0">
+                <select (change)="changeEstadoHistorial()" [(ngModel)]="sEstadoActual" class="form-select"
+                  id="incertidumbre" name="incertidumbre" required>
+                  <option value="3">Aprobada</option>
+                  <option value="2">Observada</option>
+                  <option value="0">Rechazada</option>
+                </select>
+              </div>
+              <div class="col-lg-5 col-xl-4 mt-2 mt-md-2 mt-lg-0">
+                <div class="form-group">
+                  <input type="text" class="form-control buscar" [(ngModel)]="modelB.oMunicipalidad!.sNombre"
+                    name="modelB.sRazonSocial" placeholder="Buscar por nombre de municipalidad" maxlength="50">
+                </div>
+              </div>
+            </div>
+            <br>
+            <div *ngIf="(listarHistorial| Busqueda: modelB).length > 0">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Fecha atención</th>
+                      <th scope="col">RUC</th>
+                      <th scope="col">Municipalidad</th>
+                      <th scope="col">Estado solicitud</th>
+                      <th scope="col">Declaración jurada </th>
+                      <th *ngIf="sEstadoActual==2" scope="col">Reenviar código de observación</th>
+                      <th *ngIf="sEstadoActual!=2" scope="col">Reenviar mail de atención</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor=" let item of listarHistorial | Busqueda: modelB; index as i">
+                    <tr [style.display]="i / pageSizeB >= pageB || i / pageSizeB < pageB - 1 ? 'none' : null">
+                      <td> {{ item.sFechaRegistro }} </td>
+                      <td> {{ item.oMunicipalidad?.nRuc }} </td>
+                      <td> {{ item.oMunicipalidad?.sNombre }} </td>
+                      <td> {{ item.sEstadoActual }} </td>
+                      <td><a class="descarga" type="button" (click)="fnDescargarDocumento(item)"> {{
+                          item.sNombreDocumento }}</a>
+                      </td>
+                      <td>
+                        <div *ngIf="item.sEstadoActual=='Aprobada'" (click)="fnReenviarAprobar(item)">
+                          <span placement="bottom" ngbTooltip="Reenviar Mail"><i class="fa-solid fa-envelope pointer"
+                              style="font-size:23px">
+                            </i></span>
+                        </div>
+                        <div *ngIf="item.sEstadoActual=='Observada'" (click)="fnReenviarObservar(item)">
+                          <span placement="bottom" ngbTooltip="Reenviar Mail"><i class="fa-solid fa-envelope pointer"
+                              style="font-size:23px">
+                            </i></span>
+                        </div>
+                        <div *ngIf="item.sEstadoActual=='Rechazada'" (click)="fnReenviarRechazar(item)">
+                          <span placement="bottom" ngbTooltip="Reenviar Mail"><i class="fa-solid fa-envelope pointer"
+                              style="font-size:23px">
+                            </i></span>
+                        </div>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-flex justify-content-center">
+                <ngb-pagination class="pagination-md" [collectionSize]="(listarHistorial | Busqueda: modelB).length"
+                  [(page)]="pageB" [pageSize]="pageSizeB" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                  [ellipses]="false">
+                  <ng-template ngbPaginationFirst><img src="assets/images/double-left.svg" height="7" /></ng-template>
+                  <ng-template ngbPaginationLast><img src="assets/images/double-right.svg" height="7" /></ng-template>
+                  <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="(listarHistorial | Busqueda: modelB).length"
+                  [(page)]="pageB" [pageSize]="pageSizeB" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                  [ellipses]="false">
+                  <ng-template ngbPaginationFirst><img src="assets/images/double-left.svg" height="7" /></ng-template>
+                  <ng-template ngbPaginationLast><img src="assets/images/double-right.svg" height="7" /></ng-template>
+                  <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+                </ngb-pagination>
+              </div>
+            </div>
+            <div class="mt-5 mb-5 text-center"
+              *ngIf="(listarHistorial| Busqueda: modelB)?.length <= 0 && modelB.oMunicipalidad!.sNombre?.length !== 0 && modelB.oMunicipalidad!.sNombre !== undefined">
+              <h5 class="mt-5">
+                No hay resultados para: "{{modelB.oMunicipalidad!.sNombre}}".
+              </h5>
+            </div>
+            <div class="mt-5 mb-5 text-center" *ngIf="((listarHistorial| Busqueda: modelB)?.length <= 0
+              && modelB.oMunicipalidad!.sNombre?.length == 0) || (listarHistorial| Busqueda: modelB)?.length <= 0
+              && modelB.oMunicipalidad!.sNombre == undefined">
+              <h5 class=" mt-5">
+                No existen resultados.
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #contentGenerarFactor let-modalGenerarFactor>
+  <div class="modal-body">
+    <h5>Cerrar Sesión</h5>
+    <label>Se generará el factor de emisión para el año de <label class="bold">
+
+      </label>.<br>
+      ¿Está seguro de generarlo?</label>
+  </div>
+  <div class="modal-footer" style="border: 0; padding-top: 0">
+    <button type="button" class="btn button-modal btn-success blanco"
+      (click)="modalGenerarFactor.dismiss()">Cancelar</button>
+    <button type="button" class="btn button-modal btn-success verdemodal" [disabled]="loading"><span *ngIf="loading"
+        class="spinner-border spinner-border-sm me-2"></span>Aceptar</button>
+  </div>
+</ng-template>
+
+<!-- Modal Observar -->
+<ng-template #contentObservar let-modalObservar>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title"><i class="fa-solid fa-circle-exclamation alerta"></i>
+      Observar
+      solicitud de usuario</label>
+    <button type="button" class="close" aria-label="Close" (click)="fnCerrarObservar(modalObservar)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Ingresar observación:</p>
+    <textarea class="form-control" rows="7" [(ngModel)]="sObservacion" #Observacion="ngModel" minlength="10"
+      maxlength="250" required></textarea>
+    <div *ngIf="submitObservar && Observacion.invalid">
+      <small class="text-danger">Escriba una observación de 10 caracteres como mínimo.</small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn button-modal btn-success blanco"
+      (click)="fnCerrarObservar(modalObservar)">Cancelar</button>
+    <button [disabled]="loading" type="button" class="btn button-modal btn-success verdemodal"
+      (click)="fnObservar(modalObservar)">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Observar</button>
+  </div>
+</ng-template>
+
+<!-- Modal Rechazar -->
+<ng-template #contentRechazar let-modalRechazar>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title"><i class="fa-solid fa-circle-xmark warning"></i> Rechazar
+      solicitud</label>
+    <button type="button" class="close" aria-label="Close" (click)="fnCerrarRechazar(modalRechazar)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Ingresar motivo de rechazo:</p>
+    <textarea class="form-control" rows="7" [(ngModel)]="sMotivoRechazo" #MotivoRechazo="ngModel" minlength="10"
+      maxlength="250" required></textarea>
+    <div *ngIf="submitMotivoRechazo && MotivoRechazo.invalid">
+      <small class="text-danger">Escriba un motivo de rechazo de 10 caracteres como mínimo.</small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn button-modal btn-success blanco"
+      (click)="fnCerrarRechazar(modalRechazar)">Cancelar</button>
+    <button [disabled]="loading" type="button" class="btn button-modal btn-success verdemodal"
+      (click)="fnRechazar(modalRechazar)">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Rechazar</button>
+  </div>
+</ng-template>

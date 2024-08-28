@@ -1,0 +1,98 @@
+.table__header th:first-child {
+  width: 10.53%;
+  min-width: 140px;
+}
+
+.table__header th:nth-child(2),
+.table__header th:nth-child(3),
+.table__header th:nth-child(4),
+.table__header th:nth-child(5) {
+  width: 12.20%;
+}
+
+.table__header th:nth-child(2),
+.table__header th:nth-child(3) {
+  min-width: 124px;
+}
+
+.table__header th:nth-child(6),
+.table__header th:nth-child(7) {
+  width: 11.45%;
+}
+
+.table__header th:nth-child(8) {
+  width: 11.45%;
+
+}
+
+.descarga {
+  min-width: 220px;
+}
+
+.modal-footer {
+  padding-top: 0;
+  border: 0;
+}
+
+.descarga_separador {
+  height: 3px;
+}
+
+.table__buttons {
+  width: 54px;
+}
+
+.form-control-sm {
+  width: 62px;
+}
+
+@media (min-width: 768px) {
+  .crud__label--sub {
+    margin-top: 8px
+  }
+
+}
+
+@media (max-width: 273px) {
+  .button-Guardar {
+    margin-left: 0 !important;
+  }
+}
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+
+  .table__header th:first-child {
+    min-width: 8.202vw;
+  }
+
+  .table__header th:nth-child(2),
+  .table__header th:nth-child(3) {
+    min-width: 7.264vw;
+  }
+
+  .descarga {
+    min-width: 12.888vw;
+  }
+
+  .descarga_separador {
+    height: 0.176vw;
+  }
+
+  .table__buttons {
+    width: 3.163vw;
+  }
+
+  .form-control-sm {
+    width: 3.632vw;
+  }
+
+  @media (min-width: 768px) {
+    .crud__label--sub {
+      margin-top: 0.469vw
+    }
+
+  }
+}

@@ -1,0 +1,4 @@
+<div
+  [ngClass]="router.url === '/emision-anual' || router.url === '/felicitaciones'|| router.url === '/recomendaciones'|| router.url === '/autogeneracion'|| router.url === '/ef-energia'|| router.url === '/suministro' ? 'fondo-presa' : 'fondo-reserva' ">
+  <router-outlet></router-outlet>
+</div>

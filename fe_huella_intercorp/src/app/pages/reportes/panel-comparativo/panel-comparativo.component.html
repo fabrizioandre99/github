@@ -1,0 +1,296 @@
+<!-- <div class="detect_size">
+  Tamaño de width: {{ pantallaAncho }},
+  Valor inicial: {{initialCutout}},
+  Valor cambiado: {{valorAsignado}}.
+</div> -->
+<div class="container">
+  <label class="crud__title mt-4">Panel comparativo de GEI
+  </label>
+  <div class="row mt-3">
+    <div class="ms-auto col-lg-5 mt-2 mt-md-0 d-flex justify-content-end align-items-end">
+      <button
+        [disabled]="isLoadDescargar || lstPartEmpresa.length<=0 &&  lstPartCategoria.length<=0 && lstPartFuente.length<=0"
+        class=" crud__button button-blue d-flex align-items-center ms-2" (click)="convertToImage()">
+        <img *ngIf="!isLoadDescargar" src="assets/images/icon-pie.svg" height="22" />
+        <span *ngIf="isLoadDescargar" class="spinner-border spinner-border-sm me-1"></span>
+        <span class="ms-2">Descargar
+          PDF</span>
+      </button>
+    </div>
+  </div>
+  <div class="crud__panel fs-15 ps-md-5 pe-4 pe-lg-5 mt-3">
+    <div class="row">
+      <div class="d-flex align-items-center">
+        <div class="col_reporte_subtitle">Sector</div>
+        <ng-container *ngIf="lstSector.length > 0">
+          <div class="w-arrow w-arrow-left" *ngIf="showArrowsSector" (mousedown)="startScroll($event, 'left')"
+            (mouseup)="stopScroll()">
+            <img src="assets/images/icon-left-pagination.svg" height="14" />
+          </div>
+          <div class="overflow-auto" #containerSector (wheel)="onWheel($event)">
+            <div class="form-check form-check-inline" *ngFor="let item of lstSector; let i = index">
+              <input (change)="item.sCodigo === -1 ? onAllCheckboxChange() : onCheckboxChange(); aplicarFiltros()"
+                class="form-check-input" type="checkbox" [id]="'checkboxSector_' + i" [value]="item.sCodigo"
+                [(ngModel)]="item.checked" [checked]="item.checked">
+              <label class="form-check-label" [for]="'checkboxSector_' + i">{{item.sValor}}</label>
+            </div>
+          </div>
+          <div class="w-arrow w-arrow-right" *ngIf="showArrowsSector" (mousedown)="startScroll($event, 'right')"
+            (mouseup)="stopScroll()">
+            <img src="assets/images/icon-right-pagination.svg" height="14" />
+          </div>
+        </ng-container>
+        <div *ngIf="lstSector.length <= 0">
+          <label>No hay data.</label>
+        </div>
+      </div>
+      <div class="d-flex align-items-center" [ngClass]="{ 'mt-2': lstSector.length<=0}">
+        <div class="col_reporte_subtitle">Periodo</div>
+        <ng-container *ngIf="lstPeriodo.length>0">
+          <div class="w-arrow w-arrow-left" *ngIf="showArrowsPeriodo" (mousedown)="startScroll($event, 'left')"
+            (mouseup)="stopScroll()"> <img src="assets/images/icon-left-pagination.svg" height="14" />
+          </div>
+          <div class="overflow-auto" #containerPeriodo (wheel)="onWheel($event)" *ngIf="lstPeriodo.length>0">
+            <div class="form-check form-check-inline" *ngFor="let item of lstPeriodo; let i = index">
+              <input (change)="aplicarFiltros()" class="form-check-input radioResul" type="radio"
+                name="radioPeriodo_{{i}}" [id]="'radioPeriodo_' + i" [value]="item.nAnio" [(ngModel)]="model.nAnio">
+              <label class="form-check-label" [for]="'radioPeriodo_' + i">{{item.nAnio}}</label>
+            </div>
+          </div>
+          <div class="w-arrow w-arrow-right" *ngIf="showArrowsPeriodo" (mousedown)="startScroll($event, 'right')"
+            (mouseup)="stopScroll()"> <img src="assets/images/icon-right-pagination.svg" height="14" /></div>
+        </ng-container>
+        <div *ngIf="lstPeriodo.length <= 0">
+          <label>No hay data.</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-lg-6">
+      <div class="crud__panel h-100">
+        <label class="crud__title--chart mb-4 d-block text-center">
+          Participación anual por empresa<br>
+          Sector: {{ modelfilter.nombreSector ? modelfilter.nombreSector : 'No hay data' }}<br>
+          Periodo: {{ modelfilter.nombrePeriodo }}
+        </label>
+        <div class="d-md-flex align-items-center chart-height" [ngClass]="{ 'd-none': lstPartEmpresa.length<=0}">
+
+          <div class="chart-container chart-container-sm d-flex align-items-center justify-content-center"
+            [ngClass]="{'marginFirstDonut': !hasLongLabel}">
+            <canvas id="chartEmpresa"></canvas>
+          </div>
+
+          <ul id="chartLegLoc" class="custom-legend custom-legend-firstChart mt-2 mt-md-0">
+            <li *ngFor="let item of legendItemsEmpresa; let i = index" (click)="toggleEmpresa(i)">
+              {{item.text.lenght}}
+              <span [style.backgroundColor]="item.fillStyle"></span>
+              <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+            </li>
+          </ul>
+
+        </div>
+        <div class="d-flex align-items-center justify-content-center height-sm"
+          [ngClass]="{ 'd-none chart-height': lstPartEmpresa.length>0}">
+          <h5 class="mb-0  card-title text-center">No hay data.</h5>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-6 mt-4 mt-lg-0">
+      <div class="crud__panel h-100">
+        <label class="crud__title--chart mb-4 d-block text-center">
+          Participación anual por categorías<br>
+          Sector: {{ modelfilter.nombreSector ? modelfilter.nombreSector : 'No hay data' }}<br>
+          Periodo: {{ modelfilter.nombrePeriodo }}
+        </label>
+        <div class="d-md-flex align-items-center chart-height" [ngClass]="{ 'd-none': lstPartCategoria.length<=0}">
+
+          <div
+            class="chart-container chart-container-sm d-flex align-items-center  justify-content-center marginSecondDonut">
+            <canvas id="chartCategoria"></canvas>
+          </div>
+
+          <ul id="chartLegCategoria" class="custom-legend custom-legend-categorias mt-4 mt-md-0 ">
+            <li *ngFor="let item of legendItemsCat; let i = index" (click)="toggleCategoria(i)" class="custom-tooltip"
+              [class.mt-2]="i !== 0">
+              <span [style.backgroundColor]="item.fillStyle"></span>
+              <label [class.hidden-label]="item.hidden">
+                <label>{{ item.text.substring(0, 11) }}</label>
+              </label>
+
+              <div class="tooltip-content" [ngClass]="getTooltipClass(item.text)"
+                [ngStyle]="{ '--tooltip-bg-color': currentColor }">
+                <div style="font-weight: 500">{{ item.text.substring(12) }}</div>
+              </div>
+            </li>
+          </ul>
+
+        </div>
+        <div class="d-flex align-items-center justify-content-center height-sm"
+          [ngClass]="{ 'd-none chart-height': lstPartCategoria.length>0}">
+          <h5 class="mb-0  card-title text-center">No hay data.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="crud__panel">
+        <div class="row">
+          <div class="mb-3 d-lg-flex align-items-center">
+            <div>Fuentes de emisión</div>
+            <div class="col-md-6 col-lg-4 ms-lg-2">
+              <ng-select [notFoundText]="'No hay data'" [clearable]="false" class="ng-select-admin"
+                [items]="lstFuenteEmision" [(ngModel)]="model.nIdFuenteEmision" name="fuentes" bindLabel="sNombre"
+                bindValue="nIdFuenteEmision" placeholder="Seleccione una opción" (change)="listarPartFuente()">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <div [ngClass]="{ 'd-none': lstPartFuente.length<=0}">
+          <label class="crud__title--chart d-flex justify-content-center text-center mt-3"
+            style="line-height: 29px;">Evolución de emisiones GEI por empresa
+            <br>
+            {{modelfilter.fuente}}
+            <br>[tCO₂e/mes]
+          </label>
+
+          <div class="chart-container mt-4">
+            <canvas id="chartFuente"></canvas>
+          </div>
+          <ul id="chartLegFuente" class="custom-legend d-lg-flex flex-wrap justify-content-center mt-4"
+            style="width: 100%;">
+            <li *ngFor="let item of legendItemsFuente; let i = index" (click)="toggleFuente(i)" class="ps-lg-4">
+              <span [style.backgroundColor]="item.fillStyle"></span>
+              <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+            </li>
+          </ul>
+        </div>
+        <div class="d-flex align-items-center justify-content-center" style="height: 445px;"
+          [ngClass]="{ 'd-none chart-height': lstPartFuente.length>0}">
+          <h5 class="mb-0  card-title text-center">No hay data.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+</div>
+
+<div style=" width: 1320px; position: absolute; margin-left: -500vh;margin-top: -500vh;">
+  <div id="dowloandPdf">
+    <div class="m-4">
+      <div class="text-center"><label class="crud__title" translate="no"
+          style="font-size: 30px; margin-top: 10px; margin-bottom: 11px;">Reporte comparativo de GEI</label>
+      </div>
+      <div class="crud__panel fs-15 ps-5 pe-4 pe-5 mt-3">
+        <div class="row">
+          <div class="d-flex align-items-center">
+            <div class="col-1">Sector</div>
+            <label>{{ modelfilter.nombreSector }}</label>
+          </div>
+          <div class="d-flex align-items-center  mt-2">
+            <div class="col-1">Periodo</div>
+            <label>{{ modelfilter.nombrePeriodo }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-6">
+          <div class="crud__panel h-100">
+            <label class="crud__title--chart mb-4 d-block text-center">
+              Participación anual por empresa<br>
+              Sector: {{ modelfilter.nombreSector ? modelfilter.nombreSector : 'No hay data' }}<br>
+              Periodo: {{ modelfilter.nombrePeriodo }}
+            </label>
+            <div class="d-flex align-items-center chart-height" [ngClass]="{ 'd-none': lstPartEmpresa.length<=0}">
+              <div class="chart-container chart-container-sm d-flex align-items-center justify-content-center"
+                [ngClass]="{'marginFirstDonut_report': !hasLongLabel}">
+                <canvas id="chartEmpresa_mod"></canvas>
+              </div>
+
+              <ul id="chartLegLoc" class="custom-legend custom-legend-firstChart">
+                <li *ngFor="let item of legendItemsEmpresa; let i = index">
+                  {{item.text.lenght}}
+                  <span [style.backgroundColor]="item.fillStyle"></span>
+                  <label [class.hidden-label]="item.hidden">{{ item.text }}</label> <label style="font-weight: 700;">
+                    &nbsp; ({{ porcentajeEmpresa[i]}}%) </label>
+                </li>
+              </ul>
+            </div>
+            <div class="d-flex align-items-center justify-content-center height-sm"
+              [ngClass]="{ 'd-none chart-height': lstPartEmpresa.length>0}">
+              <h5 class="mb-0  card-title text-center">No hay data.</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="crud__panel h-100">
+            <label class="crud__title--chart mb-4 d-block text-center">
+              Participación anual por categorías<br>
+              Sector: {{ modelfilter.nombreSector ? modelfilter.nombreSector : 'No hay data' }}<br>
+              Periodo: {{ modelfilter.nombrePeriodo }}
+            </label>
+            <div class="d-flex align-items-center chart-height" [ngClass]="{ 'd-none': lstPartCategoria.length<=0}">
+              <div class="chart-container chart-container-sm d-flex align-items-center  justify-content-center">
+                <canvas id="chartCategoria_mod"></canvas>
+              </div>
+              <ul id="chartLegCategoria" class="custom-legend custom-legend-categorias mt-4 mt-md-0 ">
+                <li *ngFor="let item of legendItemsCat; let i = index" (click)="toggleCategoria(i)"
+                  class="custom-tooltip" [class.mt-2]="i !== 0">
+                  <span [style.backgroundColor]="item.fillStyle"></span>
+                  <label [class.hidden-label]="item.hidden">
+                    <label [ngStyle]="{ 'font-weight': i < 11 ? '600' : 'normal' }">{{ item.text.substring(0, 11)
+                      }}</label>
+                    {{ item.text.substring(11) }}&nbsp;<label style="font-weight: 700;">
+                      ({{ porcentajeCategoria[i]}}%) </label>
+                  </label>
+                </li>
+              </ul>
+            </div>
+            <div class="d-flex align-items-center justify-content-center height-sm"
+              [ngClass]="{ 'd-none chart-height': lstPartCategoria.length>0}">
+              <h5 class="mb-0  card-title text-center">No hay data.</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="crud__panel">
+            <div [ngClass]="{ 'd-none': lstPartFuente.length<=0}">
+              <label class="crud__title--chart d-flex justify-content-center text-center mt-2"
+                style="line-height: 29px;">Evolución de emisiones GEI por empresa
+                <br>
+                {{modelfilter.fuente}}
+                <br>[tCO₂e/mes]
+              </label>
+              <div class="chart-container mt-4">
+                <canvas id="chartFuente_mod"></canvas>
+              </div>
+              <ul id="chartLegFuente" class="custom-legend d-flex flex-wrap justify-content-center mt-4"
+                style="width: 100%;">
+                <li *ngFor="let item of legendItemsFuente; let i = index" (click)="toggleFuente(i)" class="ps-4">
+                  <span [style.backgroundColor]="item.fillStyle"></span>
+                  <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                </li>
+              </ul>
+            </div>
+            <div [ngClass]="{ 'd-none chart-height': lstPartFuente.length>0}">
+              <label class="crud__title--chart d-flex justify-content-center text-center mt-1"
+                style="line-height: 29px;">Evolución de emisiones GEI por empresa
+                <br>[tCO₂e]
+              </label>
+              <div class="d-flex align-items-center justify-content-center" style="height: 445px;">
+                <h5 class="mb-0  card-title text-center">No hay data.</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br><br>
+  </div>
+</div>

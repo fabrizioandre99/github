@@ -1,0 +1,9 @@
+<div [ngClass]="{
+  'dash_background_image': isBackgroundImage, 
+  'dash_background_color': !isBackgroundImage && !isLoginRoute,
+  'dash_background_color_with_padding': !isBackgroundImage && isLoginRoute || isBackgroundImage,
+  'dash_background_image_login': isLoginRoute
+}">
+  <app-header *ngIf="showHeader"></app-header>
+  <router-outlet></router-outlet>
+</div>

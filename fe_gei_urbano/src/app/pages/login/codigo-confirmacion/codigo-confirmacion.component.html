@@ -1,0 +1,61 @@
+<div *ngIf="loading" class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+
+<form (ngSubmit)="confirmarCodigo()" #codigoConfirmacionForm="ngForm" novalidate>
+  <div class="container-fluid">
+    <div class="row vh-100">
+      <div class="col-md-5 px-0 d-none d-md-block">
+        <!-- Montana: -->
+        <img src="assets/images/fondo_montana.webp" alt="Login image" class="w-100 vh-100"
+          style="object-fit: cover; object-position: 50% 50%;">
+      </div>
+      <div class="col-md-6 d-flex align-items-center">
+
+        <div class="container">
+          <div class="row">
+            <div class="mx-auto card   py-5 text-center">
+              <div class="form-group d-flex align-items-center justify-content-center  mb-4">
+                <label class="text-center fs-17 fw-500">Ingrese su código de confirmación</label>
+
+                <button type="button" (click)="openAlertInfo()" class="dashboard_button_icon" style="margin-top: -3px;">
+                  <img height="20" src="assets/images/icon_info.svg" />
+                </button>
+
+
+              </div>
+
+              <div class="otp_container">
+                <input class="otp_input"
+                  [ngClass]="{'otp_input_invalid': codigoConfirmacionForm.submitted && !input.value}" #inputEl
+                  *ngFor="let input of inputs.controls; let i = index" (focus)="handleFocus($event)"
+                  (blur)="onTouched?.()" (keypress)="handleKeyPress($event, i)" (input)="handleInput()"
+                  (keydown)="handleKeyDown($event, i)" (paste)="handlePaste($event, i)" [formControl]="$any(input)"
+                  [attr.autocomplete]="i === 0 ? 'one-time-code' : null" type="text" inputmode="numeric" />
+
+                <div class="text-md-start" style="line-height: 24px;"
+                  *ngIf="codigoConfirmacionForm.submitted && isAnyFieldEmpty()">
+                  <small class="text-danger fs-13 fw-500">Complete todo el campo.</small>
+                </div>
+
+
+              </div>
+
+
+              <div class="d-flex justify-content-center mt-4">
+                <button class="btn btn-lg btn-light fs-14 fw-500" [disabled]="loading" routerLink="">
+                  Volver
+                </button>
+                <button [disabled]="loading" class="btn btn-lg btn-primary fs-14 fw-500 ms-3" type="submit">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span> Siguiente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>

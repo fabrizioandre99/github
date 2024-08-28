@@ -1,0 +1,20 @@
+<nav class="navbar" style="z-index: 9">
+  <button (click)="onMenuButtonClick()" type="button" class="dashboard_button_icon" style="margin-left: -10px;">
+    <img src=" assets/images/icon_menu.svg" height="24" />
+  </button>
+
+
+  <div class="d-flex align-items-center" ngbDropdown #myDrop1="ngbDropdown" ngbDropdownAnchor>
+    <div class="me-sm-2 me-0 show-img"> <img id="dropdownBasic1"
+        src="assets/images/icon_user.svg" alt="img" width="32" height="32"
+        class="rounded-circle"> </div>
+    <div class="d-sm-block d-none">
+      <p class="fw-semibold mb-0 lh-1 fs-13" style=" margin-top: 5px;">{{user}}</p>
+      <span class=" fw-normal d-block fs-11">{{rol}}</span>
+    </div>
+    <button (click)="logout()" class="ms-3 pointer dropdown-item font-menu d-flex align-items-center" ngbDropdownItem>
+      <img src="assets/images/icon-shutdown.svg" class="me-2" height="25" />
+    </button>
+  </div>
+
+</nav>

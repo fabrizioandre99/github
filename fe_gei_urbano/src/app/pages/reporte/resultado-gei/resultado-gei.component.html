@@ -1,0 +1,182 @@
+<div class="loadspinner_overlay" *ngIf="boMostrarLoading">
+  <div class="loadspinner_center">
+    <div class="loadspinner_ring"></div>
+    <span class="loadspinner_text">Descargando...</span>
+  </div>
+</div>
+
+<div *ngIf="loadingDescargar || fShowSkeleton" class="progress-bar-container">
+    <div class="progress-bar-load"></div>
+  </div>
+  
+  <div class="container px-4 margin-container">
+    <label class="dashboard_title mt-3">Reporte GEI</label>
+    <div class="row mt-3">
+      <div class="col-md-3 col-lg-2">
+        <label class="dashboard_label--sm">Periodo</label>
+        <ng-select [(ngModel)]="nIdPeriodo" placeholder="Seleccionar" (change)="fnListarEmisionesGEI()"
+          class="dashboard_select fs-14" [items]="lstPeriodo" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="nIdPeriodo" bindLabel="nAnio" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+      <div class="col-md-3 col-lg-2">
+        <label class="dashboard_label--sm">Mes</label>
+        <ng-select [(ngModel)]="sCodMes" placeholder="Seleccionar" (change)="fnListarEmisionesGEI()"
+          class="dashboard_select fs-14" [dropdownPosition]="'bottom'" [clearable]="false"
+          [searchable]="false" [notFoundText]="'No hay data'">
+          <ng-option [value]="'-1'" *ngIf="lstMes.length != 0">Todos</ng-option>
+          <ng-option *ngFor="let item of lstMes" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+        </ng-select>
+      </div>
+      <div class="col-md-3 col-lg-2">
+        <label class="dashboard_label--sm">Ruta</label>
+        <ng-select [(ngModel)]="nIdRuta" placeholder="Seleccionar" (change)="fnListarEmisionesGEI()"
+          class="dashboard_select fs-14"[dropdownPosition]="'bottom'" [clearable]="false"
+          [searchable]="false" [notFoundText]="'No hay data'">
+          <ng-option [value]="-1" *ngIf="lstRuta.length != 0">Todos</ng-option>
+          <ng-option *ngFor="let item of lstRuta" [value]="item.nIdRuta">{{item.sNombre}}</ng-option>
+        </ng-select>
+      </div>
+
+      <div class="col-lg-3 ms-auto d-flex justify-content-end align-items-end mt-2" *ngIf="lstPeriodo.length != 0">
+        <button class="btn btn-primary fs-14" (click)="fnDescargarZip()">
+          <div class="d-flex align-items-center">
+            <img src=" assets/images/download_file.svg" height="20" />
+            <span class="ms-2">Descargar</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  
+    <div class="mt-4 mb-4">
+      <div class="table-responsive dashboard_table_card">
+        <table class="table">
+          <thead class="table__header">
+            <tr>
+              <th scope="col" class="text-start tamanio_mes"></th>
+              <th scope="col" class="text-start"></th>
+              <th scope="col" class="text-start">Placa de <br>vehículo</th>
+              <th scope="col" class="text-start">Datos de actividad</th>
+              <th scope="col" class="text-end">Dioxido de carbono <br>[tCO<sub>2</sub>]</th>
+              <th scope="col" class="text-end">Metano <br> [tCH<sub>4</sub>]</th>
+              <th scope="col" class="text-end">Óxido nitroso <br> [tN<sub>2</sub>O]</th> 
+              <th scope="col" class="text-end">Emisiones GEI <br> [tCO<sub>2</sub>e] <img src="assets/images/icon_info.svg" height="16"
+                class="image-info pointer" data-bs-toggle="modal" data-bs-target="#provModal" /></th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeleton">
+            <tbody *ngFor="let item of lstSkeleton">
+              <tr class="table__body">
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+                <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              </tr>
+            </tbody>
+          </ng-container>
+
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstEmisionGei;  index as i">
+              <tr class="table__body">
+                <td class="text-start">
+                  <span>
+                    <img (click)="isCollapsed_nivel1[i] = !isCollapsed_nivel1[i]" height="20" src="assets/images/expand_less.svg"
+                      [ngClass]="isCollapsed_nivel1[i] ? 'collapsed-active' : 'collapsed-inactive'"/>
+                  </span>
+                  <span>{{item.sMes}}</span> 
+                </td>
+                <td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td>
+              </tr>
+              <ng-container *ngFor="let cRuta of item.liRuta.slice(0);  index as j">
+                  <tr class="table__body" [ngbCollapse]="isCollapsed_nivel1[i]">
+                    <td></td>
+                    <td class="text-start">
+                      <span>
+                        <img (click)="isCollapsed_nivel2[i][j] = !isCollapsed_nivel2[i][j]" height="20" src="assets/images/expand_less.svg"
+                          [ngClass]="isCollapsed_nivel2[i][j] ? 'collapsed-active' : 'collapsed-inactive'"/>
+                      </span>
+                      <span>{{cRuta.sNombre}}</span> 
+                    </td>
+                    <td></td><td></td><td></td><td>
+                    </td><td></td><td></td>
+                  </tr>
+            
+                    <ng-container *ngFor="let cVehiculo of cRuta.liVehiculo.slice(0);  index as k">
+                      <tr class="table__body" [ngbCollapse]="isCollapsed_nivel2[i][j] || isCollapsed_nivel1[i]">
+                          <td></td><td></td>
+                          <td class="text-start">{{cVehiculo.sPlaca}}</td>
+                          <td class="text-start">
+                            <div>{{cVehiculo.oEmisionGei.oFactorEmision.sTipoCombustible}}</div>  
+                            <div *ngIf="cVehiculo.oEmisionGei.bdConsumoMensual > 0">
+                              Consumo mensual: {{cVehiculo.oEmisionGei.bdConsumoMensual}} 
+                                <span class="fs-11 text-secondary" >
+                                    {{cVehiculo.oEmisionGei.oFactorEmision.sUnidad}}/mes
+                                </span>
+                            </div>
+                            <div *ngIf="cVehiculo.oEmisionGei.bdRendimiento > 0">
+                                  Rendimiento: {{cVehiculo.oEmisionGei.bdRendimiento}}
+                                  <span class="fs-11 text-secondary" >
+                                    {{cVehiculo.oEmisionGei.oFactorEmision.sUnidad}}/km
+                                </span>
+                              </div>
+                              <div *ngIf="cVehiculo.oEmisionGei.bdNumViajes > 0">
+                                Número de viajes: {{cVehiculo.oEmisionGei.bdNumViajes}}
+                            </div>
+                            <div *ngIf="cVehiculo.oEmisionGei.bdConsumoCalculado > 0">
+                              Consumo calculado: {{cVehiculo.oEmisionGei.bdConsumoCalculado}} 
+                              <span class="fs-11 text-secondary" > 
+                                {{cVehiculo.oEmisionGei.oFactorEmision.sUnidad}}/mes
+                              </span>
+                            </div>
+                          </td>
+                          <td class="text-end">{{cVehiculo.oEmisionGei.bdTotalGeiCO2}}</td>
+                          <td class="text-end">{{cVehiculo.oEmisionGei.bdTotalGeiCH4}}</td>
+                          <td class="text-end">{{cVehiculo.oEmisionGei.bdTotalGeiN2O}}</td>
+                          <td class="text-end"><div [ngClass]="{'variacion_verde' : cVehiculo.oEmisionGei.sIndicadorQa==='V', 
+                            'variacion_naranja' : cVehiculo.oEmisionGei.sIndicadorQa==='A',
+                            'variacion_rojo' : cVehiculo.oEmisionGei.sIndicadorQa==='R'}"><b>{{cVehiculo.oEmisionGei.bdTotalGeiCO2eq}}</b></div></td>
+                      </tr>
+                  </ng-container>
+              </ng-container>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="!fShowSkeleton">
+          <ng-container *ngIf="lstEmisionGei.length <= 0">
+            <div class="text-center mt-5 mb-5 dashboard_noresultados">
+              <label class="fw-500">No existen resultados.</label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL descripción de variación -->
+  <div class="modal fade" id="provModal" tabindex="-1" aria-labelledby="provModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <label class="modal-title" id="provModalLabel">Variación en el resultado de las emisiones de GEI equivalentes</label>
+          <img src="assets/images/icon-aspa.svg" class="icon-aspa-black close-modal pointer" height="12"
+            data-bs-dismiss="modal" aria-label="Close" />
+          <img src="assets/images/icon-aspa-white.svg" class="icon-aspa-white close-modal pointer" height="12"
+            data-bs-dismiss="modal" aria-label="Close" />
+        </div>
+        <div class="modal-body">
+          <p>
+            El color de fondo de las emisiones indica la diferencia porcentual en el resultado de emisiones equivalentes 
+            entre los cálculos de nivel uno y nivel dos.
+          </p>
+          <p> <b>Verde</b> La diferencia es menor al 5%.</p>
+          <p> <b>Naranja</b> La diferencia se encuentra entre el 5% y el 10%.</p>
+          <p> <b>Rojo</b> La diferencia es mayor al 10%.</p>     
+        </div>
+      </div>
+    </div>
+  </div>

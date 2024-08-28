@@ -1,0 +1,273 @@
+.nav-link {
+  color: #00358A;
+  background: white;
+  border: 1px solid #00358A !important;
+  border-bottom: none !important;
+  transition: none !important;
+}
+
+.nav-link.active {
+  color: white;
+  background: linear-gradient(180deg, #00358A 0%, #00358A 46.35%, #295CAE 100%);
+}
+
+.card {
+  border: 0;
+}
+
+.card-header:first-child {
+  background-color: white;
+  border: 0.0625rem solid white !important;
+  margin-left: 10px;
+}
+
+.nav-item:nth-child(2) {
+  margin-left: 9px;
+}
+
+.modal-footer {
+  padding-top: 0;
+  border: 0;
+}
+
+.table__header--obs th:first-child {
+  width: 65%;
+}
+
+.table__header--obs th:nth-child(2) {
+  width: 35%;
+}
+
+.table__header--DistFuente th:first-child {
+  width: 26%;
+}
+
+.table__header--DistFuente th:nth-child(2) {
+  width: 20%;
+}
+
+.table__header--DistFuente th:nth-child(3) {
+  width: 20%;
+}
+
+.table__header--DistFuente th:nth-child(4) {
+  width: 20%;
+}
+
+.table__header--DistFuente th:nth-child(4) {
+  width: 20%;
+}
+
+.table__header--DistPlanta th:first-child {
+  width: 20%;
+}
+
+.table__header--DistPlanta th:nth-child(2) {
+  width: 60%;
+}
+
+.table__header--DistPlanta th:nth-child(3) {
+  width: 20%;
+}
+
+.table__body {
+  height: 40px;
+  line-height: 24px;
+}
+
+.table__buttons {
+  width: 67px;
+}
+
+.textfile {
+  padding-top: 6px;
+}
+
+.crud__file--loading {
+  position: absolute;
+  margin-top: 8.6px;
+  width: 1rem;
+  margin-left: -31px !important;
+  height: 1rem;
+  color: #2E2E2E;
+}
+
+.form-file {
+  height: 34px;
+}
+
+.textfile {
+  padding-top: 4.5px;
+  font-size: 14.5px;
+}
+
+input[type=file] {
+  padding-top: 8.7px;
+}
+
+.form-file-disabled ::-webkit-file-upload-button {
+  background-image: none !important;
+  cursor: auto !important;
+}
+
+::-webkit-file-upload-button {
+  background-position: 4px -4.5px !important;
+}
+
+.form-file-disabled .textfile,
+.crud__file--loading {
+  cursor: auto;
+}
+
+.modal__loading--procesar {
+  width: 76px;
+  justify-content: center;
+  display: flex;
+  margin-right: 25px;
+  margin-left: 9px;
+}
+
+.descargar_xlsProduccion {
+  font-size: 13.5px;
+}
+
+.modal_procesando {
+  padding: 25.5px 14px;
+}
+
+.container_sumaTotal {
+  width: 175px;
+}
+
+.icon_folder_plus {
+  margin-right: 13px;
+}
+
+.icon_tacho_doc {
+  margin-right: 15px;
+}
+
+.form_group_procesar {
+  margin-left: 16.5px;
+}
+
+@media (min-width: 768px) {
+  .w-mes {
+    width: 165px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .table__buttons {
+    width: 71px;
+  }
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .nav-link {
+    border: 0.059vw solid #00358A !important;
+  }
+
+  .nav-tabs .nav-link {
+    border-top-left-radius: 0.937vw;
+    border-top-right-radius: 0.937vw;
+  }
+
+  .card-header:first-child {
+    border: 0.059vw solid white !important;
+    margin-left: 0.586vw;
+  }
+
+  .nav-item:nth-child(2) {
+    margin-left: 0.527vw;
+  }
+
+  .card-body {
+    border: 0.117vw solid #00358A;
+    border-radius: 1.406vw;
+  }
+
+  .table__body {
+    height: 2.343vw;
+    line-height: 1.406vw;
+  }
+
+  .table__buttons {
+    width: 3.925vw;
+  }
+
+  .textfile {
+    padding-top: 0.351vw;
+  }
+
+  .crud__file--loading {
+    margin-top: 0.504vw;
+    width: 0.937vw;
+    margin-left: -1.816vw !important;
+    height: 0.937vw;
+  }
+
+  .form-file {
+    height: 1.992vw;
+  }
+
+  .textfile {
+    padding-top: 0.264vw;
+    font-size: 0.849vw;
+  }
+
+  input[type=file] {
+    padding-top: 0.51vw;
+  }
+
+  ::-webkit-file-upload-button {
+    background-position: 0.234vw -0.264vw !important;
+  }
+
+  .modal__loading--procesar {
+    width: 4.452vw;
+    margin-right: 1.465vw;
+    margin-left: 0.527vw;
+  }
+
+  .descargar_xlsProduccion {
+    font-size: 0.791vw;
+  }
+
+  .modal_procesando {
+    padding: 1.494vw 0.82vw;
+  }
+
+  .container_sumaTotal {
+    width: 10.252vw;
+  }
+
+  .icon_folder_plus {
+    margin-right: 0.762vw;
+  }
+
+  .icon_tacho_doc {
+    margin-right: 0.879vw;
+  }
+
+  .form_group_procesar {
+    margin-left: 0.967vw;
+  }
+
+  @media (min-width: 768px) {
+    .w-mes {
+      width: 9.666vw;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .table__buttons {
+      width: 4.159vw;
+    }
+  }
+
+}

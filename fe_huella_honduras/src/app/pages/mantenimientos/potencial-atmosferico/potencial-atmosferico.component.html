@@ -1,0 +1,143 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Potencial de calentamiento atmosférico (GWP)</h3>
+
+    <mat-tab-group class="mt-4 dash_tab rounded" (selectedTabChange)="onTabChange($event)">
+        <mat-tab label="Gases de efecto invernadero">
+
+            <div class="table-responsive">
+                <table mat-table [dataSource]="tPotencial" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaGEI"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaGEI;"></tr>
+                    <!--  Tipo de gas -->
+                    <ng-container matColumnDef="tipogas">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Tipo de gas</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <label>{{ item.sCodigo }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  Descripcion -->
+                    <ng-container matColumnDef="descripcion">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Descripción</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sNombre }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- Valor -->
+                    <ng-container matColumnDef="valor">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Valor de coeficiente</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <ng-container *ngIf="item.editing">
+                                    <mat-form-field appearance="outline">
+                                        <input matInput placeholder="Valor" type="text"
+                                            [formControl]="getControlOtros(item, 'bdValor')">
+                                    </mat-form-field>
+                                </ng-container>
+                                <label *ngIf="!item.editing">{{ item.bdValor }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" (click)="editar(item)"
+                                *ngIf="!item.editing">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16"></mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarPotencialOtros(item)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Otros">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline" class="w_actividad_eco">
+                    <mat-label>Potencial de calentamiento atmosférico</mat-label>
+                    <mat-select (selectionChange)="fnListarPotencialOtros()" [(ngModel)]="selectedTipoGWP">
+                        <mat-option *ngFor="let item of lstTipoGWP" [value]="item">
+                            {{ item.sDescripcion }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="ms-md-2">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="HFC" #input>
+                </mat-form-field>
+            </div>
+            <div class="table-responsive">
+                <table mat-table [dataSource]="tOtros" matSort class="mat-elevation-z8 shadow-sm border rounded">
+                    <tr mat-header-row *matHeaderRowDef="hTablaOtros"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaOtros;"></tr>
+                    <!--  Tipo de gas -->
+                    <ng-container matColumnDef="tipogas">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Tipo de gas</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <label>{{ item.sCodigo }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  Descripcion -->
+                    <ng-container matColumnDef="descripcion">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Descripción</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sNombre }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- Valor -->
+                    <ng-container matColumnDef="valor">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Valor de coeficiente</th>
+                        <td mat-cell *matCellDef="let item" class="text-end form_xs">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <ng-container *ngIf="item.editing">
+                                    <mat-form-field appearance="outline">
+                                        <input matInput placeholder="Valor" type="text" inputmode="decimal"
+                                            [formControl]="getControlOtros(item, 'bdValor')">
+                                    </mat-form-field>
+                                </ng-container>
+                                <label *ngIf="!item.editing">{{ item.bdValor }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" (click)="editar(item)"
+                                *ngIf="!item.editing">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16"></mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarPotencialOtros(item)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

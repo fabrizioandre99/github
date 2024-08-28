@@ -1,0 +1,330 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Perfil de mi organización</h3>
+
+    <mat-tab-group class="mt-4 dash_tab rounded">
+
+        <mat-tab label="Datos generales">
+            <div class="row">
+                <div class="col-lg-5">
+                    <form [formGroup]="generalForm" (ngSubmit)="fnActualizarInst()">
+                        <mat-accordion>
+                            <mat-expansion-panel #organizationPanel (opened)="panelOpenState = true"
+                                (closed)="panelOpenState = false" [expanded]="true">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>Datos de la organización</mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>R.T.N.</mat-label>
+                                    <input matInput placeholder="999 9999 9999 9999" formControlName="rtn" type="text"
+                                        inputmode="numeric">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Razón o denominación social</mat-label>
+                                    <input matInput placeholder="Mi empresa SAC" formControlName="rsocial" type="text"
+                                        maxlength="150"
+                                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .-]/g, '');">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Dirección</mat-label>
+                                    <input matInput placeholder="Av. Las Flores 123" formControlName="address"
+                                        type="text" maxlength="200"
+                                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 .-]/g, '');">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>CIIU - Actividad económica</mat-label>
+                                    <mat-select formControlName="ciiu">
+                                        <mat-option *ngFor="let rol of lstRol" [value]="rol.nIdCiiu">{{ rol.sDescripcion
+                                            }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="auto-height">
+                                    <mat-label>Descripción de las actividades de la organización</mat-label>
+                                    <textarea matInput formControlName="description" cdkTextareaAutosize></textarea>
+                                </mat-form-field>
+
+                                <div (click)="fnDescargaArchivo()" class="d-flex align-items-center">
+                                    <mat-icon class="pointer" svgIcon="ph-fill:file-arrow-down" color="primary"
+                                        style="margin-top: -3.5px;"></mat-icon>
+                                    <label class="fs-14 primary-label pointer">{{ documentoGeneral.sNombre }}</label>
+                                </div>
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel #representativePanel (opened)="panelOpenState = true"
+                                (closed)="panelOpenState = false">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>Representante legal</mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Tipo documento</mat-label>
+                                    <mat-select formControlName="documentType">
+                                        <mat-option *ngFor="let tipo of lstTipoDocumento" [value]="tipo.sCodigo">{{
+                                            tipo.sValor }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Número de documento</mat-label>
+                                    <input matInput placeholder="8888 8888 8888" formControlName="dni" type="text"
+                                        inputmode="numeric" maxlength="13"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Nombres</mat-label>
+                                    <input matInput formControlName="firstName" type="text" maxlength="50"
+                                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Apellidos</mat-label>
+                                    <input matInput formControlName="lastName" type="text" maxlength="150"
+                                        oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                                </mat-form-field>
+
+                                <label>Género:</label>
+
+                                <mat-radio-group formControlName="gender" class="d-flex flex-column"
+                                    (change)="onGenderChange($event)">
+                                    <mat-radio-button value="Masculino">Masculino</mat-radio-button>
+                                    <mat-radio-button value="Femenino">Femenino</mat-radio-button>
+                                    <mat-radio-button value="Ninguno">Prefiero no decir</mat-radio-button>
+                                    <mat-radio-button value="Otro">Otro</mat-radio-button>
+                                </mat-radio-group>
+
+                                <mat-form-field class="mt-2" appearance="outline" *ngIf="showOtherGenderInput">
+                                    <input matInput formControlName="otherGender" type="text" maxlength="50">
+                                </mat-form-field>
+
+                                <div class="d-flex align-items-center" [ngClass]="{'mt-2': !showOtherGenderInput}">
+                                    <mat-checkbox formControlName="isIndigenous">Pertenece a la comunidad de pueblos
+                                        Indígenas y Afrohondureños</mat-checkbox>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button [disabled]="loadingPerfil" mat-flat-button color="primary" type="submit">
+                                <mat-icon *ngIf="loadingPerfil"><mat-spinner color="primary"
+                                        diameter="16"></mat-spinner></mat-icon>Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
+
+
+        <mat-tab label="Coordinador GEI">
+
+            <form [formGroup]="coordinadorForm" (ngSubmit)="fnActualizarUsuario()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="mt-2 pluto_normal fs-20">Coordinador(a) de GEI</h4>
+                        <p class="text-secondary fs-12">Datos de la persona responsable de reportar la información de la
+                            organización en el sistema.</p>
+                    </div>
+                    <div class="col-lg-5">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Tipo documento</mat-label>
+                            <mat-select formControlName="documentType">
+                                <mat-option *ngFor="let tipo of lstTipoDocumento" [value]="tipo.sCodigo">
+                                    {{ tipo.sValor }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Número de documento</mat-label>
+                            <input matInput placeholder="8888 8888 8888" formControlName="dni" type="text"
+                                inputmode="numeric" maxlength="13"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nombres</mat-label>
+                            <input matInput formControlName="firstName" type="text" maxlength="50"
+                                oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Apellidos</mat-label>
+                            <input matInput formControlName="lastName" type="text" maxlength="150"
+                                oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]/g, '');">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="contact-form-field">
+                            <mat-label>Correo electrónico</mat-label>
+                            <input matInput placeholder="ejemplo@correo.com" formControlName="email">
+
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="contact-form-field">
+                            <mat-label>Teléfono</mat-label>
+                            <input matInput placeholder="9876-5432" formControlName="phone" type="text"
+                                inputmode="numeric" maxlength="9" (input)="formatPhone($event)">
+                        </mat-form-field>
+
+
+                        <div class="d-flex justify-content-end">
+                            <button [disabled]="loadingCoordinador" mat-flat-button color="primary" type="submit">
+                                <mat-icon *ngIf="loadingCoordinador"><mat-spinner color="primary"
+                                        diameter="16"></mat-spinner></mat-icon>Guardar
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </mat-tab>
+        <mat-tab label="Sedes / Instalaciones">
+            <div class="row">
+                <div class="col-lg-9">
+                    <h4 class="mt-2 pluto_normal fs-20"> Sedes de mi organización</h4>
+                    <p class="text-secondary fs-12">
+                        Registrar las sedes con las que cuenta la organización y a las cuales reportará información de
+                        GEI.
+                    </p>
+                    <p class="text-secondary fs-12">
+                        El número de sedes podría ser validado en el proceso de verificación.
+                    </p>
+
+                    <div class="d-flex flex-column flex-md-row mb-3 form_sm">
+
+                        <form [formGroup]="sedesForm" (ngSubmit)="fnRegistrarSede()" #sedesFormRef="ngForm">
+
+                            <mat-form-field appearance="outline" class="me-md-2" style="width: 266px;">
+                                <mat-label>Nombre de la sede</mat-label>
+                                <input matInput formControlName="nombreSede" type="text" maxlength="150"
+                                    placeholder="Control operacional del 100%"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s-_0-9]/g, '');">
+                            </mat-form-field>
+
+
+                            <mat-form-field appearance="outline" class="ms-md-2" style="width: 266px;">
+                                <mat-label>Departamento</mat-label>
+                                <mat-select formControlName="departamento">
+                                    <mat-option *ngFor="let depto of lstDepartamento" [value]="depto.sCodigo">
+                                        {{ depto.sValor }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+
+                            <button [disabled]="loadingSede" mat-flat-button color="primary" type="submit"
+                                class="ms-md-2 button_add">
+                                <mat-icon *ngIf="!loadingSede" svgIcon="ph-regular:plus"></mat-icon>
+                                <mat-icon *ngIf="loadingSede">
+                                    <mat-spinner color="primary" diameter="16"></mat-spinner>
+                                </mat-icon>
+                                Registrar sede
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <div class="table-responsive" [hidden]="lstSede.length === 0">
+                        <table mat-table [dataSource]="tSede" class="mat-elevation-z8 shadow-sm border rounded ">
+                            <ng-container matColumnDef="sNombre">
+                                <th mat-header-cell *matHeaderCellDef> Nombre de la sede </th>
+                                <td mat-cell *matCellDef="let sede" class="form_xs">
+                                    <div *ngIf="sede.editing" [formGroup]="sede.formGroup">
+                                        <mat-form-field appearance="outline">
+                                            <input matInput formControlName="sNombre" type="text" maxlength="150"
+                                                oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s-_0-9]/g, '');">
+                                        </mat-form-field>
+                                    </div>
+                                    <div *ngIf="!sede.editing">
+                                        {{ sede.sNombre }}
+                                    </div>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="sCodDepartamento">
+                                <th mat-header-cell *matHeaderCellDef> Departamento </th>
+                                <td mat-cell *matCellDef="let sede" class="form_xs">
+                                    <div *ngIf="sede.editing" [formGroup]="sede.formGroup">
+                                        <mat-form-field appearance="outline">
+                                            <mat-select formControlName="sCodDepartamento">
+                                                <mat-option *ngFor="let depto of lstDepartamento"
+                                                    [value]="depto.sCodigo">
+                                                    {{ depto.sValor }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div *ngIf="!sede.editing">
+                                        {{ sede.sDepartamento }}
+                                    </div>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="acciones">
+                                <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                                <td mat-cell *matCellDef="let sede" class="text-center">
+                                    <ng-container *ngIf="!sede.editing">
+                                        <button mat-icon-button matTooltip="Editar" (click)="editarSede(sede)"
+                                            style="color: #3A9AEE">
+                                            <mat-icon svgIcon="ph-duotone:pencil"></mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Eliminar" (click)="openDepurar(sede)"
+                                            style="color: #822195">
+                                            <mat-icon svgIcon="ph-duotone:trash"></mat-icon>
+                                        </button>
+                                    </ng-container>
+                                    <ng-container *ngIf="sede.editing">
+                                        <button mat-icon-button matTooltip="Guardar" (click)="guardarSede(sede)"
+                                            style="color: #47D770">
+                                            <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Cancelar" (click)="cancelarEdicion(sede)"
+                                            style="color:#EE3725">
+                                            <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                        </button>
+                                    </ng-container>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="['sNombre', 'sCodDepartamento', 'acciones']"></tr>
+                            <tr mat-row *matRowDef="let row; columns: ['sNombre', 'sCodDepartamento', 'acciones'];">
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <mat-paginator [hidden]="lstSede.length === 0" #paginatorSede class="mt-3" [length]="lstSede.length"
+                        [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                </div>
+                <p class="text-center my-5 fs-20" *ngIf="lstSede.length === 0">No existen resultados.</p>
+            </div>
+        </mat-tab>
+
+
+
+
+
+    </mat-tab-group>
+</div>
+
+<!-- Modal depurar -->
+<ng-template #modalDepurar>
+    <div class="dialog-container d-flex flex-column align-items-center text-center">
+        <h2 mat-dialog-title class="fw-500 pluto_normal">Confirmación</h2>
+        <div mat-dialog-content>
+            <p>¿Está seguro de eliminar la sede?</p>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit" color="warn" (click)="fnEliminarSede()">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16">
+                    </mat-spinner></mat-icon>
+                Eliminar</button>
+        </div>
+    </div>
+</ng-template>

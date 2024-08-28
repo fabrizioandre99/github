@@ -1,0 +1,81 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex align-items-center">
+        <h2>Bandeja de notificaciones</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div class="row align-items-end">
+        <div class="col-md-4 col-lg-3 col-xl-2">
+          <label class="col-form-label bold col-form-label-sm">
+            Seleccionar fecha
+          </label>
+          <div class="d-flex align-items-center">
+            <input class="form-control" [startDate]="calendar" placeholder="dd/mm/aaaa" [(ngModel)]="calendar"
+              name="calendar" ngbDatepicker #dPendiente="ngbDatepicker" (ngModelChange)="changePendiente($event)"
+              (click)="dPendiente.toggle()" [minDate]="{year: 2022, month: 1, day: 1}"
+              [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+
+            <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="dPendiente.toggle()" height="32" />
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-3 mt-2 mt-md-0">
+          <select [(ngModel)]="asunto" (change)="changeAsunto()" name="Anio" class="form-select">
+            <option value="-1">Todos</option>
+            <option [ngValue]="item" *ngFor="let item of lstEstadoCombo">{{item.sEstadoActual}}</option>
+          </select>
+        </div>
+      </div>
+      <br>
+      <div class="row" *ngIf="(lstEstado| Busqueda: model).length > 0">
+        <div class="table-responsive">
+          <table class="table" cellspacing="0" cellpadding="0">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Asunto</th>
+                <th scope="col">Mensaje</th>
+                <th scope="col">Adjunto</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of lstEstado| Busqueda: model; let i = index">
+              <ng-container
+                *ngIf="this.comboSelect == item.sEstadoActual || this.comboSelect == undefined|| this.comboSelect == -1">
+                <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{searchCalendar}}</td>
+                  <td>{{item.sEstadoActual}}</td>
+                  <td>{{item.sDescripcion}}</td>
+                  <td><a class="descarga" type="button"
+                      (click)="fnDescargarDocumento(item)">{{item.sNombreDocumento}}</a>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div class="d-flex justify-content-center">
+          <ngb-pagination class="pagination-md" [collectionSize]="(lstEstado| Busqueda: model).length" [(page)]="page"
+            [maxSize]="8" [pageSize]="pageSize">
+            <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+          </ngb-pagination>
+          <ngb-pagination class="pagination-sm" [collectionSize]="(lstEstado| Busqueda: model).length" [(page)]="page"
+            [maxSize]="3" [pageSize]="pageSize">
+            <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+          </ngb-pagination>
+        </div>
+      </div>
+      <div class="text-center mt-5 mb-5" *ngIf="(lstEstado| Busqueda: model).length <= 0">
+        <h5>No existen resultados.</h5>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,218 @@
+<div class="container">
+  <label class="crud__title mt-4">Bandeja de usuarios</label>
+  <div class="row align-items-center mt-4">
+    <div class="col">
+      <div class="col-md-7 col-lg-6 col-xl-4">
+        <div class="d-flex align-items-center">
+          <input class="form-control crud__input crud__input--search" [(ngModel)]="model.sNombreyApellidos"
+            placeholder="Buscar por nombre y apellido">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end mt-3 mt-md-0"><button
+        class="crud__button button-yellow float-md-end ms-lg-auto" (click)="openModalRegistrar(contentRegistrar)">
+        <img src="assets/images/icon-userplus.svg" height="25" />
+        <span class="ms-2">Nuevo usuario</span></button></div>
+  </div>
+  <div class="crud__card mt-4 p-2">
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th scope="col">Nombre(s) </th>
+            <th scope="col">Apellidos</th>
+            <th scope="col" class="text-center">Correo electrónico</th>
+            <th scope="col" class="text-center">Rol</th>
+            <th scope="col" class="text-center">Estado</th>
+            <th scope="col" class="text-center">Editar</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body" style="border:inherit">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstUsuario| Busqueda: model; index as i">
+            <tr class="table__body" [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+              <td>{{item.sNombre}}</td>
+              <td>{{item.sApellPaterno}} {{item.sApellMaterno}}</td>
+              <td class="text-center">{{item.sCorreo}}</td>
+              <td class="text-center">{{item.oRol.sNombre}}</td>
+              <td class="text-center">
+                <label class="switch">
+                  <input type="checkbox" [(ngModel)]="item.boCodEstado" (change)="toogleTable($event,item)">
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td class="text-center"> <img src="assets/images/icon-editar.svg"
+                  (click)="editarUsuario(item,contentRegistrar)" class="pointer" height="25" /></td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+    </div>
+    <br>
+    <ng-container *ngIf="!fShowSkeleton && (lstUsuario| Busqueda: model)?.length <= 0">
+      <div class="text-center mt-4 mb-5">
+        <h5>No existen resultados.</h5>
+      </div>
+    </ng-container>
+    <div class="d-flex justify-content-center mt-2" *ngIf="!fShowSkeleton &&(lstUsuario| Busqueda: model)?.length > 0">
+      <ngb-pagination class="pagination-md" [collectionSize]="(lstUsuario| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="8" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="(lstUsuario| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="8" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Registrar Usuario -->
+<ng-template #contentRegistrar let-modalRegistrar>
+  <form name="form" (ngSubmit)="guardarUsuario(UsuarioForm);" #UsuarioForm="ngForm">
+    <div class="modal-body modal__body--admin">
+      <div class="d-flex justify-content-center">
+        <label class="modal__title--admin" *ngIf="!isEditUsuario">Registrar usuario</label>
+        <label class="modal__title--admin" *ngIf="isEditUsuario">Editar usuario</label>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="modal__label">Nombres</label>
+            <input type="text" name="sNombre" class="form-control crud__input" [(ngModel)]="model.sNombre"
+              #sNombre="ngModel" required
+              [ngClass]="{ 'is-invalid': (UsuarioForm.submitted && sNombre.errors?.['required'])||(UsuarioForm.submitted && sNombre.errors?.['pattern'])}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="250"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" />
+          </div>
+          <div *ngIf="UsuarioForm.submitted && sNombre.errors?.['required']">
+            <small class="text-danger">Campo requerido.</small>
+          </div>
+          <div *ngIf="UsuarioForm.submitted && sNombre.errors?.['pattern']">
+            <small class="text-danger">Solo se permiten letras.</small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="modal__label">Apellido paterno</label>
+            <input type="text" name="sApellPaterno" class="form-control crud__input" [(ngModel)]="model.sApellPaterno"
+              #sApellPaterno="ngModel" required
+              [ngClass]="{ 'is-invalid': (UsuarioForm.submitted && sApellPaterno.errors?.['required'])||(UsuarioForm.submitted && sApellPaterno.errors?.['pattern'])}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="250"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" />
+            <div *ngIf="UsuarioForm.submitted && sApellPaterno.errors?.['required']">
+              <small class="text-danger">Campo requerido.</small>
+            </div>
+            <div *ngIf="UsuarioForm.submitted && sApellPaterno.errors?.['pattern']">
+              <small class="text-danger">Solo se permiten letras.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="modal__label">Apellido materno</label>
+            <input type="text" name="sApellMaterno" class="form-control crud__input" [(ngModel)]="model.sApellMaterno"
+              #sApellMaterno="ngModel" required
+              [ngClass]="{ 'is-invalid': (UsuarioForm.submitted && sApellMaterno.errors?.['required'])||(UsuarioForm.submitted && sApellMaterno.errors?.['pattern'])}"
+              onkeypress="return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/.test(event.key)" maxlength="250"
+              pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" />
+            <div *ngIf="UsuarioForm.submitted && sApellMaterno.errors?.['required']"> <small class="text-danger">Campo
+                requerido.</small>
+            </div>
+            <div *ngIf="UsuarioForm.submitted && sApellMaterno.errors?.['pattern']">
+              <small class="text-danger">Solo se permiten letras.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="modal__label">Correo electrónico</label>
+            <input type="email" pattern="^[a-zA-Z0-9._%+-]+@celepsa\.com$" name="sCorreo"
+              class="form-control crud__input" [(ngModel)]="model.sCorreo" #sCorreo="ngModel" required
+              [ngClass]="{ 'is-invalid': (UsuarioForm.submitted && sCorreo.errors?.['required'])||UsuarioForm.submitted && sCorreo.errors?.['pattern']}"
+              maxlength="150" />
+            <div *ngIf="UsuarioForm.submitted && sCorreo.errors?.['required']">
+              <small class="text-danger">Campo requerido.</small>
+            </div>
+            <div *ngIf="UsuarioForm.submitted && sCorreo.errors?.['pattern']&& !sCorreo.errors?.['minlength']">
+              <small class="text-danger"> Ingrese un correo electrónico válido / Ejemplo: usuario@celepsa.com</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-9">
+          <div class="form-group">
+            <label class="modal__label">Rol</label>
+            <ng-select class="ng-select-admin" name="nIdRol" [(ngModel)]="model.oRol.nIdRol" [clearable]="false"
+              [notFoundText]="'No se encontraron resultados'" #nIdRol="ngModel" placeholder="Seleccionar rol" required
+              [ngClass]="{ 'is-invalid': UsuarioForm.submitted && nIdRol.errors?.['required']}">
+              <ng-option *ngFor="let item of lstRol" [value]="item.nIdRol">{{item.sNombre}}</ng-option>
+            </ng-select>
+            <div *ngIf="UsuarioForm.submitted && nIdRol.errors?.['required']">
+              <small class="text-danger">Seleccione el rol.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group" style="margin-top: 49px;">
+            <label class="switch">
+              <input type="checkbox" name="boCodEstado" [(ngModel)]="model.boCodEstado" (change)="ToogleModal()">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <button class="crud__button button-yellow" type="submit" [disabled]="loadingModal">
+          <span *ngIf="loadingModal" class="spinner-border spinner-border-sm me-2"></span>
+          <span>Guardar</span></button>
+        <button class="crud__button button-red ms-2" type="button" (click)="modalRegistrar.dismiss()">
+          <span>Cancelar</span></button>
+      </div>
+    </div>
+  </form>
+</ng-template>

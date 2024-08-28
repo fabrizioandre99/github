@@ -1,0 +1,141 @@
+.row {
+    justify-content: center;
+}
+
+
+.mat-mdc-card {
+    margin-right: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 16px 5px rgba(112, 112, 112, 0.15) !important;
+    text-align: left;
+}
+
+.row>* {
+    padding-right: 8px;
+    padding-left: 8px;
+}
+
+.equal-height {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mat-mdc-card {
+    margin-right: 0;
+}
+
+.solicitudes_container .mat-mdc-card-header {
+    padding: 12.5px 16px;
+}
+
+.solicitudes_container mat-card-header {
+    height: 100%;
+}
+
+.icon-display {
+    width: 45px;
+    height: 100%;
+}
+
+.mt-card-sol:hover {
+    outline: solid 2px #c11aba;
+}
+
+.mt-card-usu:hover {
+    outline: solid 2px #47D770;
+}
+
+.mt-card-rec:hover {
+    outline: solid 2px #3A9AEE;
+}
+
+.mt-card-reap:hover {
+    outline: solid 2px #E3A220;
+}
+
+.legend-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    cursor: default;
+    /* cursor: pointer; */
+    flex-wrap: nowrap;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.hidden {
+    text-decoration: line-through;
+}
+
+.mat-mdc-card-avatar {
+    height: auto !important;
+    width: auto !important;
+    border-radius: initial !important;
+    margin-bottom: 0 !important;
+    object-fit: unset !important;
+}
+
+
+/*-------------- Modo Escritorio --------------*/
+@media (width >=768px) {
+    .donut_width {
+        width: 62%;
+    }
+
+    .legend_width {
+        width: 38%;
+        word-wrap: break-word;
+    }
+
+    .legend-container {
+        margin-bottom: 35px;
+    }
+
+}
+
+@media (width <=1200px) and (width >=992px) {
+    .donut_width:first-of-type {
+        margin-left: 21px;
+    }
+
+    .legend-container {
+        margin-left: 17px;
+    }
+
+}
+
+@media (width >=992px) {
+    .border_green {
+        border-left: 2px #06d15d solid;
+    }
+}
+
+/*-------------- Modo Móvil --------------*/
+
+@media (width <=992px) {
+    .chart_participacion {
+        height: 350px;
+    }
+
+    .chart_historico {
+        height: 350px;
+    }
+}

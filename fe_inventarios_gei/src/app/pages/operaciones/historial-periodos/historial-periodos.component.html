@@ -1,0 +1,207 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex text-start">
+        <h2>Historial de periodos</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div class="row justify-content-between align-items-center">
+        <div class="col">
+          <div class="row">
+            <div class="col-md-3 col-lg-2">
+              <div class="form-group">
+                <label class="col-form-label bold col-form-label-sm">
+                  Departamento
+                </label>
+                <select [(ngModel)]="oMunicipalidad.sDepartamento" (change)="fnProvincia()" class="form-select"
+                  id="departamento" name="departamento">
+                  <option value="">TODOS</option>
+                  <option [ngValue]="item.sCodDepart" *ngFor="let item of lstDepartamento">
+                    {{ item.sDepartamento }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <!--     <div class="col-md-2 mt-2 mt-md-0"> -->
+            <div class="col-md-3 col-lg-2 mt-2 mt-md-0">
+              <div class="form-group">
+                <label class="col-form-label bold col-form-label-sm">
+                  Provincia
+                </label>
+                <select [(ngModel)]="oMunicipalidad.sProvincia" #sProvincia="ngModel" (change)="fnDistrito()"
+                  class="form-select" id="provincia" name="provincia" [disabled]="disabledProvincia">
+                  <option value="">TODOS</option>
+                  <option [ngValue]="item.sCodProv" *ngFor="let item of lstProvincia">
+                    {{ item.sProvincia }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3 col-lg-2 mt-2 mt-md-0">
+              <div class="form-group">
+                <label class="col-form-label bold col-form-label-sm">
+                  Distrito
+                </label>
+                <select [(ngModel)]="oMunicipalidad.sDistrito" (change)="fnHistorialAprobados()" class="form-select"
+                  id="distrito" name="distrito" required [disabled]="disabledDistrito">
+                  <option value="">TODOS</option>
+                  <option [ngValue]="item.sCodDist" *ngFor="let item of lstDistrito">
+                    {{ item.sDistrito }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-2 col float-end ms-lg-auto mt-2 mt-lg-0 align-self-end">
+              <input type="text" [(ngModel)]="model.nAnio" name="modelA.nAnio" maxlength="50"
+                class="form-control buscar" placeholder="Buscar por año">
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div *ngIf="(lstPeriodo | Busqueda: model)?.length > 0">
+        <div class="table-responsive text-center ">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Municipalidad</th>
+                <th scope="col">Año</th>
+                <th scope="col">Detalle <br>periodo</th>
+                <th scope="col">Datos de <br>actividad</th>
+                <th scope="col">Inventario <br> GEI</th>
+                <th scope="col">Reaperturar</th>
+                <th scope="col">Historial <br>estado</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of lstPeriodo | Busqueda: model; index as i ">
+              <tr [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+                <td>{{ i + 1 }}</td>
+                <td>{{item.oMunicipalidad.sNombre}}</td>
+                <td>{{item.nAnio}}</td>
+                <td><img src="assets/images/ver.svg" height="20" class="pointer" (click)="openModalVer(item)" />
+                </td>
+                <td><img src="assets/images/tabla.svg" height="20" class="pointer" (click)="redictDatosActividad(item)"
+                    placement="bottom" ngbTooltip="Ir a datos de actividad" />
+                </td>
+                <td> <a class="descarga pointer" (click)="fnDescargarPeriodo(item)">{{item.sNombreReporteGEI}}</a>
+                </td>
+                <td>
+                  <!-- Botón Reaperturar -->
+                  <button type=" button" class="btn btn-success btn-reaperturar blanco"
+                    (click)="Reiniciar(contentReiniciar,item)">Reaperturar</button>
+                </td>
+                <td>
+                  <!-- Botón Historial -->
+                  <span type="button" (click)="Historial(contentHistorial,item)"> <i
+                      class="fa-solid icon fa-clock-rotate-left"></i>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div class="d-flex justify-content-center">
+          <ngb-pagination class="pagination-md" [collectionSize]="(lstPeriodo | Busqueda: model)?.length"
+            [(page)]="page" [maxSize]="8" [pageSize]="pageSize">
+            <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+          </ngb-pagination>
+          <ngb-pagination class="pagination-sm" [collectionSize]="(lstPeriodo | Busqueda: model)?.length"
+            [(page)]="page" [maxSize]="3" [pageSize]="pageSize">
+            <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+          </ngb-pagination>
+        </div>
+      </div>
+      <div class="text-center mt-5 mb-5" *ngIf="(lstPeriodo| Busqueda: model).length <= 0 && model.nAnio!==undefined">
+        <h5>No hay resultados para "{{model.nAnio}}". </h5>
+      </div>
+      <div class="text-center mt-5 mb-5" *ngIf="(lstPeriodo| Busqueda: model).length <= 0 && model.nAnio==undefined">
+        <h5>No existen resultados. </h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Reaperturar -->
+<ng-template #contentReiniciar let-modalSolicitud>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title">Reaperturar periodo</label>
+    <button type="button" class="close" aria-label="Close" (click)="modalSolicitud.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <label>{{oMunicipalidad.sNombre}} <br>Año: {{nAnio}} <br>Ingresar motivo de
+      reapertura:</label>
+    <textarea class="form-control" rows="5" [(ngModel)]="sDescripcion" #descripcion="ngModel" minlength="10"
+      maxlength="250" id="exampleFormControlTextarea1" required></textarea>
+    <div *ngIf="submit && descripcion.invalid">
+      <small class="text-danger">Escriba un motivo de reapertura de 10 caracteres como mínimo.</small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn button-modal btn-success blanco"
+      (click)="modalSolicitud.dismiss()">Cancelar</button>
+    <button type="button" [disabled]="loading" (click)="fnReaperturar()"
+      class="btn button-modal btn-success verdemodal">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>Reaperturar</button>
+  </div>
+</ng-template>
+
+<!-- Modal Historial -->
+<ng-template #contentHistorial let-modalHistorial>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title">Historial estado del periodo</label>
+    <button type="button" class="close" aria-label="Close" (click)="modalHistorial.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Motivo</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Usuario</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of lstestadoPeriodo; index as i ">
+          <tr class="tbody-historial"
+            [style.display]="i / pageSizeModal >= pageModal || i / pageSizeModal < pageModal - 1 ? 'none' : null">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{item.sEstadoActual}}</td>
+            <td>
+              {{item.sDescripcion}}
+            </td>
+            <td> <a class="descarga pointer" (click)="fnDescargarEstadoPeriodo(item)">{{item.sNombreDocumento}}</a>
+            </td>
+            <td>{{item.sUsuario}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination class="pagination-md" [collectionSize]="lstestadoPeriodo.length" [(page)]="pageModal"
+          [maxSize]="8" [pageSize]="pageSizeModal">
+          <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+        </ngb-pagination>
+        <ngb-pagination class="pagination-sm" [collectionSize]="lstestadoPeriodo.length" [(page)]="pageModal"
+          [maxSize]="3" [pageSize]="pageSizeModal">
+          <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+          <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</ng-template>

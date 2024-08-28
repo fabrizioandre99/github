@@ -1,0 +1,314 @@
+<div class="container  margin-container">
+  <label class="crud__title">Resultados GEI</label>
+  <div class="row">
+    <div class="col-lg-2 w-periodo">
+      <label class="crud__label--sm">Periodo</label>
+      <ng-select [(ngModel)]="model.nIdPeriodo" placeholder="Seleccionar" class="ng-select-admin" [items]="lstPeriodo"
+        [dropdownPosition]="'bottom'" [clearable]="false" bindValue="nIdPeriodo" bindLabel="nAnio" [searchable]="false"
+        [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+    <div class="col-lg-2 w-mes">
+      <label class="crud__label--sm">Mes</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.sCodMes" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option [value]="-1">Todos</ng-option>
+        <ng-option *ngFor="let item of lstMes" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2 w-empresa">
+      <label class="crud__label--sm">Empresa</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.sCodEmpresa" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option [value]="-1">Todos</ng-option>
+        <ng-option *ngFor="let item of lstEmpresa" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2 w-sub_unidad">
+      <label class="crud__label--sm">Subunidad de negocio</label>
+      <ng-select (change)="changeSubUnidad()" class="ng-select-admin"
+        [(ngModel)]="model.oUnidadNegocio.nIdUnidadNegocio" [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'"
+        [searchable]="false" [clearable]="false">
+        <ng-option [value]="-1">Todos</ng-option>
+        <ng-option *ngFor="let item of lstUnidadNegocio" [value]="item.nIdUnidadNegocio">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-lg-2">
+      <label class="crud__label--sm">Locación</label>
+      <ng-select class="ng-select-admin" [(ngModel)]="model.oLocacion.nIdLocacion" [notFoundText]="'No hay data'"
+        [dropdownPosition]="'bottom'" [searchable]="false" [clearable]="false">
+        <ng-option [value]="-1">Todos</ng-option>
+        <ng-option *ngFor="let item of lstLocacion" [value]="item.nIdLocacion">{{item.sNombre}}</ng-option>
+      </ng-select>
+    </div>
+    <div class="col-md-5 col-lg-3 col-xl-2 mt-2 mt-xl-0 d-flex align-items-end">
+      <button [disabled]="!model.nIdPeriodo || loadingBuscar" (click)="fnResultadoGEI()"
+        class="crud__button button-blue  d-flex align-items-center">
+        <img class="icon_lupa_button" *ngIf="!loadingBuscar" src="assets/images/icon-lupa-button.svg" />
+        <span *ngIf="loadingBuscar" class="spinner-border spinner-border-sm"></span>
+        <span class="ms-2">
+          Buscar</span>
+      </button>
+    </div>
+  </div>
+  <div class="mt-4">
+    <div class="table-responsive crud__card">
+      <table class="table">
+        <thead class="table__header text-center">
+          <tr>
+            <th scope="col" class="ps-3 text-start">Fuente de emisión</th>
+            <th scope="col"><label class="fw-400">Dióxido de carbono</label><br>[tCO<sub>2</sub>]</th>
+            <th scope="col"><label class="fw-400">Metano</label> <br>[tCH<sub>4</sub>]</th>
+            <th scope="col"><label class="fw-400">Óxido nitroso</label><br>[tN<sub>2</sub>O]</th>
+            <th scope="col"><label class="fw-400">Hidrofluoro carbono</label><br>[tHFC]</th>
+            <th scope="col"><label class="fw-400">Biomasa</label><br>[tCO<sub>2</sub>]</th>
+            <th scope="col">Emisiones GEI<br>[tCO<sub>2</sub>e]</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <tbody *ngFor="let first of lstResultadoGEI">
+          <ng-container *ngFor="let second of first.liCategoria">
+            <tr class="table__body table__body--resultados text-center" [ngClass]="{
+              'table__body--color-red': second.sNombre.includes('1'),
+              'table__body--color-yellow': second.sNombre.includes('2'),
+              'table__body--color-skyblue': second.sNombre.includes('3'),
+              'table__body--color-blue': second.sNombre.includes('4')
+            }">
+              <td class="ps-3 text-start fw-600">{{second.sNombre}}</td>
+              <td>{{truncateValue(second.bdTotalgeiCO2, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiCH4, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiN2O, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalgeiHFC, 2)}}</td>
+              <td>{{truncateValue(second.bdTotalCO2, 2)}}</td>
+              <td class="p-0">
+                <!--  Si es menor o igual a 0% -->
+                <ngb-progressbar placement="top" ngbTooltip="0.00 %"
+                  *ngIf=" esNaN((second.bdTotalgeiCO2eq*100)/totalEmisiones)" type="dark"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones ">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}"
+                  *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <=0" type="dark"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}" *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <=30
+                && (second.bdTotalgeiCO2eq*100)/totalEmisiones >0" type="success"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}" *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones <60 &&
+                (second.bdTotalgeiCO2eq*100)/totalEmisiones  >30 " type="warning"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+                <!--  Si es mayor al 60% - Tipo Danger -->
+                <ngb-progressbar placement="top"
+                  ngbTooltip="{{((second.bdTotalgeiCO2eq*100)/totalEmisiones).toFixed(2)+' %'}}"
+                  *ngIf="(second.bdTotalgeiCO2eq*100)/totalEmisiones >=60" type="danger"
+                  [value]="(second.bdTotalgeiCO2eq*100)/totalEmisiones">
+                  <small class="progress-text">
+                    {{truncateValue(second.bdTotalgeiCO2eq, 2)}}
+                  </small>
+                </ngb-progressbar>
+              </td>
+            </tr>
+            <ng-container *ngFor="let third of second.liSubcategoria">
+              <tr class="table__body table__body--resultados text-center">
+                <td class="ps-3 text-start fw-600">{{third.sNombre}}</td>
+
+                <td>{{truncateValue(third.bdTotalgeiCO2, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiCH4, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiN2O, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalgeiHFC, 2)}}</td>
+                <td>{{truncateValue(third.bdTotalCO2, 2)}}</td>
+                <td class="p-0">
+                  <!--  Si es menor o igual a 0% -->
+                  <ngb-progressbar placement="top" ngbTooltip="0.00 %"
+                    *ngIf="esNaN((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq)"
+                    type="dark"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <=0"
+                    type="dark"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <=30
+                   && (third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq >0"
+                    type="success"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq <60 &&
+                  (third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq  >30 "
+                    type="warning"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                  <!--  Si es mayor al 60% - Tipo Danger -->
+                  <ngb-progressbar placement="top"
+                    ngbTooltip="{{ ((third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                    *ngIf="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq >=60"
+                    type="danger"
+                    [value]="(third.bdTotalgeiCO2eq*(second.bdTotalgeiCO2eq*100)/totalEmisiones)/second.bdTotalgeiCO2eq">
+                    <small class="progress-text">
+                      {{truncateValue(third.bdTotalgeiCO2eq, 2)}}
+                    </small>
+                  </ngb-progressbar>
+                </td>
+              </tr>
+              <ng-container *ngFor="let fourth of third.liFuenteEmision">
+                <tr class="table__body table__body--resultados text-center">
+                  <td class="ps-4 text-start ">{{fourth.sNombre}}</td>
+
+                  <td>{{truncateValue(fourth.bdTotalgeiCO2, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiCH4, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiN2O, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalgeiHFC, 2)}}</td>
+                  <td>{{truncateValue(fourth.bdTotalCO2, 2)}}</td>
+                  <td class="p-0">
+                    <!--  Si es menor o igual a 0% -->
+                    <ngb-progressbar placement="top" ngbTooltip="0.00 %" *ngIf="esNaN((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq)
+                      " type="dark"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq<=0"
+                      type="dark"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es menor o igual al 30% y mayor a 0% - Tipo Sucess -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq <=30
+                 && (fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >0"
+                      type="success"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es menor al 60% y mayor al 30% - Tipo Warning -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq <60 &&
+                      (fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >30 "
+                      type="warning"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                    <!--  Si es mayor al 60% - Tipo Danger -->
+                    <ngb-progressbar placement="top"
+                      ngbTooltip="{{ ((fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq).toFixed(2)+' %'}}"
+                      *ngIf="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq >=60"
+                      type="danger"
+                      [value]="(fourth.bdTotalgeiCO2eq*(third.bdTotalgeiCO2eq*100)/totalEmisiones)/third.bdTotalgeiCO2eq">
+                      <small class="progress-text">
+                        {{truncateValue(fourth.bdTotalgeiCO2eq, 2)}}
+                      </small>
+                    </ngb-progressbar>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+      <ng-container
+        *ngIf="!fShowSkeleton && lstResultadoGEI?.length <= 0 ||(!fShowSkeleton && lstResultadoGEI[0]?.length == 0)">
+        <div class="text-center mt-5 mb-5">
+          <h5>No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="row mt-3" *ngIf="!fShowSkeleton && totalEmisiones>=0">
+    <div class="d-flex align-items-center justify-content-end">
+      <label class="fs-16" style="font-weight: 500;">Total de emisiones GEI:&nbsp;
+        {{truncateValue(totalEmisiones, 2)}}
+        tCO<sub>2</sub>e </label>
+    </div>
+  </div>
+</div>

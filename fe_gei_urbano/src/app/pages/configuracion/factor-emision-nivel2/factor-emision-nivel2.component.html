@@ -1,0 +1,152 @@
+<div *ngIf="fShowSkeleton" class="progress-bar-container">
+    <div class="progress-bar"></div>
+  </div>
+  <div class="container px-4 margin-container">
+    
+    <div class="row mt-3">
+      
+      <label class="col-lg-5 titulo_pagina dashboard_title">Factores de emisión</label>
+      <div class="ms-auto col-lg-2 text-start ">
+        <label class="dashboard_label--sm">Categoría</label>
+        <ng-select [(ngModel)]="sCodCategoria" placeholder="Seleccionar" (change)="fnListarCategorias()"
+          class="dashboard_select fs-14" [items]="lstCategorias" [dropdownPosition]="'bottom'" [clearable]="false"
+          [disabled]="boDisableCategoria" bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+      <div class="col-lg-2 text-start">
+        <label class="dashboard_label--sm">Tipo de combustible</label>
+        <ng-select [(ngModel)]="sCodCombustible" placeholder="Seleccionar" (change)="fnListarCombustible()"
+          class="dashboard_select fs-14" [items]="lstCombustible" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="sCodFactor" bindLabel="sTipoCombustible" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+      <div class="col-lg-2">
+        <label class="dashboard_label--sm">Tipo de vehículo</label>
+        <ng-select [(ngModel)]="sCodTipoVehiculo" placeholder="Seleccionar" (change)="fnListarTipoVehiculo()"
+          class="dashboard_select fs-14" [items]="lstTipoVehiculo" [dropdownPosition]="'bottom'" [clearable]="false"
+          bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+        </ng-select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="table-responsive dashboard_table_card">
+        <table class="table">
+          <thead class="table__header">
+            <tr>
+              <th scope="col" class="text-center">Item</th>
+              <th scope="col"  class="text-start">Tecnología</th>
+              <th scope="col" class="text-end">Factor emisión<br> [ gCH<sub>4</sub>/Km ]</th>
+              <th scope="col" class="text-end">Factor emisión<br> [ gN<sub>2</sub>O/Km ]</th>
+              <th rowspan="2" scope="col" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeleton">
+            <tbody *ngFor="let item of lstSkeleton">
+              <tr class="table__body table__body--skeleton">
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstFactorEmision; index as i">
+              <tr class="table__body" 
+                [ngStyle]="{'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                  'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null}!"
+                [ngClass]="{'row_select': (sNombreTecnologia != undefined && item.oTecnologia.sNombre == sNombreTecnologia)}"
+              >
+                <td class="text-center">{{i+1}}</td>
+                <td class="text-start">{{item.oTecnologia.sNombre}}</td>
+                <td>
+                  <div *ngIf="item.bdFeCH4!==-1" class="text-end">
+                    <div *ngIf="!item.edit">
+                      {{ truncateValue(item.bdFeCH4, 5) }}
+                    </div>
+                    <div *ngIf="item.edit">
+                      <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                        oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                        class="crud__input form-control form-control-sm text-end"
+                        [ngClass]="{ 'is-invalid':!item.bdFeCH4_mod.toString().trim()||!esRegexFactores.test(item.bdFeCH4_mod)}"
+                        [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdFeCH4_mod" #bdFeCH4_mod="ngModel"
+                        name="item.bdFeCH4_mod" required>
+                    </div>
+                  </div>
+                  <div *ngIf="item.bdFeCH4==-1" class="text-end">
+                    <label>-</label>
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="item.bdFeN2O!==-1" class="text-end">
+                    <div *ngIf="!item.edit">
+                      {{ truncateValue(item.bdFeN2O, 5) }}
+                    </div>
+                    <div *ngIf="item.edit">
+                      <input type="text" pattern="^(?!\.)(\d{1,8}|\d{1,8}[.]|\d{0,8}\.\d{0,10}?)$"
+                        oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                        class="crud__input form-control form-control-sm text-end"
+                        [ngClass]="{ 'is-invalid':!item.bdFeN2O_mod.toString().trim()||!esRegexFactores.test(item.bdFeN2O_mod)}"
+                        [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.bdFeN2O_mod" #bdFeN2O_mod="ngModel"
+                        name="item.bdFeN2O_mod" required>
+                    </div>
+                  </div>
+                  <div *ngIf="item.bdFeN2O==-1" class="text-end">
+                    <label>-</label>
+                  </div>
+                </td>
+  
+                <td class="text-center">
+                  <div *ngIf="!item.edit">
+                    <img src="assets/images/icon_edit.svg" height="30" class="icon_editar pointer" (click)="editarFactor(item)" />
+                  </div>
+                  <div *ngIf="item.edit" class="table__buttons">
+                    <img class="icon_circle pointer ms-5px"
+                      (click)="actualizarFactorEmision(item)"
+                      src="assets/images/icon_check_circle.svg" placement="top" ngbTooltip="Guardar" />
+                    <img class="icon_circle pointer" (click)="item.edit=false" src="assets/images/icon_close_circle.svg"
+                      placement="top" ngbTooltip="Cancelar" />
+                  </div>
+                </td>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="!fShowSkeleton && lstFactorEmision.length <= 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados.</h5>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="!fShowSkeleton && lstFactorEmision.length > 0" class="d-flex justify-content-center mt-4">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstFactorEmision.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstFactorEmision.length" [(page)]="page" [maxSize]="5"
+        [pageSize]="pageSize">
+      </ngb-pagination>
+    </div>
+  </div>
+  

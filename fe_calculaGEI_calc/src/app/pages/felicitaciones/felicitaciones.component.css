@@ -1,0 +1,43 @@
+* {
+  color: white;
+}
+
+.label-redict {
+  text-underline-offset: 4px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.label-redict:hover {
+  color: white;
+}
+
+.content-inicio {
+  flex-direction: column;
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.body-inicio {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-felicitaciones {
+  margin-top: 75px
+}
+
+.button-celepsa {
+  padding: 12px 7%;
+}
+
+
+/* Modo móvil */
+@media (max-width: 991.98px) {
+  .text-felicitaciones {
+    margin-top: auto;
+  }
+}

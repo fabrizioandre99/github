@@ -1,0 +1,43 @@
+<div class="container">
+  <label class="crud__title">Asignar acceso por rol de usuario</label>
+  <div class="row mt-3 ms-md-2">
+    <div class="col-md-5 col-lg-3">
+      <ng-select [(ngModel)]="model.sCodRol" placeholder="Seleccionar" (change)="fnListarMenu()" class="ng-select-admin"
+        [items]="lstRol" [dropdownPosition]="'bottom'" [clearable]="false" bindValue="sCodigo" bindLabel="sValor"
+        [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-6 crud__subcard--w">
+      <div class="crud__subcard mt-2 mb-3">
+        <div *ngFor="let item of lstMenu; let i=index">
+          <div class="control-group">
+            <label class="control control-checkbox">
+              {{item.sNombre}}
+              <input type="checkbox" [(ngModel)]="item.boCodEstado" [checked]="item.boCodEstado"
+                (change)="changeFather($event,lstMenu,i)" />
+              <div class="control_indicator"></div>
+            </label>
+          </div>
+          <div *ngFor="let secondItem of item.liSubMenu; let i=index">
+            <div class="control-group ms-4">
+              <label class="control control-checkbox">
+                {{secondItem.sNombre}}
+                <input type="checkbox" [(ngModel)]="secondItem.boCodEstado" [checked]="secondItem.boCodEstado"
+                  (change)="changeChildren($event,item,item.liSubMenu)" />
+                <div class="control_indicator"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="float-end mb-5">
+        <button [disabled]="loadingGuardar" (click)="fnActualizarEstado()" class="crud__button button-blue">
+          <span [hidden]="!loadingGuardar" class="spinner-border spinner-border-sm me-2"></span>
+          Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,155 @@
+.barra {
+  margin-bottom: 1.5625rem;
+}
+
+.navbar-nav li a:hover {
+  color: #4E944F !important;
+  background-color: white;
+}
+
+.navbar-toggler-icon {
+  color: #4E944F !important;
+}
+
+.container-fluid {
+  padding-left: 0;
+}
+
+.btn-success {
+  color: #fff;
+  background-color:
+    #4E944F;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  color: black;
+}
+
+.navbar {
+  border-width: 0.125rem;
+  border-color: black;
+  height: 3.125rem;
+  width: 100%;
+  color: black;
+  font-weight: 600;
+}
+
+.dropdown-item {
+  font-weight: 600;
+
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  width: max-content;
+  border-bottom: solid;
+  border-width: 0.125rem;
+}
+
+.nav-link {
+  padding: 0 0.6rem !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:active {
+  background-color: white;
+  color: #4E944F;
+}
+
+:host ::ng-deep ngb-tooltip-window {
+  inset: 0px auto auto -5px !important;
+}
+
+@media (min-width: 990px) {
+  .bg-light {
+    background-color: white !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .hear {
+    /*  position: fixed; */
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 20;
+  }
+
+  .barra {
+    height: 49px;
+  }
+
+  .navbar {
+    width: 0;
+    height: 0;
+  }
+
+  .toogler {
+    position: relative;
+    top: -278px;
+    left: -2vh;
+    height: 0;
+    display: block !important;
+  }
+}
+
+@media (max-width: 991.5px) {
+  .nav-link {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .navbar-expand-lg .navbar-nav .nav-link {
+    border-bottom: none;
+  }
+
+  .navbar {
+    margin-bottom: 4.6875rem;
+    border-width: 0;
+  }
+
+  .navbar-toggler-icon {
+    box-shadow: 0;
+  }
+
+  .navbar-toggler:focus {
+    text-decoration: none;
+    text-decoration-line: none;
+    text-decoration-style: initial;
+    text-decoration-color: initial;
+    outline: 0;
+    outline-color: initial;
+    outline-style: initial;
+    outline-width: 0;
+    box-shadow: none;
+  }
+
+  .offcanvas-start {
+    width: 20.9375rem;
+
+  }
+
+  .navbar-collapse.collapsing .navbar-nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -45%;
+    transition: all 0.2s ease;
+  }
+
+  .navbar-collapse.show .navbar-nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    flex-direction: column;
+    height: auto;
+    width: 33vh;
+    transition: left 0.35s ease;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  .dropdown-item {
+    white-space: unset;
+
+  }
+}

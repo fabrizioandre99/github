@@ -1,0 +1,92 @@
+<div class="container margin-container">
+  <label class="crud__title">Bitácora de log de usuario</label>
+  <div class="row">
+    <div class="col-md-5 col-lg-3">
+      <label for="busqueda_usuario" class="crud__label--sm">Búsqueda</label>
+      <input id="busqueda_usuario" class="form-control crud__input crud__input--search"
+        [(ngModel)]="model.sNombreDocumento" placeholder="Buscar por nombre de archivo">
+    </div>
+    <div class="col-md-3 col-lg-2">
+      <label for="calendar_usuario" class="crud__label--sm">Seleccionar fecha de log</label>
+      <div class="d-flex align-items-center">
+        <input id="calendar_usuario" [(ngModel)]="calendar" class="form-control crud__calendar text-md-center"
+          placeholder="dd/mm/aaaa" name="calendarHistorial" ngbDatepicker #dCalendar="ngbDatepicker"
+          (click)="dCalendar.toggle()" (ngModelChange)="changeCalendar($event)"
+          [minDate]="{year: getDate.year, month: 1, day: 1}" [maxDate]="{year: getDate.year+1, month: 12, day: 31}" />
+        <img src="assets/images/icon-calendar.svg" class="icon_calendar ms-2 pointer" (click)="dCalendar.toggle()" />
+      </div>
+    </div>
+    <div class="col-lg-3 ms-auto d-flex justify-content-end align-items-end mt-2">
+      <button [disabled]="rotateArrow" class="crud__button button-blue d-flex align-items-center"
+        (click)="fnRefrescar()">
+        <img [ngClass]="{'rotate': rotateArrow}" src="assets/images/icon-refresh.svg" class="icon_refresh" />
+        <span class="ms-2">Refrescar</span>
+      </button>
+    </div>
+  </div>
+  <div class="crud__card mt-4">
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="table__header">
+          <tr class="text-center">
+            <th scope="col">Nombre de archivo</th>
+            <th scope="col">Número documento</th>
+            <th scope="col">Observación</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstLog| Busqueda: model;  index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null
+            }">
+              <td class="text-center">{{item.sNombreDocumento}}</td>
+              <td class="text-center">{{item.sNumDocumento}}</td>
+              <td class="text-center">{{item.sObservacion}}</td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton && (lstLog| Busqueda: model)?.length <= 0">
+        <div class="text-center mt-5 mb-5">
+          <h5>No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+
+  <div *ngIf="!fShowSkeleton && (lstLog| Busqueda: model)?.length > 0" class="d-flex justify-content-center mt-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="(lstLog| Busqueda: model).length" [(page)]="page"
+      [maxSize]="8" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="(lstLog| Busqueda: model).length" [(page)]="page"
+      [maxSize]="5" [pageSize]="pageSize">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+  </div>
+</div>

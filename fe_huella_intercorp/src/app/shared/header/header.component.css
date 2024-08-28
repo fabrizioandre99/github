@@ -1,0 +1,144 @@
+* {
+  color: white;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #002FA1 0%, #002FA1 48.44%, #002FA1 48.44%, #002FA1 48.45%, #002172 100%);
+  border-bottom: 2px solid #001548;
+  box-shadow: 0px 1px 2px 0px #001548;
+}
+
+.title__hcc {
+  font-size: 18px;
+  margin-left: 3px;
+}
+
+.dropdown-item {
+  color: #474848;
+}
+
+.dropdown-menu {
+  border: 1px solid black;
+  border-radius: 6px;
+  box-shadow: none !important;
+  right: 1px;
+  top: -12px
+}
+
+.custom-class-or-id:after {
+  content: none !important;
+}
+
+::ng-deep .dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item:active {
+  color: white;
+  background-color: #00358A;
+}
+
+.dropdown-item:active img {
+  filter: grayscale(100%) invert(100%);
+}
+
+.logo__hcc {
+  width: 138px;
+  margin-right: 14px;
+}
+
+.navbar {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 62px;
+}
+
+.navbar>.container-fluid {
+  display: block;
+}
+
+.crud__ngbDropdown {
+  position: absolute;
+  right: 0;
+
+}
+
+.crud__dropdown {
+  border-radius: 0px 0px 14px 14px;
+  background: linear-gradient(180deg, #002FA1 0%, #002172 100%);
+  min-height: 40px;
+  margin-top: 87px;
+  cursor: default;
+  padding: 0 11px 0px 15px;
+  align-items: center;
+  border: 0;
+}
+
+.dropdown-menu[data-bs-popper] {
+  right: -6px;
+  left: unset;
+}
+
+.me-0 {
+  margin-left: 0 !important;
+}
+
+.user_image--mobile {
+  cursor: pointer;
+}
+
+/*****************************************/
+/* ------------ Modo Escritorio---------- */
+
+@media (min-width: 609px) {
+  .user_image--mobile {
+    display: none;
+  }
+
+}
+
+
+/*****************************************/
+/* ------------ Modo Móvil-------------- */
+
+@media (max-width: 1200px) {
+  .title__hcc {
+    margin-left: 32px;
+    font-size: 13px;
+  }
+
+}
+
+@media (max-width: 1230px) {
+  .user-mobile {
+    display: inline-block;
+    width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 609px) {
+  .logo__hcc {
+    display: none;
+  }
+
+  .user-mobile {
+    width: 150px;
+  }
+
+  .user-mobile,
+  .crud__dropdown {
+    display: none;
+  }
+
+  .user_image {
+    height: 8vw;
+  }
+
+  .crud__ngbDropdown {
+    display: none !important;
+  }
+
+}

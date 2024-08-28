@@ -1,0 +1,29 @@
+.table__header th:first-child {
+  width: 52%;
+}
+
+.table__header th:nth-child(2) {
+  width: 13%;
+}
+
+.table__header th:nth-child(3) {
+  width: 10%;
+}
+
+.table__header th:nth-child(4) {
+  width: 10%;
+}
+
+.table__body {
+  height: 40px;
+}
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .table__body {
+    height: 2.343vw;
+  }
+
+}

@@ -1,0 +1,194 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Huellas de carbono organizacionales</h3>
+    <div class="d-flex flex-column flex-md-row  form_sm mt-3">
+        <mat-form-field appearance="outline" class="w_anio">
+            <mat-label>Año</mat-label>
+            <mat-select (selectionChange)="fnListarHC()" [(ngModel)]="selectedAnio">
+                <mat-option *ngFor="let anio of lstAnio" [value]="anio">
+                    {{ anio }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w_organizacion ms-md-2" appearance="outline">
+            <mat-label>Buscar por organización</mat-label>
+            <input matInput [(ngModel)]="filtroOrganizacion" (ngModelChange)="aplicarFiltro()" />
+        </mat-form-field>
+
+        <mat-slide-toggle class="ms-md-2 toggle_solicitud mb-4 mb-md-0" [(ngModel)]="boSoloReapertura"
+            (change)="fnListarHC()">
+            Mostrar solicitudes de reapertura
+        </mat-slide-toggle>
+    </div>
+    <div class="table_shadow ">
+        <div class="table-responsive ">
+            <table mat-table [dataSource]="tOrganizacional" class="mat-elevation-z8">
+
+                <!-- Columna Organización -->
+                <ng-container matColumnDef="organization">
+                    <th mat-header-cell *matHeaderCellDef> Organización </th>
+                    <td mat-cell *matCellDef="let item">{{item.oInstitucion.sRazonSocial}}
+                    </td>
+                </ng-container>
+                <!-- Columna flag linea base -->
+                <!-- <ng-container matColumnDef="baseline">
+                    <th mat-header-cell *matHeaderCellDef class="text-end"> </th>
+                    <td mat-cell *matCellDef="let item" class="text-end">
+                        <button mat-icon-button matTooltip="Año base" style="color: #39575d;" *ngIf="item.boAnioBase">
+                            <mat-icon svgIcon="ph-duotone:bookmark"></mat-icon>
+                        </button>
+                    </td>
+                </ng-container> -->
+
+                <!-- Columna Año -->
+                <ng-container matColumnDef="year">
+                    <th mat-header-cell *matHeaderCellDef class="text-left">Año</th>
+                    <td mat-cell *matCellDef="let item" class="text-left">
+                        <label>{{item.nAnio}}</label>
+                    </td>
+                </ng-container>
+
+                <!-- Columna Total Emisiones -->
+                <ng-container matColumnDef="totalEmissions">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Total emisiones<br> [tCO<sub>2</sub>e]
+                    </th>
+                    <td mat-cell *matCellDef="let item" class="text-center"> {{item.sTotalEmisionFormateado}} </td>
+                </ng-container>
+
+                <!-- Columna Reconocimientos -->
+                <ng-container matColumnDef="recognitions">
+                    <th mat-header-cell *matHeaderCellDef class="text-left"> Reconocimientos </th>
+                    <td mat-cell class="text-left" *matCellDef="let item">
+                        <div *ngIf="item.nReconocimientoActual!==0">
+                            <button mat-icon-button color="primary" matTooltip="Cuantificación" style="color: #34A453;"
+                                *ngIf="1<=item.nReconocimientoActual">
+                                <mat-icon svgIcon="ph-duotone:medal"></mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" matTooltip="Reducción"
+                                *ngIf="2<=item.nReconocimientoActual" style="color: #00C7BE;">
+                                <mat-icon svgIcon="ph-duotone:medal"></mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" matTooltip="Compensación"
+                                *ngIf="3<=item.nReconocimientoActual" style="color: #C49DE8;">
+                                <mat-icon svgIcon="ph-duotone:medal"></mat-icon>
+                            </button>
+                            <button mat-icon-button color="primary" matTooltip="Neutralización"
+                                *ngIf="4<=item.nReconocimientoActual" style="color: #5277C3;">
+                                <mat-icon svgIcon="ph-duotone:medal"></mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Columna Acciones -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+                    <td mat-cell *matCellDef="let item" class="text-center">
+                        <button *ngIf="item.oEvidencia.sNombre && item.oEvidencia.sCodigoDocumento" mat-icon-button
+                            (click)="fnDescargaZip(item)" matTooltip="Descargar nivel de actividad"
+                            style="color:#FF8C00">
+                            <mat-icon svgIcon="ph-duotone:file-zip"></mat-icon>
+                        </button>
+
+                        <button mat-icon-button matTooltip="Ir a límites de informe" style="color: #6FA1B0;"
+                            (click)="redictLimitesInforme(item)">
+                            <mat-icon svgIcon="ph-duotone:cards"></mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Reporte de huella" style="color: #136934;"
+                            (click)="fnDescargaArchivo(item)">
+                            <mat-icon svgIcon="ph-duotone:file-arrow-down"></mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Certificado de verificación" style="color: #074d22;"
+                            *ngIf="item.oVerificacion!=null" (click)="fnDescargaArchivo(item)">
+                            <mat-icon svgIcon="ph-duotone:certificate"></mat-icon>
+                        </button>
+                        <button (click)="openMotivoReapertura(item)" *ngIf="item.sJustificacionReapertura !=null"
+                            mat-icon-button color="primary" matTooltip="Atender solicitud de reapertura"
+                            style="color: #3a19b5;">
+                            <mat-icon svgIcon="ph-duotone:lock-simple-open"></mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="hOrganizacional"></tr>
+                <tr mat-row *matRowDef="let row; columns: hOrganizacional;"></tr>
+            </table>
+
+            <p class="text-center py-5 fs-20 m-0" style="background-color: white;"
+                *ngIf="tOrganizacional.data.length === 0 && filtroOrganizacion">
+                No existen resultados para "<span class="truncated-text">{{ filtroOrganizacion }}</span>".
+            </p>
+
+            <p class="text-center py-5 fs-20  m-0" style="background-color: white;"
+                *ngIf="tOrganizacional.data.length === 0 && !filtroOrganizacion">
+                No existen resultados
+            </p>
+        </div>
+
+        <mat-paginator #paginatorOrganizacional [length]="tOrganizacional.data.length" class=" border-top"
+            [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
+            [hidden]="tOrganizacional.data.length === 0"></mat-paginator>
+
+    </div>
+</div>
+
+
+<!-- Modal de reapertura de huella de carbono -->
+<ng-template #modalReaperturaHC>
+
+    <h2 mat-dialog-title class="fw-500 pluto_normal text-center">Solicitud de reapertura de huella de carbono
+        <button mat-icon-button mat-dialog-close class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </h2>
+    <div mat-dialog-content>
+        <label class="text-start  fs-14">Motivo:</label>
+        <mat-form-field appearance="outline" class="w-100">
+            <textarea rows="4" style="resize: none;" matInput [value]="sJustificacion" disabled></textarea>
+        </mat-form-field>
+    </div>
+    <div mat-dialog-actions class="d-flex justify-content-end w-100 pt-0">
+        <button mat-button (click)="openRechazarHC()">Rechazar</button>
+        <button (click)="fnAperturar()" [disabled]="loadingModal" mat-flat-button type="submit">
+            <mat-icon *ngIf="loadingModal"><mat-spinner color="primary" diameter="16"></mat-spinner></mat-icon>Aperturar
+        </button>
+    </div>
+
+</ng-template>
+
+
+<!-- Modal de rechazo de huella de carbono -->
+<ng-template #modalRechazoHC>
+
+    <form [formGroup]="formRechazoHC" (ngSubmit)="fnRechazarReapertura()">
+
+        <h2 mat-dialog-title class="fw-500 pluto_normal text-center">Rechazar reapertura de<br> huella de carbono
+            <button mat-icon-button mat-dialog-close class="close-button" type="button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </h2>
+        <div mat-dialog-content>
+            <label class="text-start  fs-14">Motivo:</label>
+            <mat-form-field appearance="outline" class="w-100">
+                <textarea rows="4" cdkTextareaAutosize formControlName="motivo"
+                    oninput="this.value = this.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ,.:\n]/g, '');"
+                    style="resize: none;" matInput maxlength="500" required></textarea>
+                <mat-error *ngIf="formRechazoHC.controls['motivo'].hasError('required')">
+                    El campo es requerido.
+                </mat-error>
+                <mat-error *ngIf="formRechazoHC.controls['motivo'].hasError('maxlength')">
+                    Máximo 500 caracteres permitidos.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+
+        <div mat-dialog-actions class="d-flex justify-content-end w-100 pt-0">
+            <button mat-dialog-close mat-button>Cancelar</button>
+            <button [disabled]="loadingModal" mat-flat-button type="submit">
+                <mat-icon *ngIf="loadingModal"><mat-spinner color="primary"
+                        diameter="16"></mat-spinner></mat-icon>Enviar
+            </button>
+        </div>
+    </form>
+</ng-template>

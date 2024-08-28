@@ -1,0 +1,58 @@
+<div *ngIf="isAuth">
+  <div class="barra d-flex justify-content-between align-items-center ">
+    <div>
+      <nav class="hear navbar navbar-expand-lg navbar-light bg-light" id="navbar">
+        <div class="container-fluid">
+          <div class="offcanvas offcanvas-start" data-bs-hideresize="true" tabindex="-1"
+            id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
+            <div class="offcanvas-header ">
+              <h5 class="offcanvas-title" id="offcanvasLabel"></h5>
+              <button type="button" class="btn-close btn-close-black text-reset  text-right" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
+                <li class="nav-item dropdown" *ngFor="let padre of lstMenu" detail>
+                  <a *ngIf="padre.sAccion" class="nav-link" routerLink={{padre.sAccion}}>
+                    {{padre.sNombre}}
+                  </a>
+                  <a class="nav-link" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    *ngIf="!padre.sAccion">
+                    {{padre.sNombre}}
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li *ngFor="let child of padre.subMenu"><a class="dropdown-item" routerLink={{child.sAccion}}>
+                        {{child.sNombre}}</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div>
+      <div class="col-auto d-flex align-items-center">
+        <div ngbDropdown #myDrop1="ngbDropdown" class="d-inline-block me-3">
+          <button class="btn btn-success" id="dropdownBasic1" ngbDropdownAnchor (focus)="myDrop1.open()">
+            <img class="me-2" src="assets/images/userdrop.svg" height="25" />
+            <label class="me-3 me-md-5" style="font-size:18.72px">{{oUsuario.sUsuario}}</label>
+          </button>
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button class="dropdown-item font-menu" ngbDropdownItem>{{oUsuario.sNombres}}
+              {{oUsuario.sApellidos}}</button>
+            <button class="dropdown-item font-menu" ngbDropdownItem>{{oUsuario.sNombreInstitucion}}</button>
+          </div>
+        </div>
+        <div class="me-lg-4">
+          <img src="assets/images/salida.svg" class="pointer" (click)="logout()" height="30" placement="bottom"
+            ngbTooltip="Salir" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-none toogler navbar-light"> <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">
+    <span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbarExample-expand-lg"></span>
+  </button></div>

@@ -1,0 +1,31 @@
+.iframe-container {
+  height: calc(100vh - 145px);
+}
+
+iframe {
+  height: calc(100vh - 85px);
+}
+
+.height_calculado {
+  height: calc(100vh - 84px);
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .iframe-container {
+    height: calc(100vh - 8.494vw);
+  }
+
+  iframe {
+    height: calc(100vh - 4.979vw);
+  }
+
+
+  .height_calculado {
+    height: calc(100vh - 4.921vw);
+  }
+
+}

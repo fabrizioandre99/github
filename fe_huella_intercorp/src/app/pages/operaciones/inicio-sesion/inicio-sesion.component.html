@@ -1,0 +1,22 @@
+<form (ngSubmit)="fnIniciarSesion()">
+  <div class="container-fluid">
+    <div class="row no-gutter">
+      <div class="col-md-12 bg-image">
+        <div class="login d-flex align-items-center">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-10 my-5 col-xl-7 mx-auto login__card">
+                <h1 class="login__title text-center">Bienvenido a la plataforma corporativa de cálculo
+                  y gestión de Huella de Carbono Intercorp.</h1>
+                <div class="d-flex justify-content-center">
+                  <button class="button-black login__button btn-corner" type="submit" [disabled]="loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>Ingresar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,222 @@
+<!-- <div class="detect_size">
+  Tamaño de width: {{ pantallaAncho }},
+  Valor inicial: {{this.initialCutout}},
+  Valor cambiado: {{this.valorAsignado}}.
+</div> -->
+
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex text-start">
+        <h2>Reportes GEI</h2>
+        <div class="ms-auto alto">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-lg-2">
+          <div class="form-group">
+            <label class="col-form-label bold col-form-label-sm">
+              <div *ngIf="usuarioActual.nTipo == '01'"> Seleccionar departamento</div>
+              <div *ngIf="usuarioActual.nTipo !== '01'"> Departamento</div>
+            </label>
+            <br>
+            <select [(ngModel)]="model.sDepartamento" [disabled]="disabledDepartamento" (change)="fnProvincia()"
+              class="form-select" id="departamento" name="departamento" required>
+              <option value="">TODOS</option>
+              <option [ngValue]="item.sCodDepart" *ngFor="let item of lstDepartamento">
+                {{ item.sDepartamento }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-2 align-self-end">
+          <div class="form-group">
+            <label class="col-form-label bold col-form-label-sm">
+              <div *ngIf="usuarioActual.nTipo == '01'"> Seleccionar provincia</div>
+              <div *ngIf="usuarioActual.nTipo !== '01'"> Provincia</div>
+            </label>
+            <br>
+            <select [(ngModel)]="model.sProvincia" [disabled]="disabledProvincia" #sProvincia="ngModel"
+              (change)="fnDistrito()" class="form-select" id="provincia" name="provincia" required>
+              <option value="">TODOS</option>
+              <option [ngValue]="item.sCodProv" *ngFor="let item of lstProvincia">
+                {{ item.sProvincia }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-2  align-self-end">
+          <div class="form-group">
+            <label class="col-form-label bold col-form-label-sm">
+              <div *ngIf="usuarioActual.nTipo == '01'"> Seleccionar distrito</div>
+              <div *ngIf="usuarioActual.nTipo !== '01'"> Distrito</div>
+            </label>
+            <br>
+            <select [(ngModel)]="model.sDistrito" [disabled]="disabledDistrito" (change)="changeDistrito()"
+              class="form-select" id="distrito" name="distrito" required>
+              <option value="">TODOS</option>
+              <option [ngValue]="item.sCodDist" *ngFor="let item of lstDistrito">
+                {{ item.sDistrito }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-2  align-self-end">
+          <div class="form-group">
+            <label class="col-form-label bold col-form-label-sm">
+              <div *ngIf="usuarioActual.nTipo == '01' || (usuarioActual.nTipo !== '01'  && lstAnio?.length>0)">
+                Seleccionar año</div>
+              <div *ngIf="usuarioActual.nTipo !== '01'  && lstAnio?.length<=0"> Año</div>
+            </label>
+            <br>
+            <select (change)="fnBuscar()" [disabled]="disabledAnio" [(ngModel)]="model.sAnio" class="form-select"
+              id="anio" name="anio" required>
+              <option value="">TODOS</option>
+              <option *ngIf="lstAnio?.length<=0 && usuarioActual.nTipo !== '01'" value="-1">No hay datos</option>
+              <option [ngValue]="item.nAnio" *ngFor="let item of lstAnio">
+                {{ item.nAnio }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-center">Participación anual por sector</h5>
+              <div class="firstCharts mt-4 d-flex flex-column justify-content-center"
+                [ngClass]="{ 'd-none': this.lstSector?.length<=0}">
+                <div class="chart-container--sector w-100 d-flex justify-content-center align-items-center">
+                  <canvas id="firstDonutChart"></canvas>
+                </div>
+                <div class="legend-height align-items-center  justify-content-lg-center d-flex">
+                  <ul class="custom-legend d-lg-flex flex-wrap justify-content-lg-center mt-4" style="width: 100%;">
+                    <li *ngFor="let item of legendFirstDonutChart; let i = index" (click)="toggleFirstDonut(i)"
+                      class="pe-md-3">
+                      <span [style.backgroundColor]="item.fillStyle"></span>
+                      <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-center"
+                [ngClass]="{ 'd-none': this.lstSector?.length>0}" style="height:515px">
+                <h5 class="card-title text-center">No hay data.</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <div class="card " style="height: 100%;">
+            <div class="card-body">
+              <h5 class="card-title text-center">Gases por sector [tCO<sub>2</sub>eq]</h5>
+              <div class="d-flex align-items-center justify-content-center"
+                [ngClass]="{ 'd-none': this.lstSector?.length>0}" style="height:515px">
+                <h5 class="card-title text-center">No hay data.</h5>
+              </div>
+              <div class="mt-4" style="    height: calc(100% - 48px) ;"
+                [ngClass]="{ 'd-none': this.lstSector?.length<=0}">
+                <div class="chart-container--sector d-flex justify-content-center align-items-center">
+                  <canvas id="barChart"></canvas>
+                </div>
+                <div class="legend-height align-items-center  justify-content-lg-center d-flex"
+                  style="background-color: #FAFAFA;  ">
+                  <ul class="custom-legend d-lg-flex flex-wrap justify-content-lg-center mt-4" style="width: 100%;">
+                    <li *ngFor="let item of legendBarChart; let i = index" (click)="toggleBarChart(i)" class="pe-md-3">
+                      <span [style.backgroundColor]="item.fillStyle"></span>
+                      <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label class="col-form-label bold col-form-label-sm">
+              <div> Seleccionar sector</div>
+            </label>
+            <br>
+            <div class="selection">
+              <select [disabled]="lstSector?.length <= 0" [(ngModel)]="model.sector"
+                (change)="fnListarSubsectorReport();fnListarGasPorSubsector()" class="form-select">
+                <option value="-1">Seleccionar</option>
+                <option value="-2" [hidden]="lstSector?.length > 0">No hay data</option>
+                <option [ngValue]="item.nIdFuenteEmision" *ngFor="let item of lstSector">
+                  {{item.sNombre}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-center">Participación anual por subsector</h5>
+              <div class="d-flex align-items-center justify-content-center"
+                [ngClass]="{ 'd-none': this.lstSubsector?.length>0}" style="height:400px">
+                <h5 class="card-title  mt-5 text-center">No hay data.</h5>
+              </div>
+              <div [ngClass]="{ 'd-none': this.lstSubsector?.length<=0}">
+                <div class="donutChart d-lg-flex justify-content-center align-items-center"
+                  style="margin-top: 27px;margin-bottom: 15px;">
+                  <div class="chart-container--subsector d-flex justify-content-center align-items-center">
+                    <canvas id="secondDonutChart"></canvas>
+                  </div>
+                  <div class="legend-height legend-container--subsector align-items-center d-flex">
+                    <ul class="custom-legend d-lg-flex flex-column justify-content-lg-center mt-4" style="width: 100%;">
+                      <li *ngFor="let item of legendSecondDonutChart; let i = index" (click)="toggleSecondDonut(i)"
+                        class="pe-md-3">
+                        <span [style.backgroundColor]="item.fillStyle"></span>
+                        <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12 mt-4 ">
+        <div class="card " style="height: 100%;">
+          <div class="card-body">
+            <h5 class="card-title text-center">Gases por subsector [tCO<sub>2</sub>eq]</h5>
+            <div class="d-flex align-items-center justify-content-center"
+              [ngClass]="{ 'd-none': this.lstGasSubsector?.length>0}" style="height:515px">
+              <h5 class="card-title text-center">No hay data.</h5>
+            </div>
+            <div class="mt-4" style="    height: calc(100% - 48px) ;"
+              [ngClass]="{ 'd-none': this.lstGasSubsector?.length<=0}">
+              <div class="chart-container--sector d-flex justify-content-center align-items-center">
+                <canvas id="barChartGas"></canvas>
+              </div>
+              <div class="legend-height align-items-center  justify-content-lg-center d-flex"
+                style="background-color: #FAFAFA;  ">
+                <ul class="custom-legend d-lg-flex flex-wrap justify-content-lg-center mt-4" style="width: 100%;">
+                  <li *ngFor="let item of legendBarChartGas; let i = index" (click)="toggleBarChartGas(i)"
+                    class="pe-md-3">
+                    <span [style.backgroundColor]="item.fillStyle"></span>
+                    <label [class.hidden-label]="item.hidden">{{ item.text }}</label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

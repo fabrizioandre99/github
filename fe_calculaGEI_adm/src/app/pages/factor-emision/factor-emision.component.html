@@ -1,0 +1,212 @@
+<div class="overlay" *ngIf="loadingDescargar">
+  <div class="loader">
+    <div class="item">
+      <div class="number"></div>
+      <div class="Load-download"></div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div *ngIf="fShow" class="crud__card crud__card--file mt-4 p-3 col-md-6">
+    <div class="crud__dowloand">
+      <label class="pointer align-items-center d-flex" (click)="fnDescargarSinData()">
+        <img src="assets/images/icon-dowloand.svg" class="me-1" height="25" />Formato - Factor de emisión
+        Gen.xls</label>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="form-file pointer">
+          <label for="fileinput" class="textfile w-100 bd-highlight pointer" #fileExcel>Seleccionar
+            archivo... </label>
+          <div class="flex-shrink-1 bd-highlight">
+            <input type="file" class="pointer" multiple
+              accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              id="fileinput" name="fileExcel" (change)="onFileChange($event)" required>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mt-2 mt-md-0">
+        <button class="crud__button button-yellow" style="width: 124px;
+        padding-left: 0;
+        padding-right: 0;" [disabled]="loadingCargar" (click)="fnCargarFactorEmision()"><span *ngIf="loadingCargar"
+            class="spinner-border spinner-border-sm me-2"></span>Guardar</button>
+        <button class="crud__button button-red ms-2" (click)="this.fShow = false">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <div class="row align-items-center mt-4">
+    <div class="col"> <label class="crud__title">Listado de factores de emisión</label></div>
+    <div class="col-md-7 d-flex justify-content-end mt-3 mt-sm-0">
+      <button class="crud__button button-yellow" (click)="fnDescargarConData()">
+        <span> <img src="assets/images/icon-xls.svg" height="25" />
+          <span class="ms-2">Descargar</span></span></button>
+      <button [hidden]="fShow" class="crud__button button-yellow ms-2" (click)="fnAgregarAnio()">
+        <img src="assets/images/icon-calendar-plus.svg" height="25" />
+        <span class="ms-2">Agregar año</span></button>
+    </div>
+  </div>
+  <div class="crud__card mt-4 p-2">
+    <label class="crud__label mt-2">Filtrar por:</label>
+    <div class="d-md-flex align-items-center ms-lg-5 mt-2">
+      <label class="crud__label crud__label--sub">Año</label>
+      <div class="col-md-2 col-xl-1 ms-md-2">
+        <ng-select class="ng-select-admin" [(ngModel)]="model.nAnio" [clearable]="false" (change)="changeAnio()"
+          [notFoundText]="'No se encontraron resultados'">
+          <ng-option [value]="item" *ngFor="let item of lstAnio">{{item}}</ng-option>
+        </ng-select>
+      </div>
+      <label class="crud__label crud__label--sub ms-md-3 mt-2 mt-md-0">Proveedor de energía</label>
+      <div class="col-md-4 ms-md-2">
+        <ng-select class="ng-select-admin" [(ngModel)]="model.oProveedorEnergia.nIdProveedor" [clearable]="false"
+          (change)="changeProveedor()" [notFoundText]="'No se encontraron resultados'">
+          <ng-option [value]="-1">Todos</ng-option>
+          <ng-option *ngFor="let item of lstProveedor"
+            [value]="item.oProveedorEnergia.nIdProveedor">{{item.oProveedorEnergia.sNombre}}</ng-option>
+        </ng-select>
+      </div>
+      <button class="crud__button button-red ms-auto mt-2 mt-md-0" style="padding: 0; width: 166px; height: 42px;"
+        [hidden]="fShowSkeleton||fnHiddenAnio" [disabled]="loadingEliminar" (click)="fnEliminarAnio()" placement="top"
+        ngbTooltip="Elimina todos los factores de emisión del año seleccionado"><span *ngIf="loadingEliminar"
+          class="spinner-border spinner-border-sm"></span>
+        <img src="assets/images/icon-tacho.svg" [hidden]="loadingEliminar" class="icon-tacho" height="25" />
+        <span class="ms-2">Eliminar año</span></button>
+    </div>
+    <div class="table-responsive mt-4">
+      <table class="table">
+        <thead>
+          <tr class="table__header">
+            <th scope="col" class="ps-4">Proveedor</th>
+            <th scope="col" class="text-end">Factor emisión<br>
+              CO<sub>2</sub><br>[tCO<sub>2</sub>/KWh]</th>
+            <th scope="col" class="text-end">Factor emisión<br>
+              CH<sub>4</sub><br>[tCH<sub>4</sub>/KWh]</th>
+            <th scope="col" class="text-end">Factor emisión<br>
+              N<sub>2</sub>O<br>[tN<sub>2</sub>O/KWh]</th>
+            <th scope="col" class="text-end">Factor emisión<br>
+              CO<sub>2</sub>eq<br>[tCO<sub>2</sub>eq/KWh]</th>
+            <th scope="col" class="text-center">Editar</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body" style="border:inherit">
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <tbody *ngFor="let item of lstTableFactores; index as i">
+          <tr class="table__body" [style.display]="i / pageSize >= page || i / pageSize < page - 1 ? 'none' : null">
+            <td class="ps-4">{{item.oProveedorEnergia.sNombre}}</td>
+            <td class="text-end">
+              <div *ngIf="!item.edit">
+                {{item.sFeCO2}}
+              </div>
+              <div *ngIf="item.edit">
+                <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                  oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                  class="form-control form-control-sm crud__input text-end"
+                  [ngClass]="{ 'is-invalid':!item.sFeCO2_mod.toString().trim()||!regex.test(item.sFeCO2_mod)}"
+                  [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.sFeCO2_mod" #sFeCO2_mod="ngModel"
+                  name="item.sFeCO2_mod" required>
+              </div>
+            </td>
+            <td class="text-end">
+              <div *ngIf="!item.edit">
+                {{item.sFeCH4}}
+              </div>
+              <div *ngIf="item.edit">
+                <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                  oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                  class="form-control form-control-sm crud__input text-end"
+                  [ngClass]="{ 'is-invalid':!item.sFeCH4_mod.toString().trim()||!regex.test(item.sFeCH4_mod)}"
+                  [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.sFeCH4_mod" #sFeCH4_mod="ngModel"
+                  name="item.sFeCH4_mod" required>
+              </div>
+            </td>
+            <td class="text-end">
+              <div *ngIf="!item.edit">
+                {{item.sFeN2O}}
+              </div>
+              <div *ngIf="item.edit">
+                <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                  oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                  class="form-control form-control-sm crud__input text-end"
+                  [ngClass]="{ 'is-invalid':!item.sFeN2O_mod.toString().trim()||!regex.test(item.sFeN2O_mod)}"
+                  [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.sFeN2O_mod" #sFeN2O_mod="ngModel"
+                  name="item.sFeN2O_mod" required>
+              </div>
+            </td>
+            <td class="text-end">
+              <div *ngIf="!item.edit">
+                {{item.sFeCO2eq}}
+              </div>
+              <div *ngIf="item.edit">
+                <input type="text" pattern="^(?!\.)(\d{1,2}|\d{1,2}[.]|\d{0,2}\.\d{0,10}?)$"
+                  oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                  class="crud__input form-control form-control-sm text-end"
+                  [ngClass]="{ 'is-invalid':!item.sFeCO2eq_mod.toString().trim()||!regex.test(item.sFeCO2eq_mod)}"
+                  [ngModelOptions]=" {standalone: true}" [(ngModel)]="item.sFeCO2eq_mod" #sFeCO2eq_mod="ngModel"
+                  name="item.sFeCO2eq_mod" required>
+              </div>
+            </td>
+            <td class="text-center">
+              <div *ngIf="!item.edit">
+                <img src="assets/images/icon-editar.svg" class="pointer" (click)="editarFactor(item)" height="25" />
+              </div>
+              <div *ngIf="item.edit" class="table__buttons">
+                <img class="pointer me-2" (click)="actualizarFactor(item)" src="assets/images/icon-check.svg"
+                  height="25" placement="top" ngbTooltip="Guardar" />
+                <img class="pointer" (click)="item.edit=false" src="assets/images/icon-close-circle.svg" height="25"
+                  placement="top" ngbTooltip="Cancelar" />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center mt-2" *ngIf="lstTableFactores.length > 0">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstTableFactores.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstTableFactores.length" [(page)]="page" [maxSize]="8"
+        [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="30" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="30" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>

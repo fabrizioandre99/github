@@ -1,0 +1,107 @@
+.crud__subcard {
+  min-height: 400px;
+  background: #FFFFFF;
+  box-shadow: 0 7px 40px 13px rgba(166, 197, 247, 0.6);
+  border-radius: 24px;
+  padding: 40px;
+}
+
+/*----------Checkbox----------*/
+.control {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 6px;
+  padding-top: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.control_indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 19.25px;
+  width: 19.25px;
+  border: 1px solid #474848;
+  border-radius: 2px;
+}
+
+.control_indicator:after {
+  box-sizing: unset;
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+.control input:checked~.control_indicator:after {
+  display: block;
+}
+
+.control-checkbox .control_indicator:after {
+  left: 7.1px;
+  top: 3.5px;
+  width: 3px;
+  height: 8px;
+  border: solid #000000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/*----------Modo escritorio----------*/
+@media (min-width: 768px) {
+  .crud__subcard--w {
+    width: 439px;
+  }
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .crud__subcard {
+    min-height: 23.433vw;
+    box-shadow: 0 0.41vw 2.343vw 0.762vw rgba(166, 197, 247, 0.6);
+    border-radius: 1.406vw;
+    padding: 2.343vw;
+  }
+
+  /*----------Checkbox----------*/
+  .control {
+    padding-left: 1.465vw;
+    margin-bottom: 0.351vw;
+    padding-top: 0.176vw;
+    font-size: 0.82vw;
+  }
+
+
+  .control_indicator {
+    top: 0.117vw;
+    height: 1.128vw;
+    width: 1.128vw;
+    border: 0.059vw solid #474848;
+    border-radius: 0.117vw;
+  }
+
+  .control-checkbox .control_indicator:after {
+    left: 0.416vw;
+    top: 0.205vw;
+    width: 0.176vw;
+    height: 0.469vw;
+    border-width: 0 0.117vw 0.117vw 0;
+  }
+
+  /*----------Modo escritorio----------*/
+  @media (min-width: 768px) {
+    .crud__subcard--w {
+      width: 25.718vw;
+    }
+  }
+
+}

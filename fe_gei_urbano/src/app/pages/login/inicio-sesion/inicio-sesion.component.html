@@ -1,0 +1,169 @@
+<div *ngIf="loading || loadingModal" class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+<section class="vh-100">
+
+  <form (ngSubmit)="iniciarSesion(inicioSesionForm)" #inicioSesionForm="ngForm" novalidate>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-7 px-0 d-none d-md-block">
+
+          <!-- Montana: -->
+          <img src="assets/images/fondo_montana.webp" alt="Login image" class="w-100 vh-100"
+            style="object-fit: cover; object-position: 50% 50%;">
+
+        </div>
+
+        <div class="col-md-5 d-flex align-items-center pt-5  pt-md-0">
+          <!--  <div style="padding:  0 78px "> -->
+          <!-- <div style="padding:  0 68px "> -->
+          <!-- <div style="padding:  0 4.43vw "> -->
+          <div style="padding:  2.988vw ">
+
+            <div class=" d-lg-flex align-items-center">
+              <img src="assets/images/logo.png" class="" height="130" />
+              <p class="h4 fw-semibold ms-1">Sistema de emisiones GEI<br> del transporte público</p>
+            </div>
+
+            <!--      <div class="">
+              <img src="assets/images/logo.png" class="" height="130" />
+              <p class="h4 fw-semibold ms-1">Sistema de emisiones GEI del <br>transporte público</p>
+            </div> -->
+
+
+            <div class="row gy-3">
+
+              <div class="col-xl-12">
+                <label for="signin-username" class="form-label text-default">Usuario</label>
+
+                <input type="text" class="form-control form-control-lg" id="signin-username"
+                  pattern="^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+$" placeholder="Nombre de usuario" [(ngModel)]="model.sUsuario"
+                  maxlength="20" name="sLoginUsuario" #sLoginUsuario="ngModel"
+                  [ngClass]="{ 'is-invalid': inicioSesionForm.submitted && sLoginUsuario.invalid }" required>
+
+
+                <div *ngIf="inicioSesionForm.submitted && sLoginUsuario.errors?.['required']">
+                  <small class="text-danger">Campo requerido.</small>
+                </div>
+                <div *ngIf="inicioSesionForm.submitted && sLoginUsuario.errors?.['pattern']">
+                  <small class="text-danger">Solo puede ingresar letras o números.</small>
+                </div>
+
+
+              </div>
+
+              <div class="col-xl-12 mb-3"> <label for="signin-password"
+                  class="form-label text-default d-block">Contraseña
+
+                  <a class="float-end text-danger pointer"
+                    (click)="openModalRecuperarContrasena(contentRecuperarContrasena)">Olvidé mi contraseña</a></label>
+
+
+                <div class="group">
+
+                  <input type="password" class="form-control form-control-lg" id="signin-password"
+                    placeholder="Contraseña" [(ngModel)]="model.sContrasena" maxlength="20" name="sContrasena"
+                    #sContrasena="ngModel" #firstPassword
+                    [ngClass]="{ 'is-invalid': inicioSesionForm.submitted && sContrasena.invalid }" required
+                    autocomplete="current-password">
+
+
+                  <div class="text-group" *ngIf="model.sContrasena">
+
+                    <button type="button" class="dashboard_button_icon" (mousedown)="showFirstPassword(firstPassword)"
+                      (mouseup)="hideFirstPassword(firstPassword)" (mouseleave)="hideFirstPassword(firstPassword)"
+                      (touchstart)="showFirstPassword(firstPassword)" (touchend)="hideFirstPassword(firstPassword)"
+                      (touchcancel)="hideFirstPassword(firstPassword)">
+
+                      <img *ngIf="!isFirstPasswordVisible" src="assets/images/icon_eye_login.svg" height="24" />
+
+                      <img *ngIf="isFirstPasswordVisible" src="assets/images/icon_eye_closed_login.svg" height="24" />
+
+                    </button>
+
+
+                  </div>
+
+
+                </div>
+
+
+                <div *ngIf="inicioSesionForm.submitted && sContrasena.errors?.['required']">
+                  <small class="text-danger">Campo requerido.</small>
+                </div>
+
+                <!--     <div class="mt-2">
+                  <div class="form-check"> <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label text-muted fw-normal" for="defaultCheck1"> ¿Recordar contraseña?
+                    </label>
+                  </div>
+                </div> -->
+              </div>
+              <div class="col-xl-12 d-grid mt-2">
+
+                <button type="submit" [disabled]="loading" class="btn btn-lg btn-primary fs-16 fw-500">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                    aria-hidden="true"></span><span>Ingresar</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</section>
+
+
+
+<!-- Modal Confirmar Recuperar Contrasena-->
+<ng-template #contentRecuperarContrasena let-modalRecuperarContrasena>
+  <form (ngSubmit)="recuperarContrasena(recuperarContrasenaForm,contentNotificacion)" #recuperarContrasenaForm="ngForm"
+    novalidate>
+
+    <div class="modal-header" style="border-bottom: none;">
+      <label class="modal-title fw-600">Recuperar mi contraseña</label>
+
+      <button type="button" class="btn-close" aria-label="Close" [disabled]="loadingModal"
+        (click)="modalRecuperarContrasena.dismiss(); model.sUsuarioRep=''"></button>
+    </div>
+
+    <div class="px-5">
+      <small>Si olvido su contraseña de usuario, no se preocupe nosotros lo
+        ayudaremos.<br> Ingrese su nombre de
+        usuario
+        para continuar.</small>
+      <br>
+      <label class="mt-3 form-label ">Usuario</label>
+      <input type=" text" class="form-control dashboard_input" pattern="^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]+$"
+        [(ngModel)]="model.sUsuarioRep" maxlength="20" name="sUsuarioRep" #sUsuarioRep="ngModel"
+        [ngClass]="{ 'is-invalid': recuperarContrasenaForm.submitted && sUsuarioRep.invalid }" required>
+      <div *ngIf="recuperarContrasenaForm.submitted && sUsuarioRep.errors?.['required']">
+        <small class="text-danger">Campo requerido.</small>
+      </div>
+      <div *ngIf="recuperarContrasenaForm.submitted && sUsuarioRep.errors?.['pattern']">
+        <small class="text-danger">Solo puede ingresar letras o números.</small>
+      </div>
+
+      <div class="col-xl-12 d-grid mt-3" style="margin-bottom: 36px;">
+
+        <button [disabled]="loadingModal" class="btn btn-primary"> <span *ngIf="loadingModal"
+            class="spinner-border spinner-border-sm me-2"></span>Continuar</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Confirmar Notificación enviada-->
+<ng-template #contentNotificacion let-modalNotificacion>
+  <div class="modal-header" style="border-bottom: none;">
+    <label class="modal-title fw-600">Notificación enviada</label>
+  </div>
+  <div class="modal-body" style="padding-top: 0;">
+    <small>Se ha enviado un mail al correo registrado para el cambio de contraseña.</small>
+
+    <div class="col-xl-12 d-grid mt-3"> <button type="submit" (click)="redictConfirmacion()"
+        class="btn btn-primary">Entendido</button> </div>
+  </div>
+</ng-template>

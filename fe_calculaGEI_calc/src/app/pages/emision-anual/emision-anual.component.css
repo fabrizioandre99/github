@@ -1,0 +1,152 @@
+.header {
+  margin-top: 70px;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.main {
+  background-color: white;
+  border-radius: 26px;
+  padding: 8px 5px 11px 2px;
+  width: 590px;
+}
+
+.dialog-float {
+  position: fixed;
+  z-index: 20;
+  left: 3rem;
+  top: 1rem;
+}
+
+.arrow-sm {
+  display: none;
+}
+
+.title-sm {
+  font-size: 19px;
+}
+
+.text-regresar {
+  position: absolute;
+  left: 3px;
+  top: 1px;
+}
+
+.text-porcentaje {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.title {
+  color: #0D3154;
+  font-weight: 400;
+}
+
+.chart {
+  height: 260px;
+  width: 500px;
+  display: block;
+}
+
+.detalle {
+  font-weight: 400;
+  font-size: 10px;
+}
+
+.loading {
+  z-index: 50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.carousel {
+  margin: 1.5rem;
+}
+
+.carousel-inner {
+  height: auto;
+}
+
+.loader {
+  animation: rotation 0.9s infinite steps(9);
+}
+
+.degradado {
+  width: 100vw;
+}
+
+.loading-contener {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+@keyframes rotation {
+  100% {
+    transform: rotate(-360deg)
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .chart {
+    height: 40vh;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .main {
+    width: 100%;
+  }
+
+  .chart {
+    width: 100%;
+  }
+
+  .arrow-next,
+  .arrow-prev {
+    display: none
+  }
+
+  .arrow-sm {
+    display: block;
+  }
+
+  .text-white {
+    display: none;
+  }
+
+  h2 {
+    font-size: 2.3rem;
+  }
+
+}
+
+@media (min-width: 991.98px) {
+  .buttons-arrows-emision {
+    display: none !important;
+    position: static !important;
+  }
+
+  .dialog-float-sm {
+    display: none !important;
+  }
+}
+
+
+/* MODO MÓVIL */
+@media (max-width: 991.98px) {
+  h2 {
+    font-size: calc(1.375rem + 1.5vw);
+  }
+
+  .content-emision {
+    flex: 1 0 auto;
+  }
+}

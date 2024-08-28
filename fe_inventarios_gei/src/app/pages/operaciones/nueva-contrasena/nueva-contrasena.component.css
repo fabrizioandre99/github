@@ -1,0 +1,88 @@
+.title {
+  font-weight: 500;
+  line-height: 23px;
+  color: #413F42
+}
+
+.form-control {
+  padding-right: 35px;
+}
+
+.contenedor-padding {
+  padding-top: 26px;
+  padding-bottom: 80px;
+}
+
+.imagen-lapiz-margin {
+  margin-top: 50px;
+}
+
+.card-margin {
+  margin-top: 0
+}
+
+.card {
+  border: 2px solid #A2CE97;
+  border-radius: 8px;
+  width: min(100%, 538px);
+}
+
+.card-body {
+  padding: 30.21px 27.04px 28.29px 29.26px;
+}
+
+.margin-container {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.info {
+  font-size: 0.75rem;
+}
+
+.eyeicon {
+  position: absolute;
+  right: 23px;
+  top: 0.5rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.password {
+  position: relative;
+}
+
+.colors {
+  color: gray;
+}
+
+.colors:active {
+  color: green;
+}
+
+input:disabled+span {
+  display: none;
+}
+
+.text-green {
+  color: #44c446;
+  font-weight: 500;
+}
+
+.text-red {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+@media (max-width:767.98px) {
+  .card {
+    margin-right: 0;
+  }
+
+  .margin-container {
+    padding-top: 25px;
+  }
+}

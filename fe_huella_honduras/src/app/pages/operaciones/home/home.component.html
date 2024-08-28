@@ -1,0 +1,136 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Bienvenido, <label class="dash_subtitle">{{nombreOrganizacion}}</label></h3>
+
+    <div class="row mt-4">
+        <div class="col-md-6 col-sm-12 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column">
+                <img class="card_image" mat-card-image [src]="'assets/images/medal_cuant.png'" draggable="false" />
+                <mat-card-content class="flex-grow-1 d-flex flex-column">
+                    <mat-card-title class="fw-500 fs-20 mt-3 pluto_normal"></mat-card-title>
+                    <mat-card-subtitle class="fs-16 fw-500">{{ oReconocimientos.sCuantificacion ?
+                        oReconocimientos.sCuantificacion : '-' }}</mat-card-subtitle>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-md-6 col-sm-12 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column">
+                <img class="card_image" mat-card-image [src]="'assets/images/medal_redu.png'" draggable="false" />
+                <mat-card-content class="flex-grow-1 d-flex flex-column">
+                    <mat-card-title class="fw-500 fs-20 mt-3 pluto_normal"></mat-card-title>
+                    <mat-card-subtitle class="fs-16 fw-500">{{ oReconocimientos.sReduccion ? oReconocimientos.sReduccion
+                        : '-' }}</mat-card-subtitle>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-md-6 col-sm-12 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column">
+                <img class="card_image" mat-card-image [src]="'assets/images/medal_comp.png'" draggable="false" />
+                <mat-card-content class="flex-grow-1 d-flex flex-column">
+                    <mat-card-title class="fw-500 fs-20 mt-3 pluto_normal"></mat-card-title>
+                    <mat-card-subtitle class="fs-16 fw-500">{{ oReconocimientos.sCompensacion ?
+                        oReconocimientos.sCompensacion : '-' }}</mat-card-subtitle>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-md-6 col-sm-12 col-lg-3 mb-4 d-flex align-items-stretch">
+            <mat-card class="w-100 d-flex flex-column">
+                <img class="card_image" mat-card-image [src]="'assets/images/medal_neu.png'" draggable="false" />
+                <mat-card-content class="flex-grow-1 d-flex flex-column">
+                    <mat-card-title class="fw-500 fs-20 mt-3 pluto_normal"></mat-card-title>
+                    <mat-card-subtitle class="fs-16 fw-500">{{ oReconocimientos.sNeutralizacion ?
+                        oReconocimientos.sNeutralizacion : '-' }}</mat-card-subtitle>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+    <label class="dash_subtitle">Notificaciones</label>
+    <div class="row mt-4">
+
+        <p class="text-center my-5 fs-20" [hidden]="tNotifica.data.length > 0">No existen notificaciones.</p>
+
+
+        <div [hidden]="tNotifica.data.length === 0" class="col-lg-10  mb-4 d-flex align-items-stretch"
+            *ngFor="let item of obsNotifica! | async">
+            <mat-card class="w-100 d-flex flex-column">
+                <mat-card-header>
+                    <mat-card-title class="fs-16 fw-500" *ngIf="item.nEstado==0 || item.nEstado==1">Huella
+                        {{item.oPeriodo?.nAnio}} -
+                        Postulación al nivel de {{item?.sTipoSolicitud}} </mat-card-title>
+                    <mat-card-title class="fs-16 fw-500" *ngIf="item.nEstado==2">Huella {{item.oPeriodo?.nAnio}} -
+                        Nivel de {{item?.sTipoSolicitud}} </mat-card-title>
+                    <div class="ms-auto mt-2 mt-md-0 fs-12">{{item?.sFecha}}</div>
+
+                </mat-card-header>
+                <mat-card-content class="flex-grow-1 d-flex ">
+                    <div class="justify-content-center mt-2 mt-md-0">
+
+                        <mat-icon class="icon-display" svgIcon="ph-duotone:clock-countdown" style="color: #c11aba"
+                            *ngIf="item.nEstado==0"></mat-icon>
+
+                        <mat-icon class="icon-display" svgIcon="ph-duotone:warning" style="color: #E3A220"
+                            *ngIf="item.nEstado==1"></mat-icon>
+
+
+                        <mat-icon style="color: #3A9AEE" *ngIf="item.nEstado==2" class="icon-display"
+                            svgIcon="ph-duotone:medal"></mat-icon>
+
+                    </div>
+
+                    <p *ngIf="item.nEstado==0" class="fs-14 fw-300">
+                        Su organización ha postulado de manera exitosa al nivel de <span
+                            class="fw-400">{{item?.sTipoSolicitud}}.</span><br>
+                        Estado de la solicitud: <span class="fw-400">{{item.sEstado}}</span><br>
+                        <span class="fs-12" *ngIf="item.sCodTipoSolicitud=='REDU'">
+                            <a class="text-primary text-decoration-underline pointer"
+                                (click)="fnDescargaArchivo(item.oPeriodo.oVerificacion.sCodigoDocumento)">
+                                {{item.oPeriodo.oVerificacion?.sNombre}}
+                            </a>/
+                            <a class="text-primary text-decoration-underline pointer "
+                                (click)="fnDescargaArchivo(item.oPeriodo.oVerificacionBase.sCodigoDocumento)">
+                                {{item.oPeriodo.oVerificacionBase?.sNombre}}
+                            </a></span>
+                        <span class="fs-14" *ngIf="item.sCodTipoSolicitud=='COMP' || item.sCodTipoSolicitud=='NEUT'">
+                            <label>Unidades de bonos de carbono comprados: <span class="fw-400">{{item.sMensaje |
+                                    number}} tCO2e.</span></label><br>
+                            <a class="text-primary text-decoration-underline pointer"
+                                (click)="fnDescargaArchivo(item.oDocRequisito?.sCodigoDocumento)">
+                                {{item.oDocRequisito?.sNombre}}
+                            </a>
+                        </span>
+                    </p>
+                    <p *ngIf="item.nEstado==1" class="fs-14 fw-300">
+                        Su solicitud ha sido <span class="fw-400">{{item?.sEstado}}</span> por el siguiente
+                        motivo:<br>
+                        <i>{{item.sMensaje}}</i><br>
+                        <span class="fs-12">Para mayor detalle ir a <a
+                                class="text-primary text-decoration-underline pointer" (click)="redirectMisHc()">
+                                Mis
+                                reconocimientos</a></span>
+
+                    </p>
+                    <p *ngIf="item.nEstado==2" class="fs-14 fw-300">Su organización ha obtenido el nivel de
+                        <span class="fw-400"> {{item?.sTipoSolicitud}} </span> del sistema de reconocimiento de la
+                        Huella
+                        de Carbono - Honduras.<br>
+                        Estado de la solicitud: <span class="fw-400">{{item?.sEstado}}</span> <br>
+                        <span class="fs-12">Para descargar su diploma de reconocimiento ir a <a
+                                class="text-primary text-decoration-underline pointer" (click)="redirectMisHc()">
+                                Mis
+                                reconocimientos</a></span>
+
+                    </p>
+
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+
+
+        <mat-paginator class="mt-1" #paginatorNotificacion [length]="tNotifica.filteredData.length" [pageSize]="5"
+            style="background-color: #f2f6ff;" [pageSizeOptions]="[5, 10, 25, 100]"
+            [hidden]="tNotifica.data.length === 0"></mat-paginator>
+    </div>
+
+</div>

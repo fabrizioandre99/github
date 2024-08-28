@@ -1,0 +1,79 @@
+<div class="container">
+  <br>
+  <div class="vista card-body">
+    <app-menu></app-menu>
+    <div class="card-body box">
+      <div class="d-lg-flex align-items-center">
+        <h2>Bitácora de log del sistema</h2>
+        <app-alert class="ms-auto alto"></app-alert>
+      </div>
+      <div *ngIf="loadingTable" class="d-flex justify-content-center align-items-center" style="height: 300px">
+        <div class=" spinner-border text-success" role="status">
+        </div>
+      </div>
+      <div *ngIf="!loadingTable">
+        <div class="row">
+          <div class="col-sm-5 col-md-4 col-lg-3 col-xl-2">
+            <div class="form-group">
+              <label class="col-form-label bold col-form-label-sm">
+                Seleccionar fecha de log
+              </label>
+              <br>
+              <div class="d-flex align-items-center">
+                <input class="form-control text-md-center" [startDate]="calendar" placeholder="dd/mm/aaaa"
+                  [(ngModel)]="calendar" name="calendarHistorial" ngbDatepicker #dHistorial="ngbDatepicker"
+                  (ngModelChange)="changeCalendar($event)" (click)="dHistorial.toggle()"
+                  [minDate]="{year: 2022, month: 1, day: 1}" [maxDate]="{year: getDate.year, month: 12, day: 31}" />
+                <img src="assets/images/calendario.svg" class="ms-2 pointer" (click)="dHistorial.toggle()"
+                  height="32" />
+              </div>
+              <br>
+            </div>
+          </div>
+          <div *ngIf="lstBitacora.length > 0">
+            <div class="table-responsive align-middle">
+              <table class="table ">
+                <thead>
+                  <tr class="align-middle">
+                    <!-- <th>Id</th> -->
+                    <th>Fecha de registro</th>
+                    <th>Usuario </th>
+                    <th>Objeto de BD</th>
+                    <th>Mensaje</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of lstBitacora">
+                  <tr>
+                    <!-- <td>{{item.nIdLog}}</td> -->
+                    <td>{{item.dFechaRegistro}}</td>
+                    <td>{{item.sUsuario}}</td>
+                    <td>{{item.sObjetoBD}}</td>
+                    <td>{{item.sMensaje}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+              <ngb-pagination class="pagination-md" [collectionSize]="collectionSize" [(page)]="page"
+                [pageSize]="pageSize" [maxSize]="10" [rotate]="true" [boundaryLinks]="true" [ellipses]="false"
+                (pageChange)="pageChanged($event)">
+                <ng-template ngbPaginationFirst><img src="assets/images/double-left.svg" height="7" /></ng-template>
+                <ng-template ngbPaginationLast><img src="assets/images/double-right.svg" height="7" /></ng-template>
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+              <ngb-pagination class="pagination-sm" [collectionSize]="collectionSize" [(page)]="page" [maxSize]="3"
+                [pageSize]="pageSize">
+                <ng-template ngbPaginationPrevious><img src="assets/images/left.svg" height="8" /></ng-template>
+                <ng-template ngbPaginationNext><img src="assets/images/right.svg" height="8" /></ng-template>
+              </ngb-pagination>
+            </div>
+          </div>
+          <div class="text-center mt-5 mb-5" *ngIf="lstBitacora.length == 0">
+            <h5>No hay resultados para la fecha: "{{searchDay}}". </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

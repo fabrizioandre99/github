@@ -1,0 +1,570 @@
+<div class="container pb-4">
+    <h3 class="dash_title">Factores de cálculo</h3>
+
+    <mat-tab-group class="mt-4 dash_tab rounded">
+        <mat-tab label="Factor de conversión">
+            <div class="table-responsive">
+                <table mat-table [dataSource]="tFConversion" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaFConversion"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaFConversion;"></tr>
+                    <!--  Combustible -->
+                    <ng-container matColumnDef="combustible">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo combustible</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sCombustible }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  Valor VCN -->
+                    <ng-container matColumnDef="valor">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">VCN / Valor conversión</th>
+
+                        <td mat-cell *matCellDef="let item;let i = index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="text" inputmode="decimal"
+                                        [formControl]="getControlFConversion(i, 'bdValorConversion')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdValorConversion }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing"
+                                (click)="editar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarFactorConversion(i)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+
+
+        </mat-tab>
+
+        <mat-tab label="Fuentes estacionarias">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline" class="w_actividad_eco">
+                    <mat-label>Seleccionar sector</mat-label>
+                    <mat-select (selectionChange)="fnListarFEstacionaria()" [(ngModel)]="selectedSector">
+                        <mat-option *ngFor="let item of lstSector" [value]="item">
+                            {{ item.sValor }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="table-responsive">
+                <table mat-table [dataSource]="tEstacionaria" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaFEstacionaria"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaFEstacionaria;"></tr>
+                    <!--  Tipo de factor -->
+                    <ng-container matColumnDef="tipofactor">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo de factor</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sCombustible }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  CO2 -->
+                    <ng-container matColumnDef="dioxidocarbono">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono [CO<sub>2</sub>]</th>
+                        <td mat-cell *matCellDef="let item;let i = index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="text" inputmode="decimal"
+                                        [formControl]="getControl(i, 'bdFeCO2')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCO2 }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- CH4 -->
+                    <ng-container matColumnDef="metano">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Metano [CH<sub>4</sub>]</th>
+                        <td mat-cell *matCellDef="let item;let i = index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="text" inputmode="decimal"
+                                        [formControl]="getControl(i, 'bdFeCH4')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCH4 }}</label>
+
+                        </td>
+                    </ng-container>
+                    <!-- N2O -->
+                    <ng-container matColumnDef="oxidonitroso">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Óxido Nitroso [N<sub>2</sub>O]</th>
+                        <td mat-cell *matCellDef="let item; let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="text" inputmode="decimal"
+                                        [formControl]="getControl(i, 'bdFeN2O')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeN2O }}</label>
+
+                        </td>
+                    </ng-container>
+                    <!-- Unidad factor -->
+                    <ng-container matColumnDef="unidad">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Unidad</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.sUnidad }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Acciones -->
+                    <!--  <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing"
+                                (click)="editar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarFEstacionaria(i)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container> -->
+                </table>
+            </div>
+        </mat-tab>
+        <mat-tab label="Fuentes móviles">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [(ngModel)]="filtroFuentes" (keyup)="applyFilterMovil($event)"
+                        placeholder="Ingresar valor a buscar" #input>
+                </mat-form-field>
+            </div>
+            <div class="table-responsive" [hidden]="tMovil.filteredData.length === 0">
+
+                <table mat-table [dataSource]="tMovil" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaFEMovil"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaFEMovil;"></tr>
+                    <!--  Tipo de transporte -->
+                    <ng-container matColumnDef="tipotransporte">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo de transporte</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sDescripcion }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  Tipo de factor -->
+                    <ng-container matColumnDef="tipofactor">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo de factor</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sCombustible }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  CO2 -->
+                    <ng-container matColumnDef="dioxidocarbono">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono [CO<sub>2</sub>]</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <label>{{ item.bdFeCO2 }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- CH4 -->
+                    <ng-container matColumnDef="metano">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Metano [CH<sub>4</sub>]</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.bdFeCH4 }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <!-- N2O -->
+                    <ng-container matColumnDef="oxidonitroso">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Óxido Nitroso [N<sub>2</sub>O]</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.bdFeN2O }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <!-- Unidad factor -->
+                    <ng-container matColumnDef="unidad">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Unidad</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.sUnidad }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Acciones -->
+                    <!-- <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container> -->
+                </table>
+
+            </div>
+
+            <p class="text-center my-5 fs-20" *ngIf="tMovil.data.length === 0">No existen resultados.</p>
+
+            <p class="text-center my-5 fs-20" *ngIf="tMovil.data.length > 0 && tMovil.filteredData.length === 0">
+                No existen resultados para "<span class="truncated-text">{{ filtroFuentes }}</span>".
+            </p>
+
+            <mat-paginator #paginatorFMovil [hidden]="tMovil.filteredData.length  === 0" [length]=" tMovil.data.length"
+                class=" border-top" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+
+        </mat-tab>
+        <mat-tab label="Energía eléctrica">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline" class="w_actividad_eco">
+                    <mat-label>Seleccionar fuente</mat-label>
+                    <mat-select (selectionChange)="fnListarFEnergia()" [(ngModel)]="selectedFuenteEnergia">
+                        <mat-option *ngFor="let item of lstFuenteEnergia" [value]="item">
+                            {{ item.sNombre}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="table-responsive">
+
+                <table mat-table [dataSource]="tEnergia" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaEnergia"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaEnergia;"></tr>
+                    <!--  Anio -->
+                    <ng-container matColumnDef="anio">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Año</th>
+                        <td mat-cell *matCellDef="let item" class="text-center">
+                            <label>{{ item.nAnio }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  CO2 -->
+                    <ng-container matColumnDef="dioxidocarbono">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono [CO<sub>2</sub>/MWh]
+                        </th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeCO2">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlEnergia(i, 'bdFeCO2')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCO2 }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- CH4 -->
+                    <ng-container matColumnDef="metano">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Metano [CH<sub>4</sub>/MWh]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeCH4">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlEnergia(i, 'bdFeCH4')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCH4 }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- N2O -->
+                    <ng-container matColumnDef="oxidonitroso">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Óxido Nitroso [N<sub>2</sub>O/MWh]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeN2O">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlEnergia(i, 'bdFeN2O')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeN2O }}</label>
+                        </td>
+                    </ng-container>
+
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing"
+                                (click)="editar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarFEnergia(i)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+
+            </div>
+            <mat-paginator #paginatorFEnergia [length]="tEnergia.data.length" class=" border-top" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]" [hidden]="tEnergia.data.length === 0"></mat-paginator>
+        </mat-tab>
+        <mat-tab label="Transporte">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline" class="w_actividad_eco">
+                    <mat-label>Seleccionar tipo de transporte</mat-label>
+                    <mat-select (selectionChange)="fnListarFTransporte()" [(ngModel)]="selectedTipoTransporte">
+                        <mat-option *ngFor="let item of lstTransporte" [value]="item">
+                            {{ item.sNombre}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+            <div class="table-responsive">
+                <table mat-table [dataSource]="tTransporte" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaFTransporte"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaFTransporte;"></tr>
+                    <!--  Tipo de factor -->
+                    <ng-container matColumnDef="tipofactor">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo de factor</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sDescripcion }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  CO2 -->
+                    <ng-container matColumnDef="dioxidocarbono">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono [CO<sub>2</sub>]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlTransporte(i, 'bdFeCO2')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCO2 }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- CH4 -->
+                    <ng-container matColumnDef="metano">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Metano [CH<sub>4</sub>]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlTransporte(i, 'bdFeCH4')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCH4 }}</label>
+
+                        </td>
+                    </ng-container>
+                    <!-- N2O -->
+                    <ng-container matColumnDef="oxidonitroso">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Óxido Nitroso [N<sub>2</sub>O]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlTransporte(i, 'bdFeN2O')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeN2O }}</label>
+
+                        </td>
+                    </ng-container>
+                    <!-- Unidad factor -->
+                    <ng-container matColumnDef="unidad">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Unidad</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.sUnidad }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing"
+                                (click)="editar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarFTransporte(i)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Insumos">
+            <div class="d-flex flex-column flex-md-row form_sm mt-3">
+                <mat-form-field appearance="outline" class="w_actividad_eco">
+                    <mat-label>Seleccionar fuente</mat-label>
+                    <mat-select (selectionChange)="fnListarFInsumos()" [(ngModel)]="selectedFuente">
+                        <mat-option *ngFor="let item of lstFuenteGEI" [value]="item">
+                            {{ item.sNombre}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+            <div class="table-responsive">
+
+                <table mat-table [dataSource]="tInsumos" matSort class="mat-elevation-z8 shadow-sm border rounded">
+
+                    <tr mat-header-row *matHeaderRowDef="hTablaInsumos"></tr>
+                    <tr mat-row *matRowDef="let row; columns: hTablaInsumos;"></tr>
+                    <!--  Tipo de factor -->
+                    <ng-container matColumnDef="tipofactor">
+                        <th mat-header-cell *matHeaderCellDef class="text-left">Tipo de factor</th>
+                        <td mat-cell *matCellDef="let item" class="text-left">
+                            <label>{{ item.sDescripcion }}</label>
+                        </td>
+                    </ng-container>
+                    <!--  CO2 -->
+                    <ng-container matColumnDef="dioxidocarbono">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono [CO<sub>2</sub>]</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeCO2">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlInsumos(i, 'bdFeCO2')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCO2 }}</label>
+                        </td>
+
+                    </ng-container>
+                    <!--  CO2e -->
+                    <ng-container matColumnDef="dioxidocarbonoeq">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Dióxido de carbono<br> equivalente
+                            [CO<sub>2</sub>eq]</th>
+
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeCO2e">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlInsumos(i, 'bdFeCO2e')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeCO2e }}</label>
+                        </td>
+                    </ng-container>
+                    <!-- NF3 -->
+                    <ng-container matColumnDef="trifloruronitrogeno">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Trifloruro de nitrogeno [NF<sub>3</sub>]
+                        </th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="form_xs text-end">
+                            <ng-container *ngIf="item.editing && item.bdFeNF3">
+                                <mat-form-field appearance="outline">
+                                    <input matInput placeholder="valor" type="number" class="text-end"
+                                        [formControl]="getControlInsumos(i, 'bdFeNF3')">
+                                </mat-form-field>
+                            </ng-container>
+                            <label *ngIf="!item.editing">{{ item.bdFeNF3 }}</label>
+                        </td>
+                    </ng-container>
+
+                    <!-- Unidad factor -->
+                    <ng-container matColumnDef="unidad">
+                        <th mat-header-cell *matHeaderCellDef class="text-end">Unidad</th>
+                        <td mat-cell *matCellDef="let item" class="text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <label>{{ item.sUnidad }}</label>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Acciones -->
+                    <ng-container matColumnDef="acciones">
+                        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+                        <td mat-cell *matCellDef="let item;let i=index" class="text-center">
+                            <button mat-icon-button style="color: #60929e" matTooltip="Editar" *ngIf="!item.editing"
+                                (click)="editar(item)">
+                                <mat-icon svgIcon="ph-duotone:pencil-simple"></mat-icon>
+                            </button>
+                            <div *ngIf="item.editing">
+                                <mat-icon *ngIf="item.loading" style="height: inherit;width: inherit;">
+                                    <mat-spinner color="primary" diameter="16">
+                                    </mat-spinner>
+                                </mat-icon>
+                                <button *ngIf="!item.loading" mat-icon-button style="color: #47D770"
+                                    matTooltip="Guardar" (click)="fnActualizarFInsumos(i)">
+                                    <mat-icon svgIcon="ph-duotone:check-circle"></mat-icon>
+                                </button>
+                                <button *ngIf="!item.loading && !item.isNew" mat-icon-button style="color:#EE3725"
+                                    matTooltip="Cancelar" (click)="cancelar(item)">
+                                    <mat-icon svgIcon="ph-duotone:x-circle"></mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                </table>
+            </div>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

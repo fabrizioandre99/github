@@ -1,0 +1,39 @@
+<div class="hamburger_content">
+  <div class="hamburger_main"><input [(ngModel)]="openMenu" (click)="firstCollapse()" type="checkbox" id="menu_btn"
+      class="hamburger_main__checkbox d-none"><label for="menu_btn" class="hamburger_main__label"><span
+        class="hamburger_main__span"></span></label></div>
+</div>
+
+<nav id="sidebar" class="sidebar close">
+  <div class="nav-menu">
+    <div class="menu-bar">
+      <div class="nav-header mb-2">
+        <img src="assets/images/icon-threedots.svg" class="img-threedots pointer" (click)="firstCollapse()" />
+      </div>
+      <div *ngFor="let first of lstMenu; index as i">
+        <li class="nav-links">
+          <a class="navbar-circle" (click)="secondCollapse(i)"
+            [ngClass]="{ 'circle-blue': rutasSubindice[i]?.includes(router.url)|| activeCircles}">
+            <img class="image-inactive" src="{{first.sIcono}}.svg" />
+            <img class="image-active" src="{{first.sIcono}}-active.svg" />
+            <div class="text nav-text">
+              {{first.sNombre}}
+              <!--   <a>{{first.sNombre}}</a> -->
+              <img *ngIf="first.liSubMenu.length>0" class="img-collapse" src="assets/images/icon-collapse.svg"
+                [ngClass]="isCollapsed[i] && first.liSubMenu?.length >0 ? 'collapsed-active' : 'collapsed-inactive'" />
+            </div>
+          </a>
+        </li>
+        <div class="first collapse show" [ngbCollapse]="!isCollapsed[i]">
+          <ul>
+            <li class="nav-li" *ngFor="let second of first.liSubMenu; index as i"><a (click)="closeSidebar()"
+                routerLink="{{second.sAccion}}">
+                {{second.sNombre}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="nav-backdrop" [hidden]="!showBackdrop" (click)="backdropCollapse()"></div>

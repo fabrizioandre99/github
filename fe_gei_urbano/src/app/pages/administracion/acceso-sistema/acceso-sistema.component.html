@@ -1,0 +1,73 @@
+<div *ngIf="loadingGuardar || fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Accesos por rol de usuario</label>
+  <div class="row mt-3">
+    <div class="col-md-5 col-lg-3">
+      <ng-select [(ngModel)]="model.sCodRol" placeholder="Seleccionar" (change)="fnListarMenu()"
+        class="dashboard_select fs-14" [items]="lstRol" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-6 dashboard_subcard--w ">
+      <div class="dashboard_subcard mt-2 mb-3 justify-content-center align-items-center"
+        [ngClass]="{'d-flex':lstMenu.length <= 0}">
+        <div *ngIf="lstMenu.length>0">
+          <div *ngFor="let item of lstMenu; let i=index">
+            <div class="control-group">
+              <label class="control control-checkbox">
+                {{item.sNombre}}
+                <input type="checkbox" [(ngModel)]="item.boCodEstado" [checked]="item.boCodEstado"
+                  (change)="changeFather($event,lstMenu,i)" />
+                <div class="control_indicator"></div>
+              </label>
+            </div>
+            <div *ngFor="let secondItem of item.liSubMenu; let i=index">
+              <div class="control-group ms-4">
+                <label class="control control-checkbox">
+                  {{secondItem.sNombre}}
+                  <input type="checkbox" [(ngModel)]="secondItem.boCodEstado" [checked]="secondItem.boCodEstado"
+                    (change)="changeChildren($event,item,item.liSubMenu)" />
+                  <div class="control_indicator"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="fShowSkeleton && lstMenu.length <= 0">
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status">
+            </div>
+          </div>
+        </ng-container>
+
+
+        <ng-container *ngIf="!fShowSkeleton && lstMenu.length <= 0">
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="text-center">
+              <div class="d-flex flex-column align-items-center">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+                  style="background-color: #FEE9E9 !important;">
+                  <img src="assets/images/icon_alert.svg" height="25" />
+                </div>
+                <label class="fs-14 fw-500 mt-2">No hay resultados.</label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="float-end mb-5">
+        <button [disabled]="loadingGuardar || lstMenu.length <= 0" (click)="fnActualizarEstado()"
+          class="btn btn-primary">
+          <span [hidden]="!loadingGuardar" class="spinner-border spinner-border-sm me-1"></span>
+          Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

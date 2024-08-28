@@ -1,0 +1,72 @@
+.image-white {
+  filter: brightness(1000%);
+}
+
+.icon_calendar_table {
+  height: 25px;
+}
+
+::ng-deep .ngb-dp-arrow.right .ngb-dp-navigation-chevron {
+  margin-left: 70px !important;
+}
+
+::ng-deep .ngb-dp-navigation-chevron {
+  margin-left: -70px !important;
+}
+
+@media (min-width: 992px) {
+  .custom-button {
+    width: 26%;
+  }
+
+  .w-subCat {
+    width: 46%;
+  }
+
+  .w-codEstado {
+    width: 16%;
+  }
+
+  .marginToogle {
+    margin-top: 39px !important;
+  }
+
+}
+
+@media (min-width: 991px) {
+  .crud__subtitle {
+    width: 455px;
+  }
+}
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .icon_calendar_table {
+    height: 1.465vw;
+  }
+
+  ::ng-deep .ngb-dp-arrow.right .ngb-dp-navigation-chevron {
+    margin-left: 4.101vw !important;
+  }
+
+  ::ng-deep .ngb-dp-navigation-chevron {
+    margin-left: -4.101vw !important;
+  }
+
+
+  @media (min-width: 992px) {
+    .marginToogle {
+      margin-top: 2.285vw !important;
+    }
+
+  }
+
+  @media (min-width: 991px) {
+    .crud__subtitle {
+      width: 26.655vw;
+    }
+  }
+
+}

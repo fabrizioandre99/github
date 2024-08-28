@@ -1,0 +1,25 @@
+.header {
+  margin-top: 100px;
+}
+
+.borde {
+  background-color: white;
+  height: 100%;
+  margin: 0 auto;
+  width: 0.5px;
+}
+
+.card-body-t {
+  color: #0D3154;
+}
+
+.card-body {
+  padding: 40px 40px 74px;
+}
+
+@media (max-width: 991.98px) {
+  .arrow-sm {
+    display: unset;
+  }
+
+}

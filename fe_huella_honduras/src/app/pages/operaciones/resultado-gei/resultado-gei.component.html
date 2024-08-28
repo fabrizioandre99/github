@@ -1,0 +1,263 @@
+<div class="container pb-5">
+    <h3 class="dash_title">Resultados de Huella de Carbono</h3>
+
+    <div class="d-flex flex-column flex-md-row form_sm mt-4">
+        <mat-form-field class="w_anio" appearance="outline">
+            <mat-label>Año</mat-label>
+            <input [(ngModel)]="getPeriodo.nAnio" matInput placeholder="Año" maxlength="4" disabled>
+        </mat-form-field>
+
+        <mat-form-field class="ms-md-2" appearance="outline">
+            <mat-label>Seleccionar sede</mat-label>
+            <mat-select [(value)]="selectedSede" (selectionChange)="onSedeChange($event.value)">
+                <mat-option *ngFor="let sede of lstSede" [value]="sede.nIdSede">{{ sede.sNombre }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <h4 class="mt-2">Resultados de Emisiones de GEI</h4>
+
+    <ng-container *ngIf="!noHayDatos(totalEmisiones)">
+        <div class="table-container mt-3">
+            <table mat-table [dataSource]="filteredDataSource" class="shadow-sm border rounded">
+
+                <tr mat-header-row *matHeaderRowDef="hEmisiones"></tr>
+                <tr mat-row *matRowDef="let row; columns: hEmisiones;"></tr>
+                <tr mat-footer-row *matFooterRowDef="hEmisiones"></tr>
+
+                <!-- Categoría -->
+                <ng-container matColumnDef="sCategoria">
+                    <th mat-header-cell *matHeaderCellDef
+                        class="static-column first-column-border fuente-emision-column">
+                        Fuente de GEI
+                    </th>
+                    <td mat-cell *matCellDef="let element"
+                        class="static-column first-column-border fuente-emision-column" [ngClass]="{
+              'parent-row': element.isParent,
+              'child-row': element.isChild,
+              'grandchild-row': element.isGrandchild
+            }">
+                        <ng-container *ngIf="element.isParent">
+                            <button mat-icon-button (click)="toggleCollapse(element)"
+                                [style.visibility]="tieneHijos(element) ? 'visible' : 'hidden'">
+                                <mat-icon
+                                    [svgIcon]="element.isCollapsed ? 'ph-regular:plus' : 'ph-regular:minus'"></mat-icon>
+                            </button>
+                            {{ element.sCategoria }}
+                        </ng-container>
+                        <ng-container *ngIf="element.isChild">
+                            <button mat-icon-button (click)="toggleCollapse(element)"
+                                [style.visibility]="tieneSubhijos(element) ? 'visible' : 'hidden'">
+                                <mat-icon
+                                    [svgIcon]="element.isCollapsed ? 'ph-regular:plus' : 'ph-regular:minus'"></mat-icon>
+                            </button>
+                            {{ element.sSubcategoria }}
+                        </ng-container>
+                        <ng-container *ngIf="element.isGrandchild">
+                            <div class="d-flex">
+                                <span class="empty-icon"
+                                    [style.visibility]="tieneSubhijos(element) ? 'visible' : 'hidden'"></span>
+                                {{ element.sNombre }}
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="element.isTotal">Total</ng-container>
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef
+                        class="text-center static-column first-column-border fuente-emision-column">Total</td>
+                </ng-container>
+
+                <!-- Total emisiones -->
+                <ng-container matColumnDef="bdTotalCo2eq">
+                    <th mat-header-cell *matHeaderCellDef class="text-center static-column">
+                        Total emisiones [tCO<sub>2</sub>e]
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="text-center static-column"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalCo2eq === null}">
+                        {{ element.oEmisionGei?.bdTotalCo2eq ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center static-column">
+                        {{ totalEmisiones?.bdTotalCo2eq ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Dióxido de carbono -->
+                <ng-container matColumnDef="bdTotalCo2">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Dióxido de carbono [tCO<sub>2</sub>]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalCo2 === null}">
+                        {{ element.oEmisionGei?.bdTotalCo2 ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalCo2 ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Metano -->
+                <ng-container matColumnDef="bdTotalCh4">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Metano [tCH<sub>4</sub>]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalCh4 === null}">
+                        {{ element.oEmisionGei?.bdTotalCh4 ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalCh4 ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Óxido nitroso -->
+                <ng-container matColumnDef="bdTotalN2o">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Óxido nitroso [tN<sub>2</sub>O]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalN2o === null}">
+                        {{ element.oEmisionGei?.bdTotalN2o ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalN2o ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Hidrofluorocarbono -->
+                <ng-container matColumnDef="bdTotalHfc">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Hidrofluoro-<br>carbono [tHFC]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalHfc === null}">
+                        {{ element.oEmisionGei?.bdTotalHfc ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalHfc ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Hidroclorofluorocarbono -->
+                <ng-container matColumnDef="bdTotalHcfc">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Hidroclorofluorocarbono [tHCFC]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalHcfc === null}">
+                        {{ element.oEmisionGei?.bdTotalHcfc ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalHcfc ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Perfluorocarbono -->
+                <ng-container matColumnDef="bdTotalPfc">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Perfluoro-carbono [tPFC]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalPfc === null}">
+                        {{ element.oEmisionGei?.bdTotalPfc ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalPfc ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Hexafluoruro de azufre -->
+                <ng-container matColumnDef="bdTotalSf6">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Hexafluoruro de azufre [tSF<sub>6</sub>]
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalsf6 === null}">
+                        {{ element.oEmisionGei?.bdTotalsf6 ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalsf6 ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Trifluoruro de nitrógeno -->
+                <ng-container matColumnDef="bdTotalNf3">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Trifluoruro de nitrógeno [tNF<sub>3</sub>]
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.oEmisionGei?.bdTotalNf3 === null}">
+                        {{ element.oEmisionGei?.bdTotalNf3 ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totalEmisiones?.bdTotalNf3 ?? '' }}
+                    </td>
+                </ng-container>
+            </table>
+        </div>
+    </ng-container>
+
+    <p class="text-center my-5 fs-20" *ngIf="noHayDatos(totalEmisiones)">
+        No existen resultados.
+    </p>
+
+    <h4 class="mt-4" *ngIf="!noHayDatos(totals)">Resultado de emisiones informativas</h4>
+
+    <ng-container *ngIf="!noHayDatos(totals)">
+        <div class="table-responsive col-md-9 mt-3">
+            <table mat-table [dataSource]="lstInformativa?.liEmisionGei" class="shadow-sm border rounded">
+
+                <tr mat-header-row *matHeaderRowDef="hInformativas"></tr>
+                <tr mat-row *matRowDef="let row; columns: hInformativas;"></tr>
+                <tr mat-footer-row *matFooterRowDef="hInformativas"></tr>
+
+                <!-- Fuente de emisión -->
+                <ng-container matColumnDef="sTipoCombustible">
+                    <th mat-header-cell *matHeaderCellDef class="fuente-emision-column">Fuente de emisión</th>
+                    <td mat-cell *matCellDef="let element" class="first-column-border fuente-emision-column">
+                        {{ element.sTipoCombustible }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center first-column-border fuente-emision-column">
+                        Total
+                    </td>
+                </ng-container>
+
+                <!-- Dióxido de carbono -->
+                <ng-container matColumnDef="bdTotalCo2">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Dióxido de carbono <br> [tCO<sub>2</sub>]
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.bdTotalCo2 === null}">
+                        {{ element.bdTotalCo2 ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totals?.bdTotalCo2 ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Hidroclorofluoro-carbono -->
+                <ng-container matColumnDef="bdTotalHcfc">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Hidroclorofluoro-<br>carbono [tHCFC]</th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.bdTotalHcfc === null}">
+                        {{ element.bdTotalHcfc ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totals?.bdTotalHcfc ?? '' }}
+                    </td>
+                </ng-container>
+
+                <!-- Total emisiones -->
+                <ng-container matColumnDef="bdTotalCo2eq">
+                    <th mat-header-cell *matHeaderCellDef class="text-center">Total emisiones<br> [tCO<sub>2</sub>e]
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="text-center"
+                        [ngClass]="{'empty-cell': element.bdTotalCo2eq === null}">
+                        {{ element.bdTotalCo2eq ?? '' }}
+                    </td>
+                    <td mat-footer-cell *matFooterCellDef class="text-center">
+                        {{ totals?.bdTotalCo2eq ?? '' }}
+                    </td>
+                </ng-container>
+            </table>
+        </div>
+    </ng-container>
+
+
+    <div class="mt-4">
+        <button mat-stroked-button color="primary" type="button" class="button_add" (click)="redictLimitesInforme()"
+            *ngIf="!(getPeriodo.sRutaAnterior =='solicitudes-reconocimiento')">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Límites de informe
+        </button>
+        <button *ngIf="getPeriodo.sRutaAnterior =='solicitudes-reconocimiento'" mat-stroked-button color="primary"
+            type="button" class="button_add " (click)="redirectReconocimiento()">
+            <mat-icon svgIcon="ph-regular:arrow-left"></mat-icon>
+            Solicitudes de reconocimiento
+        </button>
+    </div>
+</div>

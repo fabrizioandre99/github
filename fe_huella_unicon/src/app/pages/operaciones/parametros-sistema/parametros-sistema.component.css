@@ -1,0 +1,45 @@
+.table__header th:nth-child(2) {
+  width: 500px;
+}
+
+.table__body {
+  height: 40px;
+}
+
+.modal-body--nuevParametro {
+  padding: 7px 75px;
+}
+
+.modal-footer {
+  padding-top: 0;
+  border: 0;
+}
+
+.fixed-width {
+  width: 307px;
+  word-break: break-word;
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .table__header th:nth-child(2) {
+    width: 29.291vw;
+  }
+
+  .table__body {
+    height: 2.343vw;
+  }
+
+  .modal-body--nuevParametro {
+    padding: 0.41vw 4.394vw;
+  }
+
+
+  .fixed-width {
+    width: 17.985vw;
+  }
+
+}

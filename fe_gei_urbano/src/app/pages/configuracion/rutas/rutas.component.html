@@ -1,0 +1,553 @@
+<div *ngIf="loadRegOEdit || loadEliminar || fShowSkeleton || fShowSkeletonVehiculo" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Listado de rutas</label>
+  <div class="row mt-3">
+    <div class="dashboard_input_search w_buscar">
+      <img class="" src="assets/images/icon_search.svg" />
+      <input class="form-control dashboard_input fs-14" [(ngModel)]="model.sNombreRuta" placeholder="Buscar ruta">
+    </div>
+    <div class="ms-auto col-lg-5 text-end mt-2 mt-md-0">
+      <button class="btn btn-primary fs-14" (click)="openRegistrarRuta(contentRegistrarRuta)">
+        <div class="d-flex align-items-center">
+          <img src=" assets/images/icon_plus.svg" height="20" />
+          <span class="ms-2">Nueva ruta</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="table-responsive dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th scope="col" class="text-center">Item</th>
+            <th scope="col" class="text-center">Nombre de<br>ruta</th>
+            <th scope="col" class="text-center">Empresa</th>
+            <th scope="col" class="text-center">Categoría de<br>flota</th>
+            <th scope="col" class="text-end">Promedio de<br>viajes mensuales</th>
+            <th scope="col" class="text-end">Recorrido total<br>[ km ]</th>
+            <th scope="col" class="text-center">Estado</th>
+            <th scope="col" class="text-center">Flota</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeletonA">
+            <tr class="table__body">
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+              <td><p class="placeholder-glow rounded m-0"><span class="placeholder col-12 placeholder-sm"></span></p></td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <tbody *ngFor="let item of lstRutas| Busqueda:model:'sNombreRuta';  index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSizeA >= pageA || i / pageSizeA < pageA - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (pageA * pageSizeA) ? '0 solid transparent' : null
+            }">
+              <td class=" text-center">{{i+1}}</td>
+              <td class="text-center">{{item.sNombre}}</td>
+              <td class="text-center">{{item.sEmpresa}}</td>
+              <td class="text-center">{{item.sCategoria}}</td>
+              <td class="text-end">{{item.bdPromViajesMes}}</td>
+              <td class="text-end">{{item.bdRecorridoTotal}} </td>
+              <td class="text-center">
+                <div class="form-check form-switch form-switch-md d-flex justify-content-center">
+                  <input (click)="actualizarRuta(item)" class="form-check-input" type="checkbox"
+                    [(ngModel)]="item.boCodEstado">
+                </div>
+              </td>
+
+              <td class="text-center">
+                <button type="button" (click)="fnListarVehiculos(item)" class="dashboard_button_icon">
+                  <span *ngIf="item.nIdRuta===idRutaSelected"><img height="30"
+                      src="assets/images/icon_bus_active.svg" /></span>
+                  <span *ngIf="item.nIdRuta!=idRutaSelected"><img height="30" src="assets/images/icon_bus.svg" /></span>
+                </button>
+              </td>
+              <td class="text-center">
+                <button type="button" (click)="openEditarRuta(contentRegistrarRuta,item)" class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_edit.svg" />
+                </button>
+
+                <button type="button" (click)="openEliminar(contentEliminar,item)" class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_delete.svg" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton">
+        <ng-container *ngIf="(lstRutas | Busqueda: model:'sNombreRuta')?.length <= 0">
+          <div class="text-center mt-5 mb-5 dashboard_noresultados">
+            <label class="fw-500">No existen resultados{{lstRutas.length > 0 ? ' para "' +
+              model.sNombreRuta + '"' : ''}}.</label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="!fShowSkeleton && (lstRutas| Busqueda: model:'sNombreRuta')?.length > 0"
+    class="d-flex justify-content-center mt-3">
+    <ngb-pagination class="pagination-md" [collectionSize]="(lstRutas| Busqueda: model:'sNombreRuta')?.length"
+      [(page)]="pageA" [maxSize]="5" [pageSize]="pageSizeA">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="(lstRutas| Busqueda: model:'sNombreRuta')?.length"
+      [(page)]="pageA" [maxSize]="3" [pageSize]="pageSizeA">
+    </ngb-pagination>
+  </div>
+
+  <div *ngIf="fShowVehiculo">
+    <!-- <label class="dashboard_title mt-3">Listado de vehiculos: {{model.sNombre}}</label> -->
+    <div class="row mt-3">
+      <div class="dashboard_input_search w_buscar">
+        <img class="" src="assets/images/icon_search.svg" />
+        <input class="form-control dashboard_input fs-14" [(ngModel)]="moVehiculo.sNombrePlaca"
+          placeholder="Buscar placa">
+      </div>
+      <div class="ms-auto col-lg-5 text-end mt-2 mt-md-0">
+        <button class="btn btn-light fs-14" *ngIf="!(lstVehiculos.length>0)" 
+          (click)="openCargaMasiva(contentCargaMasiva)">
+          <div class="d-flex align-items-center">
+            <img src="assets/images/upload_file.svg" height="20" />
+            <span class="ms-2">Carga masiva</span>
+          </div>
+        </button>
+        <button class="btn btn-primary fs-14 ms-2" (click)="openRegistrarVehiculo(contentRegistrarVehiculo)">
+          <div class="d-flex align-items-center">
+            <img src="assets/images/icon_plus.svg" height="20" />
+            <span class="ms-2">Nuevo vehículo</span>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="mt-4">
+      <div class="table-responsive dashboard_table_card">
+        <table class="table">
+          <thead class="table__header">
+            <tr>
+              <th scope="col" class="text-center">Item</th>
+              <th scope="col" class="text-start">Placa</th>
+              <th scope="col" class="text-center">Año</th>
+              <th scope="col" class="text-start">Combustible</th>
+              <th scope="col" class="text-start">Tipo de vehículo</th>
+              <th scope="col" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <ng-container *ngIf="fShowSkeletonVehiculo">
+            <tbody *ngFor="let item of lstSkeletonB">
+              <tr class="table__body">
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+                <td>
+                  <p class="placeholder-glow rounded m-0">
+                    <span class="placeholder col-12 placeholder-sm"></span>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+          <ng-container *ngIf="!fShowSkeletonVehiculo">
+            <tbody *ngFor="let item of lstVehiculos| Busqueda:moVehiculo:'sNombrePlaca';  index as i">
+              <tr class="table__body" [ngStyle]="{
+                  'display': i / pageSizeB >= pageB || i / pageSizeB < pageB - 1 ? 'none' : 'table-row',
+                  'border-bottom': (i + 1) === (pageB * pageSizeB) ? '0 solid transparent' : null
+                }">
+                <td class=" text-center">{{i+1}}</td>
+                <td class="text-start">{{item.sPlaca}}</td>
+                <td class="text-center"> {{item.nAnio}}</td>
+                <td class="text-start"> {{item.sCombustible}}</td>
+                <td class="text-start"> {{item.sTipoVehiculo}}</td>
+                <td class="text-center">
+                  <button type="button" (click)="openEditarVehiculo(contentRegistrarVehiculo,item)"
+                    class="dashboard_button_icon">
+                    <img height="30" src="assets/images/icon_edit.svg" />
+                  </button>
+                  <button type="button" (click)="openEliminarVehiculo(contentEliminarVehiculo,item)"
+                    class="dashboard_button_icon">
+                    <img height="30" src="assets/images/icon_delete.svg" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="!fShowSkeletonVehiculo">
+          <ng-container *ngIf="(lstVehiculos | Busqueda: moVehiculo:'sNombrePlaca')?.length <= 0">
+            <div class="text-center mt-5 mb-5 dashboard_noresultados">
+              <label class="fw-500">No existen resultados{{lstVehiculos.length > 0 ? ' para "' +
+                moVehiculo.sNombrePlaca + '"' : ''}}.</label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+
+    <div *ngIf="!fShowSkeletonVehiculo && (lstRutas| Busqueda: model:'sNombreRuta')?.length > 0"
+      class="d-flex justify-content-center mt-3">
+      <ngb-pagination class="pagination-md"
+        [collectionSize]="(lstVehiculos| Busqueda: moVehiculo:'sNombrePlaca')?.length" [(page)]="pageB" [maxSize]="10"
+        [pageSize]="pageSizeB">
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm"
+        [collectionSize]="(lstVehiculos| Busqueda: moVehiculo:'sNombrePlaca')?.length" [(page)]="pageB" [maxSize]="5"
+        [pageSize]="pageSizeB">
+      </ngb-pagination>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal Confirmar Registrar Ruta-->
+<ng-template #contentRegistrarRuta let-modalRegistrarNivel>
+  <form (ngSubmit)="fnRegistrarRuta(registrarRutaForm)" #registrarRutaForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label *ngIf="!isEditarRuta" class="modal__title fw-600">Registrar ruta</label>
+        <label *ngIf="isEditarRuta" class="modal__title fw-600">Editar ruta</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+          (click)="modalRegistrarNivel.dismiss();"></button>
+      </div>
+      
+      <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarRuta }">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="nombres_ruta">Nombre de la ruta</label>
+            <input id="nombres_ruta" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sNombre" name="nombres_ruta" required #sNombres="ngModel"
+              [ngClass]="{ 'is-invalid': registrarRutaForm.submitted && sNombres.errors?.['required']
+                || registrarRutaForm.submitted && sNombres.errors?.['pattern']}" maxlength="150"
+              pattern="^(?=.*[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ])[\sA-Za-z0-9ñÑáéíóúÁÉÍÓÚ]+$"
+              (keypress)="validarAlTipear(patronRuta,$event)">
+            <div
+              *ngIf="registrarRutaForm.submitted && sNombres.errors?.['required']||registrarRutaForm.submitted && !cumpleconPatron(patronVacio,model.sNombre)">
+              <small class="text-danger">Ingrese el nombre.</small>
+            </div>
+            <div
+              *ngIf="registrarRutaForm.submitted  && !cumpleconPatron(patronRuta,model.sNombre) && registrarRutaForm.submitted && !sNombres.errors?.['required']">
+              <small class="text-danger">No ingrese caracteres especiales.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="recorrido">Recorrido total (Ida + Vuelta)</label>
+            <div class="input-group">
+              <input id="recorrido" type="text" class="form-control form-control-sm dashboard_input"
+                [(ngModel)]="model.bdRecorridoTotal" name="recorrido" required #bdRecorridoTotal="ngModel" [ngClass]="{
+                  'is-invalid': registrarRutaForm.submitted && bdRecorridoTotal.errors?.['required']
+                  || registrarRutaForm.submitted && bdRecorridoTotal.errors?.['pattern']}" maxlength="10"
+                pattern="^\d{0,7}(\.\d{0,2})?$" (keypress)="permitirNumerosYPunto($event)">
+              <span class="input-group-text fs-13" id="km">Km</span>
+            </div>
+            <div *ngIf="registrarRutaForm.submitted && bdRecorridoTotal.errors?.['required']">
+              <small class="text-danger">Ingrese el recorrido.</small>
+            </div>
+
+            <div *ngIf="registrarRutaForm.submitted  && !cumpleconPatron(patronDecimal,model.bdRecorridoTotal) &&
+              !bdRecorridoTotal.errors?.['required'] ">
+              <small class="text-danger">Ingrese una cantidad valida.</small>
+            </div>
+
+            <div *ngIf="registrarRutaForm.submitted && bdRecorridoTotal.errors?.['pattern']
+              && cumpleconPatron(patronDecimal,model.bdRecorridoTotal)">
+              <small class="text-danger">Ingrese un máx. de 10 unidades y 2 decimales.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm">Empresa</label>
+            <ng-select [(ngModel)]="model.sCodEmpresa" #sCodEmpresa="ngModel" placeholder="Seleccionar" name="Empresa" required
+              class="dashboard_select fs-14" [items]="lstEmpresa" [dropdownPosition]="'bottom'" [clearable]="false"
+              [ngClass]="{'is-invalid': registrarRutaForm.submitted && sCodEmpresa.errors?.['required']}"
+              bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+            </ng-select>
+              <div *ngIf="registrarRutaForm.submitted && sCodEmpresa.errors?.['required']">
+              <small class="text-danger">Seleeccione la empresa.</small>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+              <label class="dashboard_label--sm">Categoría de la flota</label>
+              <ng-select [(ngModel)]="model.sCodCategoria" #sCodCategoria="ngModel" placeholder="Seleccionar" name="Categoria" required
+                [ngClass]="{'is-invalid': registrarRutaForm.submitted && sCodCategoria.errors?.['required']}"
+                class="dashboard_select fs-14" [items]="lstCategoria" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+              </ng-select>
+              <div
+                *ngIf="registrarRutaForm.submitted && sCodCategoria.errors?.['required']">
+                <small class="text-danger">Seleeccione la categoría de la flota.</small>
+              </div>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="recorrido">Promedio de viajes de la flota</label>
+            <div class="input-group">
+              <input id="num_viajes" type="text" class="form-control form-control-sm dashboard_input"
+                [(ngModel)]="model.bdPromViajesMes" name="num_viajes" required #bdPromViajesMes="ngModel"
+                [ngClass]="{'is-invalid': registrarRutaForm.submitted && bdPromViajesMes.errors?.['required']
+                  || registrarRutaForm.submitted && bdPromViajesMes.errors?.['pattern']}" 
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+                pattern="^(?!\.)(\d{1,3}|\d{1,3}[.]|\d{0,3}\.[05]{0,1})$" (keypress)="permitirNumerosYPunto($event)">
+              <span class="input-group-text fs-13" id="mes">viajes/mes</span>
+            </div>
+            <div *ngIf="registrarRutaForm.submitted && bdPromViajesMes.errors?.['required']">
+              <small class="text-danger">Ingrese el número promedio de viajes.</small>
+            </div>
+
+            <div *ngIf="registrarRutaForm.submitted  && !cumpleconPatron(patronDecimal,model.bdPromViajesMes) &&
+              !bdPromViajesMes.errors?.['required'] ">
+              <small class="text-danger">Ingrese una cantidad valida.</small>
+            </div>
+
+            <div *ngIf="registrarRutaForm.submitted && bdPromViajesMes.errors?.['pattern']
+              && cumpleconPatron(patronDecimal,model.bdPromViajesMes)">
+              <small class="text-danger">Ingrese un máx. de 3 unidades y 1 decimal.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="descripcion">Descripción (opcional)</label>
+            <textarea rows="3" id="descripcion" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sDescripcion" name="descripcion" #sDescripcion="ngModel" [ngClass]="{ 
+                'is-invalid': registrarRutaForm.submitted && sDescripcion.errors?.['required']
+                || registrarRutaForm.submitted && sDescripcion.errors?.['pattern']}" maxlength="500"
+                pattern="^(?=.*[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ,.\-:])[\sA-Za-z0-9ñÑáéíóúÁÉÍÓÚ,.\-:]+$"
+                (keypress)="validarAlTipear(patronDescripcion,$event)"></textarea>
+            <div
+              *ngIf="registrarRutaForm.submitted && !cumpleconPatron(patronDescripcion,model.sDescripcion)">
+              <small class="text-danger">Solo se permite letras, números y caracteres: coma(,) , punto (.), guión (-),
+                dos puntos (:).</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+          (click)="modalRegistrarNivel.dismiss()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <div class="d-flex align-items-center">
+        <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+          style="background-color: #FEE9E9 !important;">
+          <img src=" assets/images/icon_alert.svg" height="25" />
+        </div>
+        <div class="ms-3">
+          <label class="modal__title  fw-600">Confirmación</label>
+          <label class="mt-2 d-block fs-14">¿Está seguro de eliminar la ruta?</label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button [disabled]="loadEliminar" (click)="modalEliminar.dismiss()" class="btn btn-light fc-black fs-14"
+          type="button">
+          Cancelar</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarRuta()" class="btn btn-danger fs-14 ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Registrar Vehiculo-->
+<ng-template #contentRegistrarVehiculo let-modalRegistrarVehiculo>
+  <form (ngSubmit)="fnRegistrarVehiculo(registrarVehiculoForm)" #registrarVehiculoForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label *ngIf="!isEditarVehiculo" class="modal__title fw-600">Registrar vehículo</label>
+        <label *ngIf="isEditarVehiculo" class="modal__title fw-600">Editar vehículo</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+          (click)="modalRegistrarVehiculo.dismiss();"></button>
+      </div>
+      <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarVehiculo }">
+        <label class="fw-500">{{model.sNombre}} </label>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="placa">Placa</label>
+            <input id="placa" type="text" class="form-control form-control-sm dashboard_input" placeholder="XYZ-123"
+              [(ngModel)]="moVehiculo.sPlaca" name="placa" required #sPlaca="ngModel" 
+              [ngClass]="{ 'is-invalid': registrarVehiculoForm.submitted && sPlaca.errors?.['required']
+                || registrarVehiculoForm.submitted && sPlaca.errors?.['pattern']}" maxlength="7"
+                oninput="if (!this.checkValidity()) {this.value = this.value.slice(0, -1)}"
+              pattern="^(?=.*[a-zA-Z0-9\-])[\sA-Za-z0-9\-]+$">
+            <div
+              *ngIf="registrarVehiculoForm.submitted && sPlaca.errors?.['required']||registrarVehiculoForm.submitted && !cumpleconPatron(patronVacio,moVehiculo.sPlaca)">
+              <small class="text-danger">Ingrese la placa del vehículo.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="dashboard_label--sm" for="recorrido">Año de fabricación</label>
+            <input id="anio" type="text" class="form-control form-control-sm dashboard_input" maxlength="4"
+              minlength="4" [(ngModel)]="moVehiculo.nAnio" name="anio" required #nAnio="ngModel" 
+              [ngClass]="{'is-invalid': registrarVehiculoForm.submitted && nAnio.errors?.['required']
+                || registrarVehiculoForm.submitted && nAnio.errors?.['pattern']}" pattern="^(1|2)(0|9)[0-9][0-9]$">
+            <div *ngIf="registrarVehiculoForm.submitted && nAnio.errors?.['required']">
+              <small class="text-danger">Ingrese el año del vehículo.</small>
+            </div>
+            <div *ngIf="registrarVehiculoForm.submitted && nAnio.errors?.['pattern']">
+              <small class="text-danger">Ingrese un año válido.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label class="dashboard_label--sm">Tipo de vehículo</label>
+            <ng-select [(ngModel)]="moVehiculo.sCodTipoVehiculo" placeholder="Seleccionar" name="TipoVehiculo" required
+              #sCodTipoVeh="ngModel" class="dashboard_select fs-14" [items]="lstTipoVehiculo" [dropdownPosition]="'bottom'" 
+              [clearable]="false"
+              [ngClass]="{'is-invalid': registrarVehiculoForm.submitted && sCodTipoVeh.errors?.['required']}"
+              bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+            </ng-select>
+            <div *ngIf="registrarVehiculoForm.submitted && sCodTipoVeh.errors?.['required']">
+              <small class="text-danger">Seleeccione el tipo de vehículo.</small>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <label class="dashboard_label--sm">Tipo de combustible</label>
+            <ng-select [(ngModel)]="moVehiculo.sCodCombustible" placeholder="Seleccionar" name="combustible" required
+              #sCodCombustible="ngModel" class="dashboard_select fs-14" [items]="lstCombustible" [dropdownPosition]="'bottom'" 
+              [clearable]="false" [ngClass]="{'is-invalid': registrarVehiculoForm.submitted && sCodCombustible.errors?.['required']}"
+              bindValue="sCodFactor" bindLabel="sTipoCombustible" [searchable]="false" [notFoundText]="'No hay data'">
+            </ng-select>
+            <div *ngIf="registrarVehiculoForm.submitted && sCodCombustible.errors?.['required']">
+              <small class="text-danger">Seleeccione el tipo de combustible.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+          (click)="modalRegistrarVehiculo.dismiss()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Carga Masiva-->
+<ng-template #contentCargaMasiva let-modalCargaMasiva>
+  <form (ngSubmit)="fnCargaMasiva(registrarVehiculoForm)" #registrarVehiculoForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label class="modal__title fw-600">Carga masiva de vehículos</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+          (click)="modalCargaMasiva.dismiss();"></button>
+      </div>
+      <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarVehiculo }">
+        <label class="fw-500 mb-2">{{model.sNombre}} </label>
+        <div class="row">
+          <div>
+            <!-- Input de subida de documentos-->
+            <input [disabled]="xlsxCargaMasiva.loading" type="file" accept=".xlsx,.xls" #fileCargaMasiva
+              style="display: none;" (change)="insertarCargaMasiva($event, xlsxCargaMasiva)"
+              [name]="'fileCargaMasiva'">
+            <label (click)="triggerHiddenFileInput()" (dragover)="handleDragOverCargaMasiva($event)"
+              (drop)="handleDropCargaMasiva($event, xlsxCargaMasiva)" [attr.for]="'fileCargaMasiva'"
+              class="crud__file text-start"
+              [ngClass]="{ 'is_invalid': xlsxCargaMasiva.noFormat, 'crud__file--loading': xlsxCargaMasiva.loading }">
+              <span class="crud__file--text">{{ xlsxCargaMasiva.Filename }}</span>
+            </label>
+            <a class="float-start text-primary pointer fs-19" (click)="fnDescargarFormato()"> Descargar formato</a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+          (click)="modalCargaMasiva.dismiss()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+<!-- Modal Eliminar Vehiculo-->
+<ng-template #contentEliminarVehiculo let-modalEliminarVehiculo>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <div class="d-flex align-items-center">
+        <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+          style="background-color: #FEE9E9 !important;">
+          <img src=" assets/images/icon_alert.svg" height="25" />
+        </div>
+        <div class="ms-3">
+          <label class="modal__title  fw-600">Confirmación</label>
+          <label class="mt-2 d-block fs-14">¿Está seguro de eliminar el vehículo?</label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button [disabled]="loadEliminar" (click)="modalEliminarVehiculo.dismiss()" class="btn btn-light fc-black fs-14"
+          type="button">
+          Cancelar</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarVehiculo()" class="btn btn-danger fs-14 ms-2"
+          type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,130 @@
+@use '@angular/material' as mat;
+@use '@angular/material-experimental' as matx;
+
+// output from @debug matx.$m3-azure-palette
+$honduras-colours: (
+  0: #000000,
+  10: #001a0e,
+  20: #003c19,
+  25: #004f20,
+  30: #00662a,
+  35: #008336,
+  40: #00903B,
+  // Tono base
+  50: #33a662,
+  60: #54b57c,
+  70: #8acca5,
+  80: #b0ddc2,
+  90: #e6f4eb,
+  95: #f2faf5,
+  98: #fafdfb,
+  99: #fcfefc,
+  100: #FFFFFF,
+
+  secondary: (0: #000000,
+    10: #131c2b,
+    20: #283041,
+    25: #333c4d,
+    30: #3e4759,
+    35: #4a5365,
+    40: #565e71,
+    50: #6f778b,
+    60: #8891a5,
+    70: #a3abc0,
+    80: #bec6dc,
+    90: #dae2f9,
+    95: #ecf0ff,
+    98: #f9f9ff,
+    99: #ffffff,
+    100: #ffffff,
+  ),
+  neutral: (0: #000000,
+    10: #1a1b1f, //Color de los selects
+    20: #2f3033,
+    25: #3b3b3f,
+    30: #46464a,
+    35: #525256,
+    40: #5e5e62,
+    50: #77777a,
+    60: #919094,
+    70: #ababaf,
+    80: #c7c6ca,
+    90: #ffffff,
+    95: #ffffff,
+    98: #ffffff,
+    99: #ffffff,
+    100: #ffffff,
+    4: #0a0b0c,
+    6: #101013,
+    12: #1e1f23,
+    17: #292a2d,
+    22: #343438,
+    24: #39393d,
+    87: #dbdade,
+    92: #e9e8ec,
+    94: #ffffff, //Color de fondo de los cards
+    96: #ffffff, //Color de fondo de los cards
+  ),
+  neutral-variant: (0: #000000,
+    10: #181c22,
+    20: #2d3038,
+    25: #383b43,
+    30: #666666, //Color de texto de los inputs
+    35: #4f525a,
+    40: #5b5e66,
+    50: #9e9e9e, //Color de texto de los bordes de los inputs
+    60: #8e9099,
+    70: #a9abb4,
+    80: #c4c6d0,
+    90: #e0e2ec,
+    95: #eff0fa,
+    98: #f9f9ff,
+    99: #fdfbff,
+    100: #ffffff,
+  ),
+  error: (0: #000000,
+    10: #410002,
+    20: #690005,
+    25: #7e0007,
+    30: #93000a,
+    35: #a80710,
+    40: #f44336, //Color de las alertas en los inputs
+    50: #de3730,
+    60: #ff5449,
+    70: #ff897d,
+    80: #ffb4ab,
+    90: #ffdad6,
+    95: #ffedea,
+    98: #fff8f7,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+);
+
+/* Establecer escala general de todos los componentes de Angular Material a -2 */
+$theme: matx.define-theme((color: (theme-type: light,
+        primary: $honduras-colours,
+        tertiary: $honduras-colours,
+      ),
+      density: (scale: -2), ));
+
+
+@include mat.core();
+@include matx.color-variants-back-compat($theme);
+
+:root {
+  @include mat.all-component-themes($theme);
+}
+
+.form_sm {
+  @include mat.form-field-density(-4.3);
+  @include mat.button-toggle-density(-5);
+  @include mat.datepicker-density(-5);
+  @include mat.icon-density(-5);
+  @include mat.icon-button-density(-5);
+  @include mat.datepicker-density(1);
+}
+
+.form_xs {
+  @include mat.form-field-density(-10);
+}

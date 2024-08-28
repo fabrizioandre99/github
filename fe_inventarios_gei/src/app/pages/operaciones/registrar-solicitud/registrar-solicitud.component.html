@@ -1,0 +1,400 @@
+<form class="form-signin needs-validation" (ngSubmit)="fnRegistrar(solicitudForm,contentGuardar,contentActualizar)"
+  #solicitudForm="ngForm" novalidate>
+  <div class="container">
+    <br>
+    <div class="card-body vista p-sm-5">
+      <div class="d-lg-flex align-items-center altor">
+        <div class="col-sm-8 col-md-7">
+          <h2>Solicitud de usuario</h2>
+        </div>
+        <div class="col-sm-5">
+          <app-alert></app-alert>
+        </div>
+      </div>
+      <br />
+      <fieldset class="rounded-5">
+        <legend legend class="float-none w-auto">Datos de la
+          municipalidad
+        </legend>
+        <div class="ms-2 me-2 pe-2 mb-3">
+          <div class="row align-intems">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">RUC</label>
+                <input [disabled]="disabledRuc" name="sRucMunicipalidad" [(ngModel)]="oMunicipalidad.nRuc"
+                  #sRucMunicipalidad="ngModel" maxlength="11" minlength="11" pattern="^[0-9]+(.[0-9]{1,2})?$"
+                  type="text" class="form-control"
+                  onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                  [ngClass]="{ 'is-invalid': solicitudForm.submitted && sRucMunicipalidad.invalid }" required>
+                <small [hidden]="!sRucMunicipalidad.errors?.['pattern'] && !sRucMunicipalidad.errors?.['minlength']"
+                  class="text-danger">
+                  Ingrese un número de RUC válido.
+                </small>
+                <div *ngIf="solicitudForm.submitted && sRucMunicipalidad.invalid ">
+                  <small [hidden]="!sRucMunicipalidad.errors?.['required']" class="text-danger">
+                    El RUC es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-5 col-lg-4 col-md-4">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Razón social</label>
+                <input type="text" class="form-control" #sRazonSocial="ngModel" name="sRazonSocial"
+                  [(ngModel)]="oMunicipalidad.sNombre" disabled />
+              </div>
+            </div>
+            <div class="col-xl-2 col-md-4 margin d-flex justify-content-end justify-content-md-start">
+              <div class="form-group">
+                <button type="button" class="btn btn-success blanco" [hidden]="fShowCambiarRuc"
+                  [disabled]="loadingRUC || sRucMunicipalidad.invalid" (click)="fnVerificarRuc()"><span
+                    *ngIf="loadingRUC" class="spinner-border spinner-border-sm mr-1"></span>
+                  Verificar RUC
+                </button>
+                <button [hidden]="!fShowCambiarRuc" [disabled]="loadingCambiarRuc" type="button"
+                  class="btn btn-success blanco" (click)="fnCambiarRuc()"><span *ngIf="loadingCambiarRuc"
+                    class="spinner-border spinner-border-sm mr-1"></span>
+                  Cambiar RUC
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-lg-4">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Tipo municipalidad</label>
+                <br>
+                <div class="d-flex">
+                  <div class="form-check">
+                    <input class="minam_radio form-check-input" id="Provincial" name="sTipo" type="radio" value="P"
+                      required [(ngModel)]="oMunicipalidad.sTipo" #sTipo="ngModel"
+                      [ngClass]="{  'is-invalid-radio': submitForm && sTipo.errors?.['required'] }">
+                    <label class="form-check-label ms-1" for="Provincial"
+                      [ngClass]="{  'is-invalid-radio': submitForm && sTipo.errors?.['required'] }">
+                      Provincial
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="minam_radio form-check-input ms-3" type="radio" id="Distrital" name="sTipo" value="D"
+                      [(ngModel)]="oMunicipalidad.sTipo" #sTipo="ngModel" [disabled]="!isValidUbigeo" required
+                      [ngClass]="{  'is-invalid-radio': submitForm && sTipo.errors?.['required'] }">
+                    <label class="form-check-label  ms-1" for="Distrital"
+                      [ngClass]="{  'is-invalid-radio': submitForm && sTipo.errors?.['required'] }">
+                      Distrital
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Ubigeo</label>
+                <div class="selection">
+                  <select [disabled]="!isValidUbigeo" [(ngModel)]="oMunicipalidad.sDepartamento"
+                    (change)="changeDepartamento()" class="form-select" id="departamento" name="departamento" [ngClass]="{
+                      'is-invalid': submitForm && oMunicipalidad.sDepartamento=='Departamento'
+                    }" required>
+                    <option>Departamento</option>
+                    <option [ngValue]="item.sCodDepart" *ngFor="let item of lstDepartamento">
+                      {{ item.sDepartamento }}
+                    </option>
+                  </select>
+                  <div *ngIf="submitForm && oMunicipalidad.sDepartamento=='Departamento'">
+                    <small class="text-danger">
+                      Seleccione un departamento.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md">
+              <div class="form-group">
+                <div class="selection margin-ubigeo">
+                  <select
+                    [disabled]="!isValidUbigeo || !oMunicipalidad.sDepartamento|| oMunicipalidad.sDepartamento =='Departamento'"
+                    [(ngModel)]="oMunicipalidad.sProvincia" #sProvincia="ngModel" (change)="changeProvincia()"
+                    class="form-select" id="provincia" name="provincia" [ngClass]="{
+                      'is-invalid': submitForm && oMunicipalidad.sProvincia=='Provincia'
+                    }" required>
+                    <option>Provincia</option>
+                    <option [ngValue]="item.sCodProv" *ngFor="let item of lstProvincia">
+                      {{ item.sProvincia }}
+                    </option>
+                  </select>
+                  <div *ngIf="submitForm && oMunicipalidad.sProvincia=='Provincia'">
+                    <small class="text-danger">
+                      Seleccione una provincia.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-group">
+                <div class="selection margin-ubigeo">
+                  <select [disabled]="!isValidUbigeo || !oMunicipalidad.sDepartamento || oMunicipalidad.sDepartamento =='Departamento'
+                  || !oMunicipalidad.sProvincia  || oMunicipalidad.sProvincia =='Provincia'"
+                    [(ngModel)]="oMunicipalidad.sDistrito" class="form-select" id="distrito" name="distrito" [ngClass]="{
+                      'is-invalid': submitForm && oMunicipalidad.sDistrito=='Distrito'
+                    }" required>
+                    <option>Distrito</option>
+                    <option [ngValue]="item.sCodDist" *ngFor="let item of lstDistrito">
+                      {{ item.sDistrito }}
+                    </option>
+                  </select>
+                  <div *ngIf="submitForm && oMunicipalidad.sDistrito=='Distrito'">
+                    <small class="text-danger">
+                      Seleccione un distrito.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <br>
+      <fieldset class="rounded-5 field" [disabled]="!disabledForm">
+        <legend legend class="float-none w-auto">Datos del responsable de la municipalidad
+        </legend>
+        <div class="ms-2 me-3 mb-3">
+          <div class="row align-items">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">DNI</label>
+                <input type="text" class="form-control" name="sDniMunicipalidad" [(ngModel)]="solicitud.sDNI"
+                  #sDniMunicipalidad="ngModel" maxlength="8" minlength="8" pattern="^[0-9]+(.[0-9]{1,2})?$"
+                  onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                  [disabled]="disabledDNI==true" [ngClass]="{ 'is-invalid':  sDniMunicipalidad.invalid && submitForm }"
+                  required>
+                <small [hidden]="!sDniMunicipalidad.errors?.['pattern'] && !sDniMunicipalidad.errors?.['minlength']"
+                  class="text-danger">
+                  Ingrese un número de DNI válido.
+                </small>
+                <div *ngIf=" sDniMunicipalidad.invalid && submitForm">
+                  <small [hidden]="!sDniMunicipalidad.errors?.['required']" class="text-danger">
+                    El DNI es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-md-4 margin d-flex justify-content-end justify-content-md-start">
+              <div class="form-group">
+                <button type="button" class="btn btn-success blanco" [hidden]="fShowCambiarDNI"
+                  [disabled]="sDniMunicipalidad.errors?.['required']||loadingDNI" (click)="fnVerificarDNI()">
+                  <span *ngIf="loadingDNI" class="spinner-border spinner-border-sm mr-1"></span>
+                  Verificar DNI
+                </button>
+                <button type="button" class="btn btn-success blanco" [hidden]="!fShowCambiarDNI"
+                  [disabled]="loadingCambiarDNI" (click)="fnCambiarDNI()">
+                  <span *ngIf="loadingCambiarDNI" class="spinner-border spinner-border-sm mr-1"></span>
+                  Cambiar DNI
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Nombres</label>
+                <input [disabled]="!isValidDNI" type="text" class="form-control"
+                  onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" #sNombre="ngModel" name="sNombre"
+                  [(ngModel)]="solicitud.sNombre" [ngClass]="{ 'is-invalid': !solicitud.sNombre && submitForm }"
+                  required />
+                <div *ngIf="!solicitud.sNombre && submitForm">
+                  <small class="text-danger">
+                    El nombre es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Apellido paterno</label>
+                <input [disabled]="!isValidDNI" type="text" class="form-control"
+                  onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" #sApePaterno="ngModel"
+                  name="sApePaterno" [(ngModel)]="solicitud.sApellidoPaterno"
+                  [ngClass]="{ 'is-invalid': !solicitud.sApellidoPaterno && submitForm }" required />
+                <div *ngIf="!solicitud.sApellidoPaterno && submitForm">
+                  <small class="text-danger">
+                    El apellido paterno es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Apellido materno</label>
+                <input [disabled]="!isValidDNI" type="text" class="form-control"
+                  onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" #sApeMaterno="ngModel"
+                  name="sApeMaterno" [(ngModel)]="solicitud.sApellidoMaterno"
+                  [ngClass]="{ 'is-invalid':  !solicitud.sApellidoMaterno && submitForm}" required />
+                <div *ngIf="!solicitud.sApellidoMaterno && submitForm">
+                  <small class="text-danger">
+                    El apellido materno es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Área</label>
+                <input type="text" class="form-control" maxlength="50"
+                  onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" #sArea="ngModel" name="sArea"
+                  [(ngModel)]="solicitud.sArea" [ngClass]="{ 'is-invalid': sArea.invalid && submitForm }" required />
+                <div *ngIf="sArea.invalid && submitForm">
+                  <small [hidden]="!sArea.errors?.['required']" class="text-danger">
+                    El área es requerida.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Cargo</label>
+                <input type="text" class="form-control" maxlength="50"
+                  onkeydown="return /[a-zA-Z-ZÀ-ÿ. ]*[a-zA-Z-ZÀ-ÿ ]/i.test(event.key)" #sCargo="ngModel" name="sCargo"
+                  [(ngModel)]="solicitud.sCargo" [ngClass]="{ 'is-invalid': sCargo.invalid && submitForm}" required />
+                <div *ngIf="sCargo.invalid && submitForm">
+                  <small [hidden]="!sCargo.errors?.['required']" class="text-danger">
+                    El cargo es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Correo eléctronico</label>
+                <input type="email" maxlength="50" pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                  class="form-control" [(ngModel)]="solicitud.sCorreo" #sCorreo="ngModel" name="sCorreo" id="sCorreo"
+                  [ngClass]="{ 'is-invalid': sCorreo.invalid && submitForm}" required />
+                <small [hidden]="!sCorreo.errors?.['pattern'] && !sCorreo.errors?.['minlength']" class="text-danger">
+                  Ingrese un correo electrónico válido.
+                </small>
+                <div *ngIf=" sCorreo.invalid && submitForm">
+                  <small [hidden]="!sCorreo.errors?.['required']" class="text-danger">
+                    El correo electrónico es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-group">
+                <label class="col-form-label col-form-label-sm asterisk">Teléfono</label>
+                <input type="text" class="form-control" maxlength="9" pattern="[0-9]{9}" placeholder=""
+                  #sTelefono="ngModel" name="sTelefono" [(ngModel)]="solicitud.sTelefono"
+                  onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                  [ngClass]="{ 'is-invalid': sTelefono.invalid && submitForm }" required />
+                <small [hidden]="!sTelefono.errors?.['pattern'] && !sTelefono.errors?.['minlength']"
+                  class="text-danger">
+                  El número de teléfono debe tener 9 caracteres.
+                </small>
+                <div *ngIf="submitForm && sTelefono.invalid ">
+                  <small [hidden]="!sTelefono.errors?.['required'] " class="text-danger">
+                    El número de teléfono es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <br>
+      <br />
+      <div class="row">
+        <div class="col-md-7">
+          <div class="form-group">
+            <div class="d-xl-flex justify-content-between">
+              <label class="col-form-label col-form-label-sm asterisk ">Declaración jurada</label>
+
+            </div>
+            <div class="form-file" [ngClass]=" {'is-invalid-file' : submitForm && isValidDoc ,'disabled' : !disabledForm
+              ,'pointer' : disabledForm }">
+              <label for="fileinput" class="textfile w-100 bd-highlight" #InputPdf
+                [ngClass]="{'pointer' : disabledForm }">Seleccionar
+                archivo... </label>
+              <div class="flex-shrink-1 bd-highlight">
+                <input type="file" accept=".pdf, application/pdf" id="fileinput" name="InputPdf"
+                  (change)="onFileChange($event)" [disabled]="!disabledForm||loading" required
+                  [ngClass]="{'pointer' : disabledForm }">
+              </div>
+            </div>
+            <label class="info infofor col-form-label col-form-label-sm p-0"><i class="fa-solid fa-circle-info"></i>
+              Si desea modificar el archivo, vuelva a seleccionar un nuevo documento</label><br>
+            <a (click)="fnDescargarFormato();">
+              <label class="info pointer infofor col-form-label col-form-label-sm p-0"><i
+                  class="fa-solid fa-circle-arrow-down"></i>
+                Descargar formato de declaración jurada</label></a>
+            <br>
+            <small [hidden]="!isValidDoc" class="text-danger">
+              El archivo es requerido.
+            </small>
+            <small [hidden]="!isValidDocPdf" class="text-danger">
+              El documento a cargar debe tener formato PDF.
+            </small>
+          </div>
+        </div>
+        <div class="col-md-4 margin-documento" *ngIf="getToken">
+          <label class="col-form-label pointer float-end float-md-start" (click)="fnDescargarDocumento()"><i
+              class="fa-solid fa-circle-arrow-down"></i>
+            {{solicitud.sNombreDocumento}}</label>
+        </div>
+      </div>
+      <br>
+      <div class="mt-4 gap-3 d-sm-flex align-items-center">
+        <div>
+          <div class="dato">* Datos obligatorios</div>
+        </div>
+        <div class="ms-auto col-sm-9 d-flex align-items-end flex-column flex-sm-row justify-content-end mt-3 mt-sm-0">
+          <button class="btn btn-success blanco large align-items-center" type="button" routerLink="">
+            <img src="assets/images/arrow-left.svg" height="20" class="ms-2" />
+            <span class="ms-2 me-2">Volver</span>
+          </button>
+          <button class="btn btn-success verde large ms-2 mt-2 mt-sm-0" type="submit" [disabled]="loading"><span
+              *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<ng-template #contentGuardar let-modalSolicitud>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title">Solicitud de usuario</label>
+    <button type="button" class="close" aria-label="Close" (click)="fnClose(modalSolicitud)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="form-text" [innerHTML]="mensajeModal"></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ngbAutofocus class="btn btn-sucess blanco" (click)="fnClose(modalSolicitud)">Cerrar</button>
+  </div>
+</ng-template>
+<ng-template #contentActualizar let-modalActualizar>
+  <div class="modal-header">
+    <label class="modal-title" id="modal-basic-title">Solicitud de usuario</label>
+    <button type="button" class="close" aria-label="Close" (click)="fnClose(modalActualizar)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="form-text">Su solicitud fue actualizada.
+    </p>
+    <p class="form-text">Espere mientras el administrador del sistema valida la información y actualiza las credenciales
+      de usuario de su
+      municipalidad.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ngbAutofocus class="btn btn-sucess blanco" (click)="fnClose(modalActualizar)">Cerrar</button>
+  </div>
+</ng-template>

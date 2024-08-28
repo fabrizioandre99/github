@@ -1,0 +1,49 @@
+.btn-finalizado {
+    background-color: rgba(32, 173, 32, 0.012) !important;
+    color: rgb(9, 75, 28) !important;
+    font-weight: 600;
+}
+
+.btn-proceso {
+  background-color: rgba(32, 60, 173, 0.012);
+  color: rgb(9, 19, 75);
+  font-weight: 600;
+}
+
+.background-alert {
+  background-color: #FEE9E9 !important;
+}
+
+.btn-periodo {
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 20px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  outline: none;
+}
+
+.btn-finalizar {
+  background: rgb(102, 188, 74);
+  background: linear-gradient(0deg, rgb(86, 160, 61) 0%, rgb(66, 171, 87) 100%);
+  border: none;
+}
+.btn-finalizar:hover {
+   background: rgb(74, 135, 54);
+background: linear-gradient(0deg, rgb(65, 120, 46) 0%, rgb(44, 116, 59)100%);
+}
+
+.btn-reiniciar {
+  background: rgb(54, 45, 161);
+  background: linear-gradient(0deg, rgb(43, 68, 160) 0%, rgb(62, 84, 163) 100%);
+  border: none;
+}
+.btn-reiniciar:hover {
+   background: rgb(40, 33, 118);
+background: linear-gradient(0deg, rgb(32, 51, 119) 0%, rgb(44, 60, 117)100%);
+}

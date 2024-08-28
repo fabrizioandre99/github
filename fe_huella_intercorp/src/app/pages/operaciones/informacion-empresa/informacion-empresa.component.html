@@ -1,0 +1,200 @@
+<div class="container">
+  <div class="d-flex align-items-center mt-4">
+    <label class="crud__title">Información de la empresa</label>
+  </div>
+  <div class="row  mt-3 mt-md-4">
+    <div class="col-md-5 col-lg-4 col-xl-3">
+      <div class="d-md-flex align-items-center">
+        <div class="col-2 text-md-end">
+          <label class="crud__label--sm" for="ruc">RUC</label>
+        </div>
+        <div class="col-md-10 ms-md-2">
+          <div class="form-group">
+            <input id="ruc" [(ngModel)]="model_panel.sRuc" class="form-control crud__input"
+              [disabled]="sfEditLocacion==false">
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 mt-md-3 d-md-flex  align-items-center">
+        <div class="col-2 text-md-end">
+          <label class="crud__label--sm" for="sector">Sector</label>
+        </div>
+        <div class="col-md-10 ms-md-2">
+          <div class="form-group">
+            <input id="sector" [(ngModel)]="model_panel.sNombreSector" class="form-control crud__input"
+              [disabled]="sfEditLocacion==false">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7 col-lg-5 col-xxl-4">
+      <div class="mt-2 mt-md-0 d-md-flex  align-items-center">
+        <div class="col-4 text-md-end">
+          <label class="crud__label--sm" for="rsocial">Razón social</label>
+        </div>
+        <div class="col-md-8 ms-md-2">
+          <div class="form-group">
+            <input id="rsocial" [(ngModel)]="model_panel.sRazonSocial" class="form-control crud__input"
+              [disabled]="sfEditLocacion==false">
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 mt-md-3 d-md-flex align-items-center">
+        <div class="col-4 text-md-end">
+          <label class="crud__label--sm" for="ncomercial">Nombre comercial</label>
+        </div>
+        <div class=" col-md-8 ms-md-2">
+          <div class="form-group">
+            <input id="ncomercial" [(ngModel)]="model_panel.sNombreComercial" class="form-control crud__input"
+              [disabled]="sfEditLocacion==false">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="sfEditLocacion" class="d-flex justify-content-end mt-3">
+      <button type="button" (click)="sfEditLocacion=false;" class="crud__button button-white ">
+        Cancelar</button> <button type="button" class="crud__button button-blue ms-2">
+        Guardar</button>
+    </div>
+  </div>
+  <div class="row mt-4 align-items-center">
+    <div class="col-md-6">
+      <label class="crud__title">Información de locaciones</label>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" *ngIf="sfAgLocacion">
+    <form (ngSubmit)="fnRegOEdit(RegOEditForm)" #RegOEditForm="ngForm" novalidate>
+      <div class="crud__panel mt-4 col-md-11 mb-1">
+        <div class="row align-items-end">
+          <div class="col-lg-4">
+            <label class="crud__label--sm" for="nombreLocacion">Nombre de locación</label>
+            <input type="text" id="nombreLocacion" class="form-control crud__input" maxlength="150"
+              [(ngModel)]="model.sNombre" name="nombreLocacion" id="nombreLocacion" required #sNombreLocacion="ngModel"
+              [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sNombreLocacion.errors?.['required']
+          || RegOEditForm.submitted && sNombreLocacion.errors?.['pattern'] || RegOEditForm.submitted && !patronLocacion.test(model.sNombre)
+        } " (keypress)=" validarLocacion($event)">
+          </div>
+          <div class="col-lg-5 mt-2 mt-md-0">
+            <label class="crud__label--sm" for="nombreUbicacion">Ubicación</label>
+            <input type="text" id="nombreUbicacion" class="form-control crud__input" maxlength="150"
+              [(ngModel)]="model.sUbicacion" name="nombreUbicacion" placeholder="Deparmento/Provincia/Distrito" required
+              #sUbicacion="ngModel"
+              [ngClass]="{ 'is-invalid': RegOEditForm.submitted && sUbicacion.errors?.['required']
+              || RegOEditForm.submitted && sUbicacion.errors?.['pattern']  || RegOEditForm.submitted && !patronUbicacion.test(model.sUbicacion)}"
+              (keypress)="validarUbicacion($event)">
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" (click)="closePanel()" class="crud__button button-white ">
+            Cancelar</button>
+          <button [disabled]="loadRegLocacion" type="submit" class="crud__button button-blue ms-2">
+            <span *ngIf="loadRegLocacion" class="spinner-border spinner-border-sm me-1"></span> Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row mt-3 align-items-center">
+    <div class="col-md-5 col-lg-4 col-xxl-3">
+      <input [(ngModel)]="model.nombreLocacion" maxlength="150" class="form-control crud__input crud__input--search"
+        placeholder="Buscar por nombre de locación">
+    </div>
+    <div class="ms-auto col-md-4 d-flex justify-content-end mt-2 mt-md-0">
+      <button type="button" (click)="AgreLocacion()" [disabled]="sfAgLocacion==true"
+        class="crud__button btn-corner button-blue" (click)="sfAgLocacion=true;">
+        <img src="assets/images/icon-plus.svg" height="25" />
+        <span class="ms-2">Agregar locación</span> </button>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="mt-4 col-md-10">
+      <div class="table-responsive crud__card">
+        <table class="table">
+          <thead class="table__header">
+            <tr class="text-center">
+
+              <th scope="col">Nombre locación</th>
+              <th scope="col">Ubicación</th>
+              <th scope="col">Editar</th>
+              <th scope="col">Eliminar</th>
+
+            </tr>
+          </thead>
+          <ng-container *ngIf="!fShowSkeleton">
+            <tbody *ngFor="let item of lstById| Busqueda: model; index as i">
+              <tr class="table__body" [ngStyle]="{
+                'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+                'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null,
+                 'background-color': selectedItem === item.nIdLocacion ?  '#D8C8FF' : null
+              }">
+
+                <td class="text-center">
+                  {{item.sNombre}}
+                </td>
+                <td class="text-center">
+                  {{item.sUbicacion}}
+                </td>
+                <td class="text-center">
+
+                  <img placement="top" ngbTooltip="Editar" class="pointer" src="assets/images/icon-editar.svg"
+                    height="23" (click)="editarLocacion(item)" />
+
+                </td>
+                <td class="text-center">
+                  <img class="pointer" (click)="openEliminarLocacion(item,contentEliminar)" placement="top"
+                    ngbTooltip="Eliminar" src="assets/images/icon-tacho.svg" height="23" />
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+        <ng-container *ngIf="(lstById| Busqueda: model)?.length <= 0 && lstById.length !== 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados para: "{{model.nombreLocacion}}".</h5>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="lstById.length == 0">
+          <div class="text-center mt-5 mb-5">
+            <h5>No existen resultados.</h5>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4 pb-3" *ngIf="(lstById| Busqueda: model)?.length > 0">
+      <ngb-pagination class="pagination-md" [collectionSize]="(lstById| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="8" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="(lstById| Busqueda: model)?.length" [(page)]="page"
+        [maxSize]="5" [pageSize]="pageSize">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg"
+            height="15" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" height="15" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div style="padding: 5px 25px 11px;">
+    <div class="modal-body ">
+      <label class="modal__title">Confirmación</label>
+      <div class="mt-3 d-flex justify-content-center">
+        ¿Está seguro de eliminar la locación?
+      </div>
+      <div class="d-flex justify-content-center mt-4">
+        <button style="width: 100px;" (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button style="width: 100px;" (click)="eliminarLocacion()" [disabled]="loadEliminar"
+          class="crud__button button-blue ms-2" type="button">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

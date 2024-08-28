@@ -1,0 +1,65 @@
+<form id="loginForm" #loginForm="ngForm">
+  <div class="fondo">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="mb-3 text-center">Inicio de sesión</h2>
+            <img class="center-image mb-3" src="assets/images/personas.png" />
+            <div class="d-flex mb-4 justify-content-center flex-radiogruop">
+              <div class="form-check">
+                <input class="minam_radio form-check-input" (change)="changeRadio()" id="Minam" name="sTipoUsuario"
+                  type="radio" [value]="getTipoCredencial.SoyMinam" [(ngModel)]="oCredencial.sTipoUsuario"
+                  #sTipoUsuario="ngModel" required>
+                <label class="form-check-label ms-2" for="Minam">
+                  Soy MINAM
+                </label>
+              </div>
+              <div class="form-check ps-3 paddingCredencial">
+                <input class="minam_radio form-check-input" (change)="changeRadio()" id="Municipalidad"
+                  name="sTipoUsuario" [value]="getTipoCredencial.SoyMuni" type="radio" value="02"
+                  [(ngModel)]="oCredencial.sTipoUsuario" #sTipoUsuario="ngModel" required>
+                <label class="form-check-label  ms-2" for="Municipalidad">
+                  Soy municipalidad
+                </label>
+              </div>
+            </div>
+            <div class="mb-4 tform">
+              <img src="assets/images/user.svg" class="iform" />
+              <input class="eform" name="sUsuario" autocomplete="off" [(ngModel)]="oCredencial.sUsuario" required />
+            </div>
+            <div class="mb-4 tform">
+              <img src="assets/images/candado.svg" class="iform" />
+              <input class="eform" type="password" autocomplete="off" name="sContrasena" autocomplete="one-time-code"
+                [(ngModel)]="oCredencial.sContrasena" required />
+            </div>
+            <div class="col text-center mt-3 mb-4">
+              <button class="btn btn-success mb-3" type="submit" (click)="fnValidaRecaptcha()"
+                [disabled]="loginForm.invalid || loading"><span *ngIf="loading"
+                  class="spinner-border spinner-border-sm me-2"></span>
+                Ingresar
+              </button>
+              <br>
+              <a routerLink="/recuperar-contrasena" class="mt-3">¿Olvidó su contraseña?</a>
+            </div>
+            <div class="col text-center mt-3 mb-4">
+              <app-alert></app-alert>
+            </div>
+          </div>
+          <hr class="mb-2" *ngIf="oCredencial.sTipoUsuario ==='02'">
+          <div class="card-footer" *ngIf="oCredencial.sTipoUsuario ==='02'">
+            <div class="d-flex align-items-start">
+              <div><i class="icon fas fa-info-circle"></i></div>
+              <div class="ps-2">
+                <label class="card-footer-text">Si aún no cuenta con credenciales de acceso al sistema, haga clic
+                  <label class="text-aqui" type="button" routerLink="/registrar-solicitud">aquí</label> para
+                  registrar su
+                  solicitud de usuario.</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,38 @@
+textarea {
+    resize: none;
+  }
+  
+  .crud__file {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 0.5px solid #2E2E2E;
+    background-color: #FFF;
+    background-image: url('../../../../assets/images/icon-file.svg');
+    background-repeat: no-repeat;
+    background-position: 96% center;
+    background-size: calc(0.95em + 0.575rem) calc(0.95em + 0.575rem);
+  }
+  
+  .crud__file--text {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 88%;
+    display: list-item;
+    text-overflow: ellipsis;
+  }
+  
+  .crud__file--text {
+    transition: color 0.3s ease, font-weight 0.3s ease;
+  }
+  
+  .crud__file--loading {
+    background-image: none;
+    pointer-events: none;
+  }
+  
+  .pointer {
+    font-size: 12px !important;
+  }

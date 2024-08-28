@@ -1,0 +1,84 @@
+.nav-link {
+  color: #00358A;
+  background: white;
+  border: 1px solid #00358A !important;
+  border-bottom: none !important;
+  transition: none !important;
+}
+
+.nav-link.active {
+  color: white;
+  background: linear-gradient(180deg, #00358A 0%, #00358A 46.35%, #295CAE 100%);
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover {
+  isolation: auto;
+}
+
+.card {
+  border: 0;
+}
+
+.card-header:first-child {
+  background-color: white;
+  border: 0.0625rem solid white !important;
+  margin-left: 10px;
+}
+
+.nav-item:nth-child(2) {
+  margin-left: 9px;
+}
+
+.modal-footer {
+  padding-top: 0;
+  border: 0;
+}
+
+
+@media (min-width: 992px) {
+  .custom-button {
+    width: 33%;
+  }
+
+  .w-subCat {
+    width: 46%;
+  }
+
+  .w-codEstado {
+    width: 20%;
+  }
+
+  .marginToogle {
+    margin-top: 35px !important;
+  }
+
+}
+
+@media (min-width: 991px) {
+  .crud__subtitle {
+    width: 455px;
+  }
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+
+  @media (min-width: 992px) {
+    .marginToogle {
+      margin-top: 2.05vw !important;
+    }
+
+  }
+
+  @media (min-width: 991px) {
+    .crud__subtitle {
+      width: 26.655vw;
+    }
+  }
+
+
+}

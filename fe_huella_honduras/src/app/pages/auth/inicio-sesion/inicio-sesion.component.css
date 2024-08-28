@@ -1,0 +1,117 @@
+.login_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login_title {
+    color: #003C19;
+    font-size: 24px;
+    font-weight: 500;
+    text-align: center;
+}
+
+mat-card {
+    padding: 2rem;
+    background-color: #F8FAFF !important;
+    box-shadow: 0px 0px 32px 12px rgba(168, 187, 255, 0.2);
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+mat-form-field:nth-of-type(2) .mat-mdc-form-field-subscript-wrapper {
+    height: 9px;
+}
+
+.forgot-password {
+    cursor: pointer;
+    display: block;
+    color: #3f51b5;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+
+.login_apoyo {
+    color: #8d8d8d;
+    font-size: 9.5px;
+}
+
+.login_card_version {
+    position: absolute;
+    bottom: 8.5px;
+    font-size: 10.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #8d8d8d;
+}
+
+.wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.login_background_version {
+    color: #585858;
+    font-size: 12px;
+    position: absolute;
+    top: 7px;
+    right: 7px;
+}
+
+.grecaptcha-badge {
+    visibility: visible;
+}
+
+.dash_header__login {
+    font-family: 'Pluto' !important;
+    font-size: 28px;
+    line-height: 30px;
+    font-weight: 700;
+    background: linear-gradient(to top right, #00903B 0%, #7DBB5C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dash_header__title {
+    color: #00903B;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    font-weight: 500;
+}
+
+.dash_header__title label {
+    font-family: "Pluto" !important;
+}
+
+.dash_header__title--top {
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.dash_header__title--bottom {
+    font-size: 23px;
+}
+
+/* ------ Modificar el tamaño entre la separación de cada input ----*/
+mat-dialog-content .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+@media (width >=768px) {
+    mat-card {
+        padding: 2rem;
+        width: 420px;
+        background-color: #F8FAFF !important;
+        box-shadow: 0px 0px 32px 12px rgba(168, 187, 255, 0.2);
+    }
+
+}

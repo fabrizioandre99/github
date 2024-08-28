@@ -1,0 +1,74 @@
+<img src="assets/images/arrow-left-sm.svg" class="arrow-sm-float" routerLink="/emision-anual" height="30" />
+<div class="float-lg-end mt-3 me-lg-1">
+  <img src="assets/images/celepsa.png" class="celepsa-image" />
+</div>
+<div class="bar">
+  <img src="assets/images/arrow-left.svg" [routerLink]="recomendaciones == null ? ['/'] : ['/emision-anual']"
+    class="arrow-float" />
+  <div class="bar-body"> <img src="assets/images/icon-question.svg" height="72" class="ms-1" />
+    <h1 class="mt-4">¿Qué podemos<br> hacer?</h1>
+  </div>
+</div>
+<div class="body">
+  <div class="header">
+    <h2 class="text-center" style="font-weight: 800"> Te recomendamos:</h2>
+  </div>
+  <div class="content-recomendaciones container col-lg-10">
+    <div class="text-lg-center">
+      <div class="row row-cols-1 row-cols-lg-3 g-4">
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex d-lg-block align-items-center">
+                <img src="assets/images/img-remolino.svg" class="imgs" height="82" />
+                <div class="mt-lg-4 ms-2 ms-lg-0">
+                  <h5 class="card-title">Explorar la factibilidad de proyectos de autogeneración renovable</h5>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small routerLink="/autogeneracion">SABER MÁS</small>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex d-lg-block align-items-center">
+                <img src="assets/images/img-enchufe.svg" class="imgs" height="82" />
+                <div class="mt-lg-4 ms-2 ms-lg-0">
+                  <h5 class="card-title">Explorar iniciativas de eficiencia energética que reduzcan mi consumo
+                    mensual
+                  </h5>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small routerLink="/ef-energia">SABER MÁS</small>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex d-lg-block align-items-center">
+                <img src="assets/images/img-hoja.svg" class="imgs" height="82" />
+                <div class="mt-lg-4 ms-2 ms-lg-0">
+                  <h5 class="card-title">Explorar la contratación de un suministro de energía renovable</h5>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small routerLink="/suministro">SABER MÁS</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-lg-5" style="margin-top: auto;">
+      <button type="button" (click)="redict()" class="button-celepsa button-blue">¡Quiero
+        contactarlos!</button>
+    </div>
+  </div>
+  <label class="footer-recomendaciones">Con el respaldo de Alwa Ingeniería Sostenible S.A.C.</label>
+</div>

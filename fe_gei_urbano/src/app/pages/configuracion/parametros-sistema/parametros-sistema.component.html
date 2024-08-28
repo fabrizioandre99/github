@@ -1,0 +1,214 @@
+<div *ngIf="loadRegOEdit || loadEliminar || fShowSkeleton" class="progress-bar-container">
+  <div class="progress-bar-load"></div>
+</div>
+
+<div class="container px-4 margin-container">
+  <label class="dashboard_title mt-3">Parámetros del sistema</label>
+  <div class="row mt-3">
+    <div class="col-md-5 col-lg-3">
+      <ng-select [(ngModel)]="sTipoParam" (change)="fnListarParamXTipos()" placeholder="Tipo de parámetro"
+        class="dashboard_select fs-14" [items]="lstTipos" [dropdownPosition]="'bottom'" [clearable]="false"
+        bindValue="sTipo" bindLabel="sTipo" [searchable]="false" [notFoundText]="'No hay data'">
+      </ng-select>
+    </div>
+  </div>
+  
+  <div class="row ms-auto mt-4 mt-md-4">
+    <div class="text-start col-lg-8 fs-14" *ngIf="sDescripcion != undefined || sDescripcion != null">
+      {{sDescripcion}}
+    </div>
+    <div class="ms-auto col-lg-4 text-end" *ngIf="boCreate">
+      <button type="button" [disabled]="!sTipoParam" class="btn btn-primary fs-14"
+        (click)="openRegistrarUsuario(contentRegistrarParam)">
+        <div class="d-flex align-items-center">
+          <img src=" assets/images/icon_plus.svg" height="20" />
+          <span class="ms-2">Nuevo parámetro</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+
+
+  <div class="mt-3">
+    <div class="table-responsive dashboard_table_card">
+      <table class="table">
+        <thead class="table__header">
+          <tr>
+            <th scope="col" class="text-center">Item</th>
+            <th scope="col" class="text-center">Código de parámetro</th>
+            <th scope="col" class="text-center">Valor del parámetro</th>
+            <th scope="col" class="text-center">Estado</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fShowSkeleton">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body">
+              <td> <p class="placeholder-glow rounded m-0"> <span class="placeholder col-12 placeholder-sm"></span> </p> </td>
+              <td> <p class="placeholder-glow rounded m-0"> <span class="placeholder col-12 placeholder-sm"></span> </p> </td>
+              <td> <p class="placeholder-glow rounded m-0"> <span class="placeholder col-12 placeholder-sm"></span> </p> </td>
+              <td> <p class="placeholder-glow rounded m-0"> <span class="placeholder col-12 placeholder-sm"></span> </p> </td>
+              <td> <p class="placeholder-glow rounded m-0"> <span class="placeholder col-12 placeholder-sm"></span> </p> </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fShowSkeleton">
+          <!--  <tbody *ngFor="let item of lstParamXTipo;  index as i"> -->
+          <tbody *ngFor="let item of lstParamXTipo;  index as i">
+            <tr class="table__body" [ngStyle]="{
+              'display': i / pageSize >= page || i / pageSize < page - 1 ? 'none' : 'table-row',
+              'border-bottom': (i + 1) === (page * pageSize) ? '0 solid transparent' : null
+            }">
+              <td class="text-center">{{i+1}}</td>
+              <td class="text-center">{{item.sCodigo}}</td>
+              <td class="text-center">{{item.sValor}}</td>
+
+              <td class="text-center ">
+                <div class="form-check form-switch form-switch-md d-flex justify-content-center">
+                  <input [disabled]="!item.sOpciones.includes('S')" (click)="actualizarParam(item)" class="form-check-input" type="checkbox"
+                    [(ngModel)]="item.boEstado">
+                </div>
+              </td>
+              <td class="text-center">
+                <button *ngIf="item.sOpciones.includes('U')" type="button" (click)="openEditarParam(contentRegistrarParam,item)"
+                  class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_edit.svg" />
+                </button>
+
+                <button *ngIf="item.sOpciones.includes('D')" type="button" (click)="openEliminar(contentEliminar,item)" class="dashboard_button_icon">
+                  <img height="30" src="assets/images/icon_delete.svg" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fShowSkeleton">
+        <ng-container *ngIf="lstParamXTipo.length <= 0">
+          <div class="text-center mt-5 mb-5 dashboard_noresultados">
+            <label class="fw-500">No existen resultados.</label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div *ngIf="!fShowSkeleton && lstParamXTipo.length > 0" class="d-flex justify-content-center mt-3">
+    <ngb-pagination class="pagination-md" [collectionSize]="lstParamXTipo.length" [(page)]="page" [maxSize]="8"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="lstParamXTipo.length" [(page)]="page" [maxSize]="5"
+      [pageSize]="pageSize">
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Modal Confirmar Registrar Usuario-->
+<ng-template #contentRegistrarParam let-modalRegistrarNivel>
+  <form (ngSubmit)="fnRegistrarParam(registrarUsuarioForm)" #registrarUsuarioForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header" style="border-bottom: none;">
+        <label *ngIf="!isEditarParam" class="modal__title fw-600">Registrar parámetro</label>
+        <label *ngIf="isEditarParam" class="modal__title fw-600">Editar parámetro</label>
+        <button type="button" class="btn-close" aria-label="Close" [disabled]="loadRegOEdit"
+          (click)="modalRegistrarNivel.dismiss();"></button>
+      </div>
+      <div class="modal-body pt-0" [ngClass]="{ 'modal-body--withoutBottom':isEditarParam }">
+        <div class="row">
+          <div class="col-md-12">
+            <label class="dashboard_label--sm" for="tipo_param">Tipo de parámetro</label>
+            <input id="tipo_param" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="sTipoParam" name="tipo_param" required disabled>
+          </div>
+        </div>
+
+        <div class="row  mt-2">
+          <div class="col-md-12">
+            <label class="dashboard_label--sm" for="codigo_param">Código de parámetro</label>
+            <input id="codigo_param" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sCodigo" name="codigo_param" required #sCodigo="ngModel" [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sCodigo.errors?.['required']
+              ||registrarUsuarioForm.submitted && sCodigo.errors?.['pattern']}" maxlength="50"
+              pattern="^(?=.*[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ:/()._-])[\sA-Za-z0-9ñÑáéíóúÁÉÍÓÚ:/(). _-]+$" [disabled]="isEditarParam"
+              (keypress)="validarAlTipear(patronParam,$event)">
+            <div
+              *ngIf="registrarUsuarioForm.submitted && sCodigo.errors?.['required']||registrarUsuarioForm.submitted && !cumpleconPatron(patronVacio,model.sCodigo) ">
+              <small class="text-danger">Ingrese el código.</small>
+            </div>
+
+            <div
+              *ngIf="registrarUsuarioForm.submitted && sCodigo.errors?.['pattern']  && cumpleconPatron(patronVacio,model.sCodigo)">
+              <small class="text-danger">No ingrese caracteres extraños.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row  mt-2">
+          <div class="col-md-12">
+            <label class="dashboard_label--sm" for="valor_param">Valor de parámetro</label>
+            <input id="valor_param" type="text" class="form-control form-control-sm dashboard_input"
+              [(ngModel)]="model.sValor" name="valor_param" required #sValor="ngModel" 
+              [ngClass]="{ 'is-invalid': registrarUsuarioForm.submitted && sValor.errors?.['required']
+                || registrarUsuarioForm.submitted && sValor.errors?.['pattern']}"
+              pattern="^(?=.*[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ:\\/()._-])[\sA-Za-z0-9ñÑáéíóúÁÉÍÓÚ:/\\(). _-]+$" maxlength="500">
+            <div *ngIf="registrarUsuarioForm.submitted && sValor.errors?.['required']">
+              <small class="text-danger">Ingrese el valor.</small>
+            </div>
+
+            <div
+              *ngIf="registrarUsuarioForm.submitted && sValor.errors?.['pattern']">
+              <small class="text-danger">No ingrese caracteres extraños.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2" *ngIf="model.sOpciones.includes('S')">
+          <div class="col-md-12">
+            <div class="form-check form-switch form-switch-md">
+              <input class="form-check-input" name="boCodEstado" type="checkbox" id="codestado_modalParam"
+                [(ngModel)]="model.boEstado">
+              <label *ngIf="model.boEstado" class="form-check-label ms-2 fs-14 fw-500"
+                for="codestado_modalParam">Activo</label>
+              <label *ngIf="!model.boEstado" class="form-check-label ms-2 fs-14 fw-500"
+                for="codestado_modalParam">Inactivo</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="loadRegOEdit" class="btn btn-light fs-14"
+          (click)="modalRegistrarNivel.dismiss()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loadRegOEdit" class="btn btn-primary  fs-14 ms-2"> <span *ngIf="loadRegOEdit"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <div class="d-flex align-items-center">
+        <div class="flex-shrink-0 d-flex align-items-center justify-content-center p-3 rounded-circle bg-light"
+          style="background-color: #FEE9E9 !important;">
+          <img src=" assets/images/icon_alert.svg" height="25" />
+        </div>
+        <div class="ms-3">
+          <label class="modal__title  fw-600">Confirmación</label>
+          <label class="mt-2 d-block fs-14">¿Está seguro de eliminar el parámetro?</label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button [disabled]="loadEliminar" (click)="modalEliminar.dismiss()" class="btn btn-light fc-black fs-14"
+          type="button">
+          Cancelar</button>
+        <button [disabled]="loadEliminar" (click)="fnEliminarParam()" class="btn btn-danger fs-14 ms-2" type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

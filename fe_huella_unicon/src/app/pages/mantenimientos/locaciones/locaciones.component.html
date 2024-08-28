@@ -1,0 +1,583 @@
+<div class="container">
+  <div class="crud__card px-4 pt-2 pb-3 mt-4" *ngIf="fShowAgreLoc">
+    <form (ngSubmit)="fnRegOActLocacion(regOActLocacionForm)" #regOActLocacionForm="ngForm" novalidate>
+      <div class="row align-items-start">
+        <div class="form-group col-lg-3">
+          <label for="nombre_locacion" class="col-form-label crud__label--sm">Nombre de locación:</label>
+          <input id="nombre_locacion" type="text" maxlength="50" class="form-control crud__input"
+            placeholder="Ej.: Locación 1" [(ngModel)]="modelLocacion.sNombre" name="nombre" required #sNombre="ngModel"
+            [ngClass]="{ 'is-invalid': submitLocacion && sNombre.errors?.['required']
+||submitLocacion && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$">
+          <div
+            *ngIf="submitLocacion && sNombre.errors?.['required'] ||submitLocacion && modelLocacion.sNombre.trim().length==0">
+            <small class="text-danger">Ingrese la categoría.</small>
+          </div>
+          <div *ngIf="submitLocacion && sNombre.errors?.['pattern']&& modelLocacion.sNombre.trim().length!==0">
+            <small class="text-danger">No ingrese caracteres extraños.</small>
+          </div>
+        </div>
+        <div class="form-group col-lg-4">
+          <label class="col-form-label crud__label--sm">Seleccionar según su geografía:</label>
+          <div class="row">
+            <div class="col-md-6">
+              <ng-select [(ngModel)]="modelLocacion.oCatGeo.nIdCategoria" placeholder="Categoría"
+                class="ng-select-admin" [items]="lstCatGeo" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="nIdCategoria" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'"
+                (change)="changeCatGeo()" name="CatGeo"
+                [ngClass]="{ 'is-invalid': submitLocacion && !modelLocacion.oCatGeo.nIdCategoria}" required>
+              </ng-select>
+              <div *ngIf="submitLocacion && !modelLocacion.oCatGeo.nIdCategoria">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+            </div>
+            <div class="col-md-6 mt-2 mt-md-0">
+              <ng-select [(ngModel)]="modelLocacion.oSubcatGeo.nIdCategoria" placeholder="Subcategoría"
+                class="ng-select-admin" [items]="lstSubCatGeo" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="nIdCategoria" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'"
+                name="subcatGeo" [ngClass]="{ 'is-invalid': submitLocacion && !modelLocacion.oSubcatGeo.nIdCategoria}"
+                required [disabled]="disabledSubCatGeo">
+              </ng-select>
+              <div *ngIf="submitLocacion && !modelLocacion.oSubcatGeo.nIdCategoria">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-lg-4">
+          <label class="col-form-label crud__label--sm">Seleccionar según su ámbito:</label>
+          <div class="row">
+            <div class="col-md-6">
+              <ng-select [(ngModel)]="modelLocacion.oCatAmb.nIdCategoria" placeholder="Categoría"
+                class="ng-select-admin" [items]="lstCatAmb" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="nIdCategoria" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'"
+                (change)="changeCatAmb()" name="CatAmb"
+                [ngClass]="{ 'is-invalid': submitLocacion && !modelLocacion.oCatAmb.nIdCategoria}" required>
+              </ng-select>
+              <div class="ms-2" *ngIf="submitLocacion && !modelLocacion.oCatAmb.nIdCategoria">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+            </div>
+            <div class="col-md-6 mt-2 mt-md-0">
+              <ng-select [(ngModel)]="modelLocacion.oSubcatAmb.nIdCategoria" placeholder="Subcategoría"
+                class="ng-select-admin" [items]="lstSubCatAmb" [dropdownPosition]="'bottom'" [clearable]="false"
+                bindValue="nIdCategoria" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'"
+                name="subcatAmb" [ngClass]="{ 'is-invalid': submitLocacion && !modelLocacion.oSubcatAmb.nIdCategoria}"
+                required [disabled]="disabledSubCatAmb">
+              </ng-select>
+              <div *ngIf="submitLocacion && !modelLocacion.oSubcatAmb.nIdCategoria">
+                <small class="text-danger">Campo requerido.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3 align-items-center">
+        <div class="form-group col-lg-2">
+          <label class="switch">
+            <input type="checkbox" id="boEstado_CatGeo" name="boEstadoDistFuente"
+              [(ngModel)]="modelLocacion.boCodEstado">
+            <span class="slider round"></span>
+          </label>
+          <label for="boEstado_CatGeo" *ngIf="modelLocacion.boCodEstado" class="ms-2">Activo</label>
+          <label for="boEstado_CatGeo" *ngIf="!modelLocacion.boCodEstado" class="ms-2">Inactivo</label>
+        </div>
+        <div class="col-lg-5 ms-auto d-flex justify-content-end ">
+          <button type="button" class="crud__button button-white" (click)="cancelLocacion()">
+            Cancelar
+          </button>
+          <button [disabled]="loadRegLocacion" type="submit" class="crud__button button-blue ms-2">
+            <span *ngIf="loadRegLocacion" class="spinner-border spinner-border-sm me-1"></span>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col-lg-7">
+      <label class="crud__title">Listado de locaciones</label>
+    </div>
+    <div class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-2">
+      <button class="crud__button button-blue" (click)="openAgreLocacion()" [disabled]="fShowAgreLoc">
+        <img src="assets/images/icon-plus.svg" height="25" />
+        <span class="ms-2">Agregar locación</span>
+      </button>
+    </div>
+  </div>
+  <div class="table-responsive  crud__card mt-4">
+    <table class="table">
+      <thead class="table__header">
+        <tr class="text-center">
+          <th scope="col">Locación</th>
+          <th scope="col">Categoría<br>geográfica</th>
+          <th scope="col">Categoría<br>por ámbito</th>
+          <th scope="col">Plantas</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <ng-container *ngIf="fSkLocacion">
+        <tbody *ngFor="let item of lstSkeleton">
+          <tr class="table__body table__body--skeleton">
+            <td>
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td>
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td>
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+            <td class="text-center">
+              <p class="placeholder-glow rounded m-0">
+                <span class="placeholder col-12 placeholder-sm"></span>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
+      <ng-container *ngIf="!fSkLocacion">
+        <tbody *ngFor="let item of lstLocacion; index as i">
+          <tr class="table__body table__body--degradado" [ngStyle]="{
+                        'display': i / pageSizeA >= pageA || i / pageSizeA < pageA - 1 ? 'none' : 'table-row',
+                        'border-bottom': (i + 1) === (pageA * pageSizeA) ? '0 solid transparent' : null,
+                        'background-color': selectedCategory_A === item.nIdLocacion
+                        ? '#FFEFB0' : null
+                      }">
+            <td class="text-center">
+              {{item.sNombre}}
+            </td>
+            <td class="text-center">
+              {{item.oCatGeo.sNombre}} - {{item.oSubcatGeo.sNombre}}
+            <td class="text-center">
+              {{item.oCatAmb.sNombre}} - {{item.oSubcatAmb.sNombre}}
+            </td>
+            <td class="text-center">
+              <img class="icon_subcategorias pointer" src="assets/images/icon-subcategorias.svg"
+                (click)="openPlanta(item)" />
+            </td>
+            <td class="text-center">
+              <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+              <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+            </td>
+            <td class="text-center">
+              <img class="icon_editar pointer" src="assets/images/icon-editar.svg" (click)="openEditLocacion(item)" />
+            </td>
+            <td class="text-center">
+              <img class="icon_tacho pointer" src="assets/images/icon-tacho.svg"
+                (click)="openEliminarLocacion(contentEliminar,item,1)" />
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
+
+    </table>
+    <ng-container *ngIf="!fSkLocacion && lstLocacion.length <= 0">
+      <div class="text-center mt-5 mb-5">
+        <h5 class="mb-0">No existen resultados.</h5>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="!fSkLocacion &&lstLocacion.length > 0" class="d-flex justify-content-center mt-4 pb-4">
+    <ngb-pagination class="pagination-md" [collectionSize]="lstLocacion.length" [(page)]="pageA" [maxSize]="5"
+      [pageSize]="pageSizeA">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+    <ngb-pagination class="pagination-sm" [collectionSize]="lstLocacion.length" [(page)]="pageA" [maxSize]="3"
+      [pageSize]="pageSizeA">
+      <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+      <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+    </ngb-pagination>
+  </div>
+  <div [hidden]="!fShowPlanta" [ngClass]="{'margin-container':  lstPlanta.length <= 0}">
+    <div class="col-md-12">
+      <div class="row mt-2">
+        <div class="col-lg-7">
+          <label class="crud__subtitle">Planta - {{itemPlanta.sNombre}}</label>
+        </div>
+        <div *ngIf="!fShowAgrePlanta" class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-2">
+          <button class="crud__button button-blue" (click)="openAgrePlanta()">
+            <img src="assets/images/icon-plus.svg" height="25" />
+            <span class="ms-2">Agregar planta</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="fShowAgrePlanta" class="crud__card mt-4 p-4 pt-2 col-md-12 col-lg-9">
+      <form (ngSubmit)="fnRegOActPlanta(regOActPlantaForm)" #regOActPlantaForm="ngForm" novalidate>
+        <div class="row">
+          <div class="col-lg-3">
+            <label for="nombre_planta" class="col-form-label col-form-label-sm">Nombre de la planta</label>
+            <input id="nombre_planta" type="text" maxlength="50" class="form-control crud__input"
+              placeholder="Ej.: Planta11" [(ngModel)]="modelPlanta.sNombre" name="nombre" required #sNombre="ngModel"
+              [ngClass]="{ 'is-invalid': submitPlanta && sNombre.errors?.['required']
+||submitPlanta && sNombre.errors?.['pattern']}" pattern="^(?!\s+$)[a-zA-ZñÑáéíóúÁÉÍÓÚ\s0-9,.;\-\/]+$">
+            <div *ngIf="submitPlanta && sNombre.errors?.['required']">
+              <small class="text-danger">Ingrese la planta.</small>
+            </div>
+            <div *ngIf="submitPlanta && sNombre.errors?.['pattern']">
+              <small class="text-danger">No ingrese caracteres extraños.</small>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <label class="col-form-label col-form-label-sm">Subunidad negocio</label>
+            <ng-select [(ngModel)]="modelPlanta.oUUNN.nIdUnidadNegocio" placeholder="Seleccionar"
+              class="ng-select-admin" [items]="lstUnNegocio" [dropdownPosition]="'bottom'" [clearable]="false"
+              bindValue="nIdUnidadNegocio" bindLabel="sNombre" [searchable]="false" [notFoundText]="'No hay data'"
+              (change)="changeCatGeo()" name="CatGeo"
+              [ngClass]="{ 'is-invalid': submitPlanta && !modelPlanta.oUUNN.nIdUnidadNegocio}" required>
+            </ng-select>
+            <div *ngIf="submitPlanta && !modelPlanta.oUUNN.nIdUnidadNegocio">
+              <small class="text-danger">Campo requerido.</small>
+            </div>
+          </div>
+          <div class="form-group mt-2 marginToogle w-codEstado">
+            <label class="switch">
+              <input type="checkbox" id="boEstado_CatGeo" name="boEstadoDistFuente"
+                [(ngModel)]="modelPlanta.boCodEstado">
+              <span class="slider round"></span>
+            </label>
+            <label for="boEstado_CatGeo" *ngIf="modelPlanta.boCodEstado" class="ms-2">Activo</label>
+            <label for="boEstado_CatGeo" *ngIf="!modelPlanta.boCodEstado" class="ms-2">Inactivo</label>
+          </div>
+          <div class="d-flex col-md-3 mt-2 mt-lg-0 custom-button">
+            <button type="button" class="crud__button button-white" (click)="cancelPlanta()">Cancelar</button>
+            <button type="submit" [disabled]="loadRegPlanta" class="crud__button button-blue ms-2"> <span
+                *ngIf="loadRegPlanta" class="spinner-border spinner-border-sm me-1"></span>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="fShowAgrePlanta" class="col-lg-5 ms-auto d-flex justify-content-end align-items-end mt-4">
+      <button class="crud__button button-blue" disabled>
+        <img src="assets/images/icon-plus.svg" height="25" />
+        <span class="ms-2">Agregar planta</span>
+      </button>
+    </div>
+    <div class="table-responsive  crud__card mt-4">
+      <table class="table">
+        <thead class="table__header">
+          <tr class="text-center">
+            <th scope="col">Planta</th>
+            <th scope="col">Subunidad Negocio</th>
+            <th scope="col">Actividad</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
+          </tr>
+        </thead>
+        <ng-container *ngIf="fSkPlanta">
+          <tbody *ngFor="let item of lstSkeleton">
+            <tr class="table__body table__body--skeleton">
+              <!--  <td>
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td> -->
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+              <td class="text-center">
+                <p class="placeholder-glow rounded m-0">
+                  <span class="placeholder col-12 placeholder-sm"></span>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+        <ng-container *ngIf="!fSkPlanta">
+          <tbody *ngFor="let item of lstPlanta; index as i">
+            <tr class="table__body table__body--degradado" [ngStyle]="{
+                        'display': i / pageSizeB >= pageB || i / pageSizeB < pageB - 1 ? 'none' : 'table-row',
+                        'border-bottom': (i + 1) === (pageB * pageSizeB) ? '0 solid transparent' : null,
+                        'background-color': selectedCategory_B === item.nIdPlanta ? '#FFEFB0' : null
+                      }">
+
+              <td class="text-center">
+                {{item.sNombre}}
+              </td>
+              <td class="text-center">
+                {{item.oUUNN.sNombre}}
+              </td>
+              <td class="text-center">
+                <img class="icon_calendar_table pointer" src="assets/images/icon-calendar.svg"
+                  (click)="openActiPlanta(contentActiPlanta,item)" />
+              </td>
+              <td class="text-center">
+                <div *ngIf="item.boCodEstado" class="ms-2">Activo</div>
+                <div *ngIf="!item.boCodEstado" class="ms-2">Inactivo</div>
+              </td>
+              <td class="text-center">
+                <img class="icon_editar pointer" src="assets/images/icon-editar.svg" (click)="openEditPlanta(item,i)" />
+              </td>
+              <td class="text-center">
+                <img class="icon_tacho pointer" src="assets/images/icon-tacho.svg"
+                  (click)="openEliminarPlanta(contentEliminar,item,2)" />
+              </td>
+            </tr>
+          </tbody>
+        </ng-container>
+      </table>
+      <ng-container *ngIf="!fSkPlanta && lstPlanta.length <= 0">
+        <div class="text-center mt-5 mb-5">
+          <h5 class="mb-0">No existen resultados.</h5>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="!fSkPlanta &&lstPlanta.length > 0" class="d-flex justify-content-center mt-4 pb-3">
+      <ngb-pagination class="pagination-md" [collectionSize]="lstPlanta.length" [(page)]="pageB" [maxSize]="8"
+        [pageSize]="pageSizeB">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+      </ngb-pagination>
+      <ngb-pagination class="pagination-sm" [collectionSize]="lstPlanta.length" [(page)]="pageB" [maxSize]="5"
+        [pageSize]="pageSizeB">
+        <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+        <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body ">
+      <label class="modal__title">Confirmación</label>
+      <div class="mt-3 d-flex justify-content-center fs-16">
+        ¿Está seguro de eliminar la&nbsp; <label *ngIf="eliminar.itemElim==1">locación</label>
+        <label *ngIf="eliminar.itemElim==2">planta</label>
+        <label *ngIf="eliminar.itemElim==3">actividad de la planta</label>?
+      </div>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <div *ngIf="eliminar.itemElim==1">
+          <button [disabled]="loadElimLocacion" (click)="fnEliminarLocacion()" class="crud__button button-blue ms-2"
+            type="submit">
+            <span [hidden]="!loadElimLocacion" class="spinner-border spinner-border-sm me-2"></span>
+            Sí</button>
+        </div>
+        <div *ngIf="eliminar.itemElim==2">
+          <button [disabled]="loadElimPlanta" (click)="fnEliminarPlanta()" class="crud__button button-blue ms-2"
+            type="submit">
+            <span [hidden]="!loadElimPlanta" class="spinner-border spinner-border-sm me-2"></span>
+            Sí</button>
+        </div>
+        <div *ngIf="eliminar.itemElim==3">
+          <button [disabled]="loadElimActiPlanta" (click)="fnEliminarActiPlanta()" class="crud__button button-blue ms-2"
+            type="submit">
+            <span [hidden]="!loadElimActiPlanta" class="spinner-border spinner-border-sm me-2"></span>
+            Sí</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal Actividad de la planta-->
+<ng-template #contentActiPlanta let-modalActiPlanta>
+  <form (ngSubmit)="regOAct_ActiPlanta(regOAct_ActiPlantaForm)" #regOAct_ActiPlantaForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title">Actividad de la planta</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close" (click)="closeModal()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop">
+        <div class="row align-items-start">
+          <div class="form-group col-lg-3">
+            <label for="nombre_plantaM" class="crud__label--sm">Planta</label>
+            <input id="nombre_plantaM" type="text" class="form-control crud__input" [(ngModel)]="itemPlanta.sNombre"
+              name="nombre" disabled>
+          </div>
+          <div class="form-group  col-lg-3">
+            <label class="crud__label--sm">Empresa</label>
+            <ng-select class="ng-select-admin" [(ngModel)]="modelActiPlanta.sCodEmpresa"
+              [ngModelOptions]="{standalone: true}" placeholder="Seleccionar" [searchable]="false" [clearable]="false"
+              required [ngClass]="{ 'is-invalid': submitActiPlanta &&  !modelActiPlanta.sCodEmpresa}">
+              <ng-option *ngFor="let item of lstEmpresa" [value]="item.sCodigo">{{item.sValor}}</ng-option>
+            </ng-select>
+            <div *ngIf="submitActiPlanta && !modelActiPlanta.sCodEmpresa">
+              <small class="text-danger">Campo requerido.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row  justify-content-between mt-1">
+          <div class="col-lg-3">
+            <label class="crud__label--sm">Fecha inicio</label>
+            <div class="d-flex align-items-center">
+              <input [(ngModel)]="firstCalendar" class="form-control crud__calendar calendar_locaciones text-md-center"
+                placeholder="dd/mm/aaaa" name="fstCalendar" ngbDatepicker #fCalendar="ngbDatepicker"
+                (click)="fCalendar.toggle()" (ngModelChange)="changeFirstCalendar($event)"
+                [ngClass]="{ 'is-invalid': invalid_firstDate}" [minDate]="{year: getDate.year, month: 1, day: 1}"
+                [maxDate]="{year: getDate.year+1, month: 12, day: 31}" />
+              <img src="assets/images/icon-calendar.svg" class="icon_calendar ms-2 pointer"
+                (click)="fCalendar.toggle()" />
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <label class="crud__label--sm">Fecha fin</label>
+            <div class="d-flex align-items-center">
+              <input [(ngModel)]="secondCalendar" class="form-control crud__calendar calendar_locaciones text-md-center"
+                placeholder="dd/mm/aaaa" name="scndCalendar" ngbDatepicker #sCalendar="ngbDatepicker"
+                (click)="sCalendar.toggle()" (ngModelChange)="changeSecondCalendar($event)"
+                [ngClass]="{ 'is-invalid': invalid_secondDate}" [minDate]="{year:  getDate.year, month: 1, day: 1}"
+                [maxDate]="{year: getDate.year+1, month: 12, day: 31}" />
+              <img src="assets/images/icon-calendar.svg" class="icon_calendar ms-2 pointer"
+                (click)="sCalendar.toggle()" />
+            </div>
+          </div>
+          <div class="col-lg-5 ms-auto d-flex justify-content-end  align-items-end mt-2 mt-md-0">
+            <button type="button" class="crud__button button-white" (click)="cancelActiPlanta()">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="loadRegActiPlanta"
+              class="mt-2 mt-lg-0  crud__button crud__button--large   button-blue ms-2">
+              <div *ngIf="!isEditarActiPlanta" class=" d-flex align-items-center">
+                <span [hidden]="!loadRegActiPlanta" class=" spinner-border spinner-border-sm me-1"></span>
+                <img [hidden]="loadRegActiPlanta" src="assets/images/icon-calendar-plus-white.svg" class="me-2"
+                  height="25" />
+                <span>Agregar</span>
+              </div>
+              <div *ngIf="isEditarActiPlanta">
+                <span [hidden]="!loadRegActiPlanta" class=" spinner-border spinner-border-sm me-1"></span>
+                Guardar
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive crud__card crud__card--modal p-0 mt-4">
+          <table class="table my-table">
+            <thead class="table__header text-center">
+              <th scope="col">Empresa</th>
+              <th scope="col">Fecha inicio</th>
+              <th scope="col">Fecha fin</th>
+              <th scope="col">Editar</th>
+              <th scope="col">Eliminar</th>
+            </thead>
+            <ng-container *ngIf="fShowSkActiPlanta">
+              <tbody *ngFor="let item of lstSkeleton">
+                <tr class="table__body table__body--skeleton">
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                  <td>
+                    <p class="placeholder-glow rounded m-0">
+                      <span class="placeholder col-12 placeholder-sm"></span>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+            <ng-container *ngIf="!fShowSkActiPlanta">
+              <tbody *ngFor="let item of lstActiPlanta; index as i">
+                <tr class="table__body table__body--degradado text-center" [ngStyle]="{
+                            'display': i / pageSize_modal >= page_modal || i / pageSize_modal < page_modal - 1 ? 'none' : 'table-row',
+                            'border-bottom': (i + 1) === (page_modal * pageSize_modal) ? '0 solid transparent' : null,
+                            'background-color': selectedCategory_C === item.nIdActividadPlanta
+                            ? '#FFEFB0' : null
+                          }">
+                  <td>
+                    {{item.sCodEmpresa}}
+                  </td>
+                  <td>
+                    {{ item.sFechaInicio | date:'dd/MM/yyyy' }}
+                  </td>
+                  <td>
+                    {{ item.sFechaFin | date:'dd/MM/yyyy' }}
+                  </td>
+                  <td>
+                    <img class="icon_editar pointer" src="assets/images/icon-editar.svg"
+                      (click)="openEditActiPlanta(item)" />
+                  </td>
+                  <td>
+                    <img class="icon_tacho pointer" (click)="openEliminarActiPlanta(contentEliminar,item,3)"
+                      src="assets/images/icon-tacho.svg" />
+                  </td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+          <ng-container *ngIf="!fShowSkActiPlanta && lstActiPlanta.length <= 0">
+            <div class="text-center mt-5 mb-5">
+              <h5>No existen resultados.</h5>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="lstActiPlanta.length > 0" class="d-flex justify-content-center mt-3">
+          <ngb-pagination class="pagination-md" style="height: 35px;" [collectionSize]="lstActiPlanta.length"
+            [(page)]="page_modal" [maxSize]="8" [pageSize]="pageSize_modal">
+            <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+            <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

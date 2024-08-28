@@ -1,0 +1,15 @@
+footer {
+  background: #413F42;
+  border-top: 14px solid;
+  border-image: url("src/assets/images/header.png") 30 30 repeat;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 0.1875rem 0.5rem;
+}
+
+.text-footer {
+  font-size: 14px;
+  color: #A6A6A6
+}
+
+.col-md-4 {
+  line-height: 25px;
+}

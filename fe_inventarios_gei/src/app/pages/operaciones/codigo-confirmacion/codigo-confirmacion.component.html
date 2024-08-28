@@ -1,0 +1,53 @@
+<form class="form-signin needs-validation" (ngSubmit)="fnCodigoContrasena()" #contrasenaForm="ngForm" novalidate>
+  <div class="container contenedor-padding">
+    <div class="d-lg-flex align-items-center">
+      <app-alert class="ms-auto alto"></app-alert>
+    </div>
+    <div class="row card-margin">
+      <div class="col-md-6 margin-col-1">
+        <div class="d-flex align-items-center">
+          <label class="title">Ingrese código de confirmación</label>
+          <img src="assets/images/label-alert.svg" class="ms-2 pointer" height="16"
+            (click)="openModalConfirmacion(contentConfirmacion)" />
+        </div>
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="row mt-4 justify-content-center">
+              <ng-otp-input (onInputChange)="onOtpChange($event)" [config]="{allowNumbersOnly: true, length:8}"
+                onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></ng-otp-input>
+            </div>
+            <div class="float-right mt-5">
+              <div class="col d-flex justify-content-end align-items-end">
+                <button class="btn btn-success blanco align-items-center button-contrasena"
+                  routerLink="/recuperar-contrasena" type="submit">
+                  <img src="assets/images/arrow-left.svg" height="20" class="pointer" />
+                  <span class="ms-2"> Volver</span>
+                </button>
+                <button class="btn btn-success ms-3 verde button-contrasena" [disabled]="loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 d-flex justify-content-center imagen-lapiz-margin">
+        <img src="assets/images/img-contrasena.png" class="imagen-lapiz" />
+      </div>
+    </div>
+  </div>
+</form>
+<ng-template #contentConfirmacion let-modalConfirmacion>
+  <div>
+    <img src="assets/images/salida-modal.svg" (click)="modalConfirmacion.dismiss()" class="pointer float-end mt-3 me-3"
+      style="height: 15px;" />
+  </div>
+  <div class="modal-body text-center mb-5">
+    <h5 class="title-modal">Código de confirmación</h5>
+    <label class="modal-text">Ingrese el código enviado a su teléfono
+      registrado en el sistema.<br>
+      Si no cuenta con el código, comuníquese con el
+      administrador del sistema.</label>
+  </div>
+</ng-template>

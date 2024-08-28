@@ -1,0 +1,14 @@
+.height_calculado {
+  height: calc(100vh - 210px);
+}
+
+
+/*************************************************************/
+/*------- Vista de monitores menor a 1707px de width---------*/
+
+@media (min-width: 991px) and (max-width: 1707px) {
+  .height_calculado {
+    height: calc(100vh - 12.302vw);
+  }
+
+}

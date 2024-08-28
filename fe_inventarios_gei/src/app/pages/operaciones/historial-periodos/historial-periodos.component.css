@@ -1,0 +1,25 @@
+.modal-header {
+  padding: 1px 8px 1px 15px;
+  border-bottom: 1px solid black;
+}
+
+th {
+  line-height: 19px;
+}
+
+.btn-reaperturar {
+  color: black !important;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.col-md-2:last-of-type {
+  width: 200px !important;
+}
+
+.tbody-historial td,
+.tbody-historial th {
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 200px;
+}

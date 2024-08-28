@@ -1,0 +1,59 @@
+.d-none {
+  display: none !important;
+}
+
+.chart-height {
+  height: calc(100% - 50px);
+}
+
+.crud__title--chart {
+  font-size: 22px;
+}
+
+.form-check:first-of-type {
+  margin-left: 4px;
+}
+
+.custom-legend {
+  padding-left: 5%;
+}
+
+.custom-legend-firstChart {
+  padding-left: 8%;
+}
+
+.crud__title--totalLoc {
+  font-size: 17px;
+  color: #0187E0
+}
+
+@media (max-width: 600px) {
+  .height-auto-sm {
+    height: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .chart-container-sm {
+    height: 300px;
+    max-height: 300px;
+    width: 51%;
+    min-width: 51%;
+  }
+
+}
+
+.crud__tite--nombreEmpresa {
+  font-size: 30px;
+  margin-top: -5px;
+}
+
+.height-sm {
+  height: 310px !important;
+}
+
+@media (min-width: 1430px) {
+  .col-lg-1.col_nombreSelect {
+    width: 6%;
+  }
+}

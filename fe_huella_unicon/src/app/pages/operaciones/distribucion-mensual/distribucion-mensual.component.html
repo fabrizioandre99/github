@@ -1,0 +1,463 @@
+<div class="container">
+  <label class="crud__title">Distribución mensual</label>
+  <div class="card mt-2">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#tab1">Distribución por fuente de emisión</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#tab2" (click)="fnListarDistPlanta()">Distribución por
+            planta</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <div class="tab-pane show active" id="tab1">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="row">
+                <div class="col-lg-2 w-periodo">
+                  <label class="crud__label--sm">Periodo</label>
+                  <ng-select [(ngModel)]="model.oPeriodo.nIdPeriodo" class="ng-select-admin ng-select-removeArrow"
+                    [items]="lstPeriodo" [dropdownPosition]="'bottom'" [clearable]="false" bindValue="nIdPeriodo"
+                    bindLabel="nAnio" [searchable]="false" [notFoundText]="'No hay data'" disabled>
+                  </ng-select>
+                </div>
+                <div class="col-lg-2 w-mes">
+                  <label class="crud__label--sm">Mes</label>
+                  <ng-select (change)="fnListarDistFuente()" [(ngModel)]="model.sCodMes" placeholder="Seleccionar"
+                    class="ng-select-admin" [items]="lstMes" [dropdownPosition]="'bottom'" [clearable]="false"
+                    bindValue="sCodigo" bindLabel="sValor" [searchable]="false" [notFoundText]="'No hay data'">
+                  </ng-select>
+                </div>
+                <div class="col-lg-6">
+                  <label class="crud__label--sm">Fuentes de emisión</label>
+                  <ng-select (change)="fnListarDistFuente()" class="ng-select-admin"
+                    [(ngModel)]="model.oFuenteEmision.nIdFuenteEmision" placeholder="Seleccionar"
+                    [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false"
+                    [clearable]="false">
+                    <ng-option [value]="-1">Todos</ng-option>
+                    <ng-option *ngFor="let item of lstFuentesEmision"
+                      [value]="item.nIdFuenteEmision">{{item.sNombre}}</ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="row mt-2 align-items-end">
+                <div class="col-md-3 me-2 ">
+                  <label class="crud__label--sm"
+                    [ngClass]="{ 'text_disabled': todosProcesados || esFinalizado  || loadProcesar}">Procesar
+                    todo</label>
+                  <div class="form-group form_group_procesar">
+                    <label class="switch">
+                      <input type="checkbox" name="boEstadoDistFuente" [(ngModel)]="procesarGlobal"
+                        [disabled]="todosProcesados || esFinalizado || loadProcesar"
+                        (click)="openProcesarF(contentProcesarF)">
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-6 ms-auto d-flex justify-content-end">
+                  <button [disabled]="loadOpenModal" (click)="openRegistrarDistribucion(contentRegistrarDistribucion)"
+                    class="crud__button button-blue" [disabled]="!model.sCodMes || !model.oFuenteEmision.nIdFuenteEmision || model.oFuenteEmision.nIdFuenteEmision === -1
+                    || sharedData.itemPeriodo.disabled==true">
+                    <img *ngIf="!loadOpenModal" src=" assets/images/icon-plus.svg" height="25" />
+                    <span *ngIf="loadOpenModal" class="spinner-border spinner-border-sm me-1"></span>
+                    Agregar
+                    distribución
+                  </button>
+                </div>
+              </div>
+              <div class="crud__card mt-3">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="table__header table__header--DistFuente">
+                      <tr class="text-center">
+                        <th scope="col">Fuente emisión</th>
+                        <th scope="col">Locación</th>
+                        <th scope="col">Distribución</th>
+                        <th scope="col">Procesado</th>
+                        <th scope="col">Eliminar</th>
+                      </tr>
+                    </thead>
+                    <ng-container *ngIf="fShowSkDistFuente">
+                      <tbody *ngFor="let item of lstSkeleton">
+                        <tr class="table__body table__body--skeleton">
+                          <td>
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td>
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td class="text-center">
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td class="text-center">
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td class="text-center">
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </ng-container>
+                    <ng-container *ngIf="!fShowSkDistFuente">
+                      <tbody
+                        *ngFor="let item of lstDistFuente| slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                        <tr class="table__body">
+                          <td class="text-center">{{item.oFuenteEmision.sNombre}}</td>
+                          <td class="text-center">{{item.oLocacion.sNombre}}</td>
+                          <td class="text-center">
+                            <img class="icon_editar pointer" *ngIf="sharedData.itemPeriodo.disabled==false" src="
+                              assets/images/icon-editar.svg"
+                              (click)="openEditarDistribucion(contentRegistrarDistribucion,item)" />
+                            <img class="icon_eye_table pointer" *ngIf="sharedData.itemPeriodo.disabled==true"
+                              src="assets/images/icon-eye.svg"
+                              (click)="openEditarDistribucion(contentRegistrarDistribucion,item)" />
+                          </td>
+                          <td class="text-center">
+                            <div class="form-group">
+                              <label class="switch">
+                                <input type="checkbox" name="boEstadoDistFuente" [(ngModel)]="item.boProcesado"
+                                  disabled>
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                          </td>
+                          <td class="text-center">
+                            <button class="button-defect" (click)="openEliminar(contentEliminar,item)"
+                              [disabled]="sharedData.itemPeriodo.disabled">
+                              <img class="icon_tacho" src="assets/images/icon-tacho.svg"
+                                [ngClass]="{'image-disabled': sharedData.itemPeriodo.disabled==true}" />
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </ng-container>
+                  </table>
+                </div>
+                <ng-container *ngIf="!fShowSkDistFuente && lstDistFuente.length <= 0">
+                  <div class="text-center mt-5 mb-5">
+                    <h5>No existen resultados.</h5>
+                  </div>
+                </ng-container>
+              </div>
+              <div *ngIf="!fShowSkDistFuente && lstDistFuente.length > 0"
+                class="d-flex justify-content-center mt-4 margin-container">
+                <ngb-pagination class="pagination-md" [collectionSize]="lstDistFuente.length" [(page)]="page"
+                  [maxSize]="8" [pageSize]="pageSize">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+                <ngb-pagination class="pagination-sm" [collectionSize]="lstDistFuente.length" [(page)]="page"
+                  [maxSize]="5" [pageSize]="pageSize">
+                  <ng-template ngbPaginationPrevious><img src="assets/images/icon-left-pagination.svg" /></ng-template>
+                  <ng-template ngbPaginationNext><img src="assets/images/icon-right-pagination.svg" /></ng-template>
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab2">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="row">
+                <div class="col-lg-2 w-periodo">
+                  <label class="crud__label--sm">Periodo</label>
+                  <ng-select [(ngModel)]="model.oPeriodo.nIdPeriodo" class="ng-select-admin ng-select-removeArrow"
+                    [items]="lstPeriodo" [dropdownPosition]="'bottom'" [clearable]="false" bindValue="nIdPeriodo"
+                    bindLabel="nAnio" [searchable]="false" [notFoundText]="'No hay data'" disabled>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="mt-2" style="width: 195px;">
+                <div class="d-flex align-items-center">
+                  <img class="icon_doc" src="assets/images/icon-doc.svg">
+                  <span class="fs-12"> Formato:</span>
+                  <span class="crud__label--formato ms-1 pointer"
+                    (click)="fnDescargarFormato()">DistProduccion_mes.xls</span>
+                </div>
+              </div>
+              <div class="crud__card mt-3">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="table__header table__header--DistPlanta">
+                      <tr class="text-center">
+                        <th scope="col">Mes</th>
+                        <th scope="col" class="text-start">Documento</th>
+                        <th scope="col">Procesado</th>
+                      </tr>
+                    </thead>
+                    <ng-container *ngIf="fShowSkDistPlanta">
+                      <tbody *ngFor="let item of lstSkeleton">
+                        <tr class="table__body table__body--skeleton">
+                          <td>
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td>
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                          <td>
+                            <p class="placeholder-glow rounded m-0">
+                              <span class="placeholder col-12 placeholder-sm"></span>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </ng-container>
+                    <ng-container *ngIf="!fShowSkDistPlanta">
+                      <tbody *ngFor="let item of lstDistPlanta; let i = index">
+                        <tr class=" table__body">
+                          <td class="text-center">{{item.sNombreMes}}</td>
+                          <td>
+                            <div class="d-flex justify-content-between align-items-center" *ngIf="item.sXlsProduccion">
+                              <a class="descarga descargar_xlsProduccion me-4" (click)="fnDescargarDocumento(item)">
+                                {{item.sXlsProduccion}}</a>
+                              <button class="button-defect" (click)="eliminarProdPlanta(item)"
+                                [disabled]="sharedData.itemPeriodo.disabled || item.boProcesado ">
+                                <img class="icon_tacho icon_tacho_doc" src="assets/images/icon-tacho.svg"
+                                  [ngClass]="{'image-disabled': sharedData.itemPeriodo.disabled==true ||item.boProcesado  }" />
+                              </button>
+
+                            </div>
+                            <div *ngIf="item.edit" class="d-flex justify-content-between align-items-center">
+                              <div class="d-flex align-items-center" style="width: 100%;">
+                                <div style="width: 97%;" class="form-file" (dragover)="dragOverHandler($event)"
+                                  (drop)="dropHandler($event, i)"
+                                  [ngClass]="{'is-invalid': item.noFormat, 'form-file-disabled': item.loadDocument}">
+                                  <label class="textfile w-100 bd-highlight" [for]="'fileDoc' + i">{{
+                                    item.sXlsProduccion_modDocName
+                                    }}</label>
+                                  <div class="flex-shrink-1 bd-highlight">
+                                    <input type="file" [ngClass]="{'pointer': !item.loadDocument}" multiple
+                                      accept=".xlsx,.xls" [id]="'fileDoc' + i" [name]="'fileDoc' + i" required
+                                      [ngModelOptions]="{ standalone: true }" [(ngModel)]="item.sXlsProduccion_mod"
+                                      (change)="changeFile($event, item)" [disabled]="item.loadDocument">
+                                    <span *ngIf=" item.loadDocument"
+                                      class="spinner-border spinner-border-sm crud__file--loading ms-2"></span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="table__buttons">
+                                <div *ngIf="item.loadDocument">
+                                  <img src="assets/images/icon-check-circle--disabled.svg" class="icon_circle ms-5px" />
+                                  <img src="assets/images/icon-close-circle--disabled.svg" class="icon_circle" />
+                                </div>
+                                <div *ngIf="!item.loadDocument">
+                                  <button class="button-defect ms-5px" placement="top" ngbTooltip="Guardar"
+                                    (click)="registrarProdPlanta(item)">
+                                    <img class="icon_circle" src="assets/images/icon-check-circle.svg" />
+                                  </button>
+                                  <button class="button-defect" placement="top" ngbTooltip="Cancelar">
+                                    <img class="icon_circle" (click)="cancelarProdPlanta(item)"
+                                      src="assets/images/icon-close-circle.svg" /></button>
+                                </div>
+                              </div>
+                            </div>
+                            <div *ngIf="!item.edit">
+                              <div class="d-flex justify-content-end align-items-center" *ngIf="!item.sXlsProduccion">
+                                <button class="button-defect" (click)="subirArchivo(item)"
+                                  [disabled]="sharedData.itemPeriodo.disabled==true">
+                                  <img class="icon_folder_plus"
+                                    [ngClass]="{'image-disabled': sharedData.itemPeriodo.disabled==true}"
+                                    src="assets/images/icon-file-plus.svg" />
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                          <td class=" text-center">
+                            <div class="form-group">
+                              <label class="switch">
+                                <input type="checkbox" name="boEstadoDistFuente" [(ngModel)]="item.boProcesado"
+                                  [disabled]="item.boProcesado||!item.sXlsProduccion||sharedData.itemPeriodo.disabled==true"
+                                  (click)="procesarDistMensual(item)" [ngModelOptions]="{ standalone: true }">
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </ng-container>
+                  </table>
+                </div>
+                <ng-container *ngIf="!fShowSkDistPlanta && lstDistPlanta.length <= 0">
+                  <div class="text-center mt-5 mb-5">
+                    <h5>No existen resultados.</h5>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end mt-3 pb-4">
+    <button class="crud__button button-white" routerLink="/bandeja-periodos">Volver</button>
+  </div>
+</div>
+
+<!-- Modal Registrar distribución -->
+<ng-template #contentRegistrarDistribucion let-modalRegistrarDistribucion>
+  <form (ngSubmit)="fnRegistrarDistribucion(registrarDistribucionForm)" #registrarDistribucionForm="ngForm" novalidate>
+    <div class="modal-padding">
+      <div class="modal-header">
+        <label class="modal__title" *ngIf="!isEditarDistribucion && sharedData.itemPeriodo.disabled==false">Registrar
+          distribución</label>
+        <label class="modal__title" *ngIf="isEditarDistribucion && sharedData.itemPeriodo.disabled==false">Editar
+          distribución</label>
+        <label class="modal__title" *ngIf="sharedData.itemPeriodo.disabled==true">Ver
+          distribución</label>
+        <button type="button" class="close-modal modal_close" aria-label="Close"
+          (click)="modalRegistrarDistribucion.dismiss()">
+          <img src="assets/images/icon-close.svg" />
+        </button>
+      </div>
+      <div class="modal-body modal-body--withoutTop modal-body--withoutBottom mt-1">
+        <div class="row">
+          <div class="col-lg-10">
+            <label class="crud__label--sm">Seleccionar locación
+            </label>
+            <ng-select placeholder="Seleccionar" class="ng-select-admin" [(ngModel)]="model.oLocacion.nIdLocacion"
+              name="sCodRol" [notFoundText]="'No hay data'" [dropdownPosition]="'bottom'" [searchable]="false"
+              [clearable]="false" required #nIdPeriodo="ngModel" [disabled]="isEditarDistribucion"
+              [ngClass]="{ 'is-invalid': registrarDistribucionForm.submitted && nIdPeriodo.errors?.['required']}"
+              (change)="changeLocacion()">
+              <ng-option *ngFor="let item of lstActivos" [value]="item.nIdLocacion">{{item.sNombre}}</ng-option>
+            </ng-select>
+            <div *ngIf="registrarDistribucionForm.submitted && nIdPeriodo.errors?.['required']">
+              <small class="text-danger">Seleccione la locación.</small>
+            </div>
+          </div>
+        </div>
+        <div class="crud__card crud__card--modal p-0 mt-4">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="table__header table__header--obs">
+                <th scope="col" class="ps-3">Subunidad de Negocio</th>
+                <th scope="col" class="ps-3" [ngClass]="{ 'text-end pe-3':  sharedData.itemPeriodo.disabled==true}">
+                  Distribución</th>
+              </thead>
+              <ng-container *ngIf="fShowDFByLocacion">
+                <tbody *ngFor="let item of lstSkeleton">
+                  <tr class="table__body table__body--skeleton">
+                    <td>
+                      <p class="placeholder-glow rounded m-0">
+                        <span class="placeholder col-12 placeholder-sm"></span>
+                      </p>
+                    </td>
+                    <td>
+                      <p class="placeholder-glow rounded m-0">
+                        <span class="placeholder col-12 placeholder-sm"></span>
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-container>
+              <ng-container *ngIf="!fShowDFByLocacion">
+                <tbody *ngFor="let item of lstDFByLocacion; index as i">
+                  <tr class="table__body">
+                    <td class="ps-3">{{item.oUnidadNegocio.sNombre}}</td>
+                    <td class="ps-3">
+                      <div class="d-flex align-items-center justify-content-end">
+                        <label *ngIf="sharedData.itemPeriodo.disabled==true"
+                          class="ms-5px">{{lstDFByLocacion[i].bdValorDistribucion}} %</label>
+                        <div class="d-flex align-items-center" *ngIf="sharedData.itemPeriodo.disabled==false">
+                          <input type="number" maxlength="3" [(ngModel)]="lstDFByLocacion[i].bdValorDistribucion"
+                            [ngModelOptions]="{standalone: true}" (change)="onInputChanged(i)"
+                            class="form-control form-control-sm crud__input text-end"
+                            pattern="^(100(\.0+)?|\d{1,2}(\.\d+)?)$" #bdValorDistribucion="ngModel"
+                            [ngClass]="{ 'is-invalid':
+                          (registrarDistribucionForm.submitted && bdValorDistribucion.errors?.['required']) ||registrarDistribucionForm.submitted && bdValorDistribucion.errors?.['pattern']}">
+                          <label class="mx-1 ">% </label>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-container>
+
+            </table> <ng-container *ngIf="!fShowDFByLocacion && lstDFByLocacion.length <= 0">
+              <div class="text-center mt-5 mb-5">
+                <h5>No existen resultados.</h5>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-1 mb-2">
+          <div class="ml-auto text-center container_sumaTotal"
+            *ngIf="lstDFByLocacion.length > 0 && sharedData.itemPeriodo.disabled==false">
+            <label class="text-danger fs-16" *ngIf="sumaValores<100 || sumaValores>100"> La suma total es:
+              {{sumaValores}} %
+            </label>
+            <label class="text-success fs-16" *ngIf="sumaValores==100"> La suma total es: {{sumaValores}} %</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="crud__button button-white" (click)="limpiarValores()"
+          *ngIf="sharedData.itemPeriodo.disabled==false">
+          Limpiar
+        </button>
+        <button [disabled]="loadRegDist" type="submit" class="crud__button button-blue ms-2"
+          *ngIf="sharedData.itemPeriodo.disabled==false">
+          <span [hidden]="!loadRegDist" class="spinner-border spinner-border-sm me-1"></span>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal Eliminar-->
+<ng-template #contentEliminar let-modalEliminar>
+  <div class="modal_confirmacion">
+    <div class="modal-body">
+      <label class="modal__title">Confirmación</label>
+      <label class="mt-3 d-flex justify-content-center text-center fs-16">
+        ¿Está seguro de eliminar la distribución por fuente de emisión?
+      </label>
+      <div class="d-flex justify-content-center mt-4">
+        <button (click)="modalEliminar.dismiss()" class="crud__button button-white" type="button">
+          No</button>
+        <button [disabled]="loadEliminar" (click)="eliminarDistFuente()" class="crud__button button-blue ms-2"
+          type="submit">
+          <span *ngIf="loadEliminar" class="spinner-border spinner-border-sm me-2"></span>
+          Sí</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Modal Procesar Fuente-->
+<ng-template #contentProcesarF let-modalProcesarF>
+  <div class="modal-body modal_procesando">
+    <div class="d-flex align-items-center">
+      <div class="modal__loading--procesar">
+        <div class="loader"></div>
+      </div>
+      <div>
+        <label class="modal__title text-start fs-18">Espere un momento por favor</label>
+        <label class="mt-2  fs-16">
+          Estamos procesando las distribuciones.
+        </label>
+      </div>
+    </div>
+  </div>
+</ng-template>
